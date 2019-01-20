@@ -7,16 +7,18 @@
 
 package org.usfirst.frc.team4669.robot;
 
-import org.usfirst.frc.team4669.robot.commands.DoNothing;
+import org.usfirst.frc.team4669.robot.commands.*;
 import org.usfirst.frc.team4669.robot.subsystems.*;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -31,6 +33,9 @@ public class Robot extends TimedRobot {
 	public static F310 f310;
 	public static DriverStation driverStation;
 	public static DriveTrain driveTrain;
+	public static NetworkTableInstance networkTableInst;
+	public static NetworkTable table;
+	public static Elevator elevator;
 
 	Command autonomousCommand;
 	SendableChooser<String> chooser = new SendableChooser<String>();
@@ -43,8 +48,11 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		oi = new OI();
 		f310 = new F310();
-
+		// driverStation = DriverStation.getInstance();
+		// networkTableInst = NetworkTableInstance.getDefault();
+		// table = networkTableInst.getTable("DataTable");
 		driveTrain = new DriveTrain();
+		elevator = new Elevator();
 
 		// Sends Strings to chooser and not commands in the case of the command
 		// requiring something that only occurs during auto init
@@ -54,19 +62,30 @@ public class Robot extends TimedRobot {
 	}
 
 	/**
+	 * This function is called every robot packet, no matter the mode. Use this for
+	 * items like diagnostics that you want ran during disabled, autonomous,
+	 * teleoperated and test.
+	 *
+	 * <p>
+	 * This runs after the mode specific periodic functions, but before LiveWindow
+	 * and SmartDashboard integrated updating.
+	 */
+	@Override
+	public void robotPeriodic() {
+	}
+
+	/**
 	 * This function is called once each time the robot enters Disabled mode. You
 	 * can use it to reset any subsystem information you want to clear when the
 	 * robot is disabled.
 	 */
 	@Override
 	public void disabledInit() {
-
 	}
 
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
-		driverStation = DriverStation.getInstance();
 		updateSmartDashboard();
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
