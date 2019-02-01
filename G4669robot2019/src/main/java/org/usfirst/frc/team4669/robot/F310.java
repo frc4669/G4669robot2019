@@ -9,14 +9,14 @@ public class F310 {
 
 	// x on back switch, mode light off
 	private Joystick f310;
-
-	private POVButton dPadButton = new POVButton(f310, (int) getDPadPOV());
+	private POVButton dPadButton;
 
 	public static final int greenButton = 1, redButton = 2, blueButton = 3, orangeButton = 4, leftShoulderButton = 5,
 			rightShoulderButton = 6, backButton = 7, startButton = 8, leftJoyButton = 9, rightJoyButton = 10;
 
 	public F310() {
 		f310 = new Joystick(RobotMap.f310);
+		dPadButton = new POVButton(f310, getDPadPOV());
 		dPadButton.whenPressed(new TurnTo(getDPadPOV()));
 	}
 
@@ -67,7 +67,7 @@ public class F310 {
 		return f310.getRawButtonReleased(buttonPort);
 	}
 
-	public double getDPadPOV() {
+	public int getDPadPOV() {
 		return f310.getPOV();
 	}
 

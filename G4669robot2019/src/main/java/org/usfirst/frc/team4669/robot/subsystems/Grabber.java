@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team4669.robot.subsystems;
 
+import org.usfirst.frc.team4669.robot.RobotMap;
 import org.usfirst.frc.team4669.robot.commands.OpenGrabber;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -19,8 +20,10 @@ public class Grabber extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  private DoubleSolenoid leftDoubleAction = new DoubleSolenoid(0, 1);
-  private DoubleSolenoid rightDoubleAction = new DoubleSolenoid(3, 2);
+  private DoubleSolenoid leftDoubleAction = new DoubleSolenoid(RobotMap.leftSolenoidForward,
+      RobotMap.leftSolenoidReverse);
+  private DoubleSolenoid rightDoubleAction = new DoubleSolenoid(RobotMap.rightSolenoidForward,
+      RobotMap.rightSolenoidReverse);
   // Channels are reversed because left and right sides are mirrored
 
   public void open() {

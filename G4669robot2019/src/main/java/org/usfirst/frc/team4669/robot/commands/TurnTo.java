@@ -34,7 +34,7 @@ public class TurnTo extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
         // Stop turning once robot turns past specified angle
-        return Robot.driveTrain.getPIDDone(Robot.driveTrain.getGyroController()) || isTimedOut();
+        return Robot.driveTrain.getPIDDone(Robot.driveTrain.getGyroController()) || isTimedOut() || degree == -1;
     }
 
     // Called once after isFinished returns true

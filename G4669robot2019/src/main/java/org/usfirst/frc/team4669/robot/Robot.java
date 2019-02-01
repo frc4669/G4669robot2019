@@ -51,13 +51,12 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
-		// intake = new CubeIntake();
-		// climber = new Climber();
-		elevator = new ElevatorClimber();
 		networkTableInst = NetworkTableInstance.getDefault();
 		visionTable = networkTableInst.getTable("DataTable");
+		elevator = new ElevatorClimber();
 		driveTrain = new DriveTrain();
 		arm = new Arm();
+		grabber = new Grabber();
 		ultrasonic = new AnalogUltrasonic(0);
 		oi = new OI();
 		f310 = new F310();

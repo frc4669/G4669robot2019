@@ -40,8 +40,6 @@ public class DriveTrain extends Subsystem {
   private WPI_TalonSRX frontRightMotor;
   private WPI_TalonSRX rearRightMotor;
 
-  private SpeedControllerGroup leftMotorGroup;
-  private SpeedControllerGroup rightMotorGroup;
   private MecanumDrive drive;
 
   public VisionPIDSource visionDistance;
@@ -70,10 +68,8 @@ public class DriveTrain extends Subsystem {
   public DriveTrain() {
     super();
     gyro = new ADXRS450_Gyro();
-
     visionDistance = new VisionPIDSource(BallAlign.DISTANCE);
     visionTurn = new VisionPIDSource(BallAlign.TURN);
-    gyro = new ADXRS450_Gyro();
     visionDistanceOutput = new PIDOutputWrapper();
     visionTurnOutput = new PIDOutputWrapper();
     turnOutput = new PIDOutputWrapper();
