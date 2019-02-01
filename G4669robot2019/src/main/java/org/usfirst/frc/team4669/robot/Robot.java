@@ -41,6 +41,7 @@ public class Robot extends TimedRobot {
 	public static Grabber grabber;
 
 	public AnalogUltrasonic ultrasonic;
+	public Ultrasonic digitalUltrasonic;
 
 	Command autonomousCommand;
 	SendableChooser<String> chooser = new SendableChooser<String>();
@@ -58,11 +59,14 @@ public class Robot extends TimedRobot {
 		arm = new Arm();
 		grabber = new Grabber();
 		ultrasonic = new AnalogUltrasonic(0);
+		digitalUltrasonic = new Ultrasonic(0, 1);
 		oi = new OI();
 		f310 = new F310();
 		driveTrain.zeroEncoders();
 		driveTrain.resetGyro();
 		driveTrain.calibrateGyro();
+
+		digitalUltrasonic.setAutomaticMode(true);
 
 		// Sends Strings to chooser and not commands in the case of the command
 		// requiring something that only occurs during auto init
@@ -254,5 +258,6 @@ public class Robot extends TimedRobot {
 		 */
 		SmartDashboard.putNumber("Ultrasonic voltage", ultrasonic.getVoltage());
 		SmartDashboard.putNumber("Ultrasonic Distance", ultrasonic.getDistance());
+		SmartDashboard.putNumber("Digital Ultrasonic Distance", digitalUltrasonic.getRangeInches());
 	}
 }
