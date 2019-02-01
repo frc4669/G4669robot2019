@@ -13,28 +13,52 @@ package org.usfirst.frc.team4669.robot.misc;
 public class Constants {
 	// Robot Constants
 	public static final double wheelDiameter = 4; // in inches
+	public static final double elevatorSprocketDiameter = 1.775; // in inches
 	public static final double wheelBase = 22.25; // figure out real distance later
-
 	public static final int encoderTicksPerRotation = 4096;
+	public static final double shoulderLength = 29;
+	public static final double elbowLength = 21;
+	public static final double wristLength = 0;
+	public static final double shoulderGearRatio = 3;
+	public static final double elbowGearRatio = 3;
+	public static final double wristGearRatio = 2;
 
-	// PID Constants
-	public static final double kF = 0.3343;
-	public static final double kP = 0.4;
-	public static final double kI = 0.0003;
-	public static final double kD = 20;
-	public static final int kIZone = 50;
+	// Constants for Pathfinder
+	public static final double maxVel = 88.9; // units in inches
 
-	public static final double kPGyro = 0;
-	public static final double kIGyro = 0;
-	public static final double kDGyro = 0.045;
+	/**
+	 * Array for accessing PID constants for turning drive train
+	 * {kF,kP,kI,kD,Integral Zone}
+	 */
+	public static final double[] driveTrainPID = { 0.3343, 0.4, 0.0003, 20, 50 };
 
-	public static final double kFElevator = 0.977;
-	public static final double kPElevator = 1.056;
-	public static final double kIElevator = 0.006;
-	public static final double kDElevator = 21.12;
-	public static final double kIZoneElevator = 50;
+	/** Array for accessing PID constants for the gyro turning {kP,kI,kD} */
+	public static final double[] gyroPID = { 0.25, 0, 0.045 };
 
-	public static final int timeoutMs = 20;
+	/** Array for accessing PID constants for vision {kP,kI,kD} */
+	public static final double[] cameraPID = { 0.8, 0, 0 };
+
+	/**
+	 * Array for accessing PID constants for elevator {kF,kP,kI,kD,Integral zone}
+	 */
+	public static final double[] elevatorPID = { 0.977, 1.056, 0.006, 21.12, 50 };
+
+	/** Array for accessing PID constants for arm {kF,kP,kI,kD,Integral zone} */
+	public static final double[] shoulderPID = { 1.26, 3, 0, 0, 50 };
+
+	/** Array for accessing PID constants for arm {kF,kP,kI,kD,Integral zone} */
+	public static final double[] elbowPID = { 1.81, 3.1, 0.0002, 100, 50 };
+
+	/** Array for accessing PID constants for arm {kF,kP,kI,kD,Integral zone} */
+	public static final double[] wristPID = { 1.76, 1.2, 0, 0, 50 };
+
+	/**
+	 * Array for accessing PID constants for climber drive {kF,kP,kI,kD,Integral
+	 * zone}
+	 */
+	public static final double[] elevatorWheelPID = { 1, 0, 0, 0, 50 };
+
+	public static final int timeout = 10;
 	public static final int baseTrajPeriodMs = 0;
 
 	// Velocities & Acceleration for Motion Magic
@@ -44,25 +68,58 @@ public class Constants {
 	public static final int elevatorDownVel = 1300;
 	public static final int elevatorDownAccel = 2900;
 
-	// Encoder Heights for Elevator
-	public static final int elevatorSwitch = -10000;
-	public static final int elevatorExchange = -2450;
-	public static final int elevatorLift = -1200;
-	public static final int elevatorScaleMid = -23000;
-	public static final int elevatorMax = -27295;
+	public static final int elevatorWheelVel = 0;
+	public static final int elevatorWheelAccel = 0;
+
+	public static final int driveVel = 2300;
+	public static final int driveAccel = 4600;
+
+	public static final double armScaleFactor = 1;
+
+	public static final int shoulderVel = (int) (150 * armScaleFactor);
+	public static final int shoulderAccel = (int) (300 * armScaleFactor);
+	public static final int elbowVel = (int) (200 * armScaleFactor);
+	public static final int elbowAccel = (int) (400 * armScaleFactor);
+	public static final int wristVel = (int) (500 * armScaleFactor);
+	public static final int wristAccel = (int) (1500 * armScaleFactor);
+
+	public static final int armTolerance = 10; // units of encoder ticks
+
+	// Elevator Constants
+	public static final double elevatorTolerance = 10;
+	public static final double wheelElevatorOffset = 6;
+	public static final double level3Height = 19 + wheelElevatorOffset;
 
 	// Conversion factors and quick maffs
 	public static final double wheelCircumference = Math.PI * wheelDiameter;
+	public static final double elevatorSprocketCircumference = Math.PI * elevatorSprocketDiameter;
 
-	public static final double encoderToInch = wheelCircumference / encoderTicksPerRotation; // Multiply encoder ticks
-																								// by this to convert to
-																								// inches
-	public static final double inchToEncoder = encoderTicksPerRotation / wheelCircumference; // Multiply inches by this
-																								// to convert to encoder
-																								// ticks
+	/** Multiply encoder ticks by this to convert to inches for drive train */
+	public static final double encoderToInchDrive = wheelCircumference / encoderTicksPerRotation;
+
+	/** Multiply inches by this to convert to encoder ticks for drive train */
+	public static final double inchToEncoderDrive = encoderTicksPerRotation / wheelCircumference;
+
+	/** Multiply encoder ticks by this to convert to inches for elevator */
+	public static final double encoderToInchElevator = elevatorSprocketCircumference / encoderTicksPerRotation;
+
+	/** Multiply inches by this to convert to encoder ticks for elevator */
+	public static final double inchToEncoderElevator = encoderTicksPerRotation / elevatorSprocketCircumference;
 
 	public static final double distancePerRotation = wheelBase * Math.PI / 4;
 
 	public static final int angleTolerance = 2;
+	public static final double kPStraightGyro = 0.025;
+
+	public static final int driveTolerance = 200;
+
+	// Drive Train current limits
+	public static final int continuousCurrentLimit = 20;
+	public static final int peakCurrentLimit = 22;
+	public static final int currentDuration = 50;
+
+	// Arm current limits
+	public static final int continuousCurrentLimitArm = 8;
+	public static final int peakCurrentLimitArm = 10;
 
 }

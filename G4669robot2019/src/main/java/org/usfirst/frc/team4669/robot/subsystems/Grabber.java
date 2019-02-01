@@ -7,32 +7,37 @@
 
 package org.usfirst.frc.team4669.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import org.usfirst.frc.team4669.robot.commands.OpenGrabber;
 
-import org.usfirst.frc.team4669.robot.commands.ElevatorControl;
-
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  * Add your docs here.
  */
-public class Elevator extends Subsystem {
+public class Grabber extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-  private WPI_TalonSRX backElevator = new WPI_TalonSRX(12);
+
+  private DoubleSolenoid leftDoubleAction = new DoubleSolenoid(0, 1);
+  private DoubleSolenoid rightDoubleAction = new DoubleSolenoid(3, 2);
+  // Channels are reversed because left and right sides are mirrored
+
+  public void open() {
+    leftDoubleAction.set(DoubleSolenoid.Value.kForward);
+    rightDoubleAction.set(DoubleSolenoid.Value.kForward);
+  }
+
+  public void close() {
+    leftDoubleAction.set(DoubleSolenoid.Value.kReverse);
+    rightDoubleAction.set(DoubleSolenoid.Value.kReverse);
+  }
 
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
-    setDefaultCommand(new ElevatorControl());
+    // Not using default commands
   }
 
-  public void controlPower(double power) {
-    backElevator.set(0.2 * power);
-  }
-
-  public void stop() {
-    controlPower(0);
-  }
 }

@@ -25,25 +25,28 @@ public class RobotMap {
 	// public static int rangefinderModule = 1;
 
 	// CAN IDs for motor controllers
-	public static final int driveFrontLeft = 4;
-	public static final int driveRearLeft = 7;
-	public static final int driveFrontRight = 3;
-	public static final int driveRearRight = 5;
+	public static final int driveFrontLeft = 5;
+	public static final int driveRearLeft = 20; // 10
+	public static final int driveFrontRight = 8;
+	public static final int driveRearRight = 7;
 
-	public static final int leftIntake = 1;
-	public static final int rightIntake = 2;
-	public static final int elevator = 11;
-	public static final int rightClimber = 9;
-	public static final int centerClimber = 13;
-	public static final int leftClimber = 6;
+	public static final int leftMotorElevator = 10;
+	public static final int rightMotorElevator = 22; // 2
+	public static final int wheelMotorElevator = 23;
 
 	// USB IDs for gamepad and joysticks
 	public static final int leftJoystick = 0;
 	public static final int rightJoystick = 1;
 	public static final int f310 = 2;
+	public static final int extremeJoystick = 3;
+	public static final int buttonBoard = 4;
 
 	// Slot for Talon SRX encoder?
 	public static final int slotIdx = 0;
 	public static final int pidIdx = 0;
+
+	public static final int shoulderMotor = 11;
+	public static final int wristMotor = 13;
+	public static final int elbowMotor = 2; // 2
 
 }

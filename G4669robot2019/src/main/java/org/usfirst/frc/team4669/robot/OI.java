@@ -7,7 +7,13 @@
 
 package org.usfirst.frc.team4669.robot;
 
+import org.usfirst.frc.team4669.robot.commands.ExtendLeftElevator;
+import org.usfirst.frc.team4669.robot.commands.ExtendRightElevator;
+import org.usfirst.frc.team4669.robot.misc.Constants;
+
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -41,63 +47,98 @@ public class OI {
 	// Start the command when the button is released and let it run the command
 	// until it is finished as determined by it's isFinished method.
 	// button.whenReleased(new ExampleCommand());
-	
-	//Joystick variables
-		private Joystick leftStick;
-		private Joystick rightStick;
 
-		public OI() {
-			//Mapping joysticks
-			leftStick = new Joystick(RobotMap.leftJoystick);
-			rightStick = new Joystick(RobotMap.rightJoystick);
+	// Joystick variables
+	private Joystick leftStick = new Joystick(RobotMap.leftJoystick);
+	private Joystick rightStick = new Joystick(RobotMap.rightJoystick);
+	private Joystick extremeStick = new Joystick(RobotMap.extremeJoystick);
 
+	private Button[] leftButtons = new Button[11];
+	private Button[] rightButtons = new Button[11];
+
+	public OI() {
+		// Creates button objects for every button on logitech joystick
+		for (int i = 1; i <= 11; i++) {
+			leftButtons[i - 1] = new JoystickButton(leftStick, i);
+			rightButtons[i - 1] = new JoystickButton(rightStick, i);
 		}
 
-		//Getting joystick values
-		public double leftY() {
-			double joystickValue = leftStick.getY();
-			return deadzone(joystickValue);
+		leftButtons[5].whenPressed(new ExtendRightElevator(Constants.level3Height));
+		leftButtons[4].whenPressed(new ExtendLeftElevator(Constants.level3Height));
+	}
+
+	// Getting joystick values
+	public double leftY() {
+		double joystickValue = leftStick.getY();
+		return deadzone(joystickValue, 0.09);
+	}
+
+	public double leftX() {
+		double joystickValue = leftStick.getX();
+		return deadzone(joystickValue, 0.09);
+	}
+
+	public double rightY() {
+		double joystickValue = rightStick.getY();
+		return deadzone(joystickValue, 0.09);
+	}
+
+	public double rightX() {
+		double joystickValue = rightStick.getX();
+		return deadzone(joystickValue, 0.09);
+	}
+
+	public double extremeX() {
+		double joystickValue = extremeStick.getX();
+		return deadzone(joystickValue, 0.09);
+	}
+
+	public double extremeY() {
+		double joystickValue = -extremeStick.getY();
+		return deadzone(joystickValue, 0.09);
+	}
+
+	public double extremeZ() {
+		double joystickValue = extremeStick.getZ();
+		return deadzone(joystickValue, 0.09);
+	}
+
+	public boolean getLeftRawButton(int button) {
+		return leftStick.getRawButton(button);
+	}
+
+	public boolean getRightRawButton(int button) {
+		return rightStick.getRawButton(button);
+	}
+
+	public boolean getExtremeRawButton(int button) {
+		return extremeStick.getRawButton(button);
+	}
+
+	public Joystick getLeftStick() {
+		return leftStick;
+	}
+
+	public Joystick getRightStick() {
+		return rightStick;
+	}
+
+	public Joystick getExtremeStick() {
+		return extremeStick;
+	}
+
+	private double deadzone(double joystickValue, double offset) {
+		double joystickOffset = offset;
+		double absJoystickValue = Math.abs(joystickValue);
+		if (absJoystickValue > joystickOffset) {
+			double speed = absJoystickValue;
+			speed = (speed * speed) + joystickOffset;
+			if (joystickValue > 0)
+				return speed;
+			else
+				return -speed;
+		} else {
+			return 0;
 		}
-		public double leftX() {
-			double joystickValue = leftStick.getX();
-			return deadzone(joystickValue);
-		}
-		public double rightY() {
-			double joystickValue = rightStick.getY();
-			return deadzone(joystickValue);
-		}
-		public double rightX() {
-			double joystickValue = rightStick.getX();
-			return deadzone(joystickValue);
-		}
-		
-		public boolean getLeftRawButton(int button) {
-			return leftStick.getRawButton(button);
-		}
-		public boolean getRightRawButton(int button) {
-			return rightStick.getRawButton(button);
-		}
-		
-		public Joystick getLeftStick() {
-			return leftStick;
-		}
-		public Joystick getRightStick() {
-			return rightStick;
-		}
-		
-		private double deadzone(double joystickValue) {
-			double joystickOffset = 0.075;
-			double absJoystickValue = Math.abs(joystickValue);
-			if (absJoystickValue > joystickOffset) {
-				double speed = absJoystickValue;
-				speed = (speed*speed) + joystickOffset;
-				if (joystickValue > 0) 
-					return speed;
-				else
-					return -speed;
-			}
-			else {
-				return 0;
-			}
-		}
+	}
 }

@@ -9,26 +9,28 @@ package org.usfirst.frc.team4669.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
-import edu.wpi.first.wpilibj.drive.Vector2d;
 
-import org.usfirst.frc.team4669.robot.F310;
 import org.usfirst.frc.team4669.robot.RobotMap;
-import org.usfirst.frc.team4669.robot.commands.MecanumDriveCommand;
+import org.usfirst.frc.team4669.robot.commands.JoystickDrive;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 import org.usfirst.frc.team4669.robot.misc.PIDOutputWrapper;
+import org.usfirst.frc.team4669.robot.misc.VisionPIDSource;
+import org.usfirst.frc.team4669.robot.misc.VisionPIDSource.BallAlign;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 /**
- * Add your docs here.
+ * Robot drive train subsystem
  */
 public class DriveTrain extends Subsystem {
   // Put methods for controlling this subsystem
@@ -42,9 +44,18 @@ public class DriveTrain extends Subsystem {
   private SpeedControllerGroup rightMotorGroup;
   private MecanumDrive drive;
 
+  public VisionPIDSource visionDistance;
+  public VisionPIDSource visionTurn;
+
   public PIDController gyroPID;
+  public PIDController visionTurnController;
+  public PIDController visionDistanceController;
+
   private PIDOutputWrapper turnOutput;
-  private Gyro analogGyro;
+  private PIDOutputWrapper visionTurnOutput;
+  private PIDOutputWrapper visionDistanceOutput;
+
+  private Gyro gyro;
 
   int velocity = 2300; // About 200 RPM, vel units are in sensor units per 100ms
   int accel = 4600;
@@ -52,112 +63,97 @@ public class DriveTrain extends Subsystem {
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
-    setDefaultCommand(new MecanumDriveCommand());
+    setDefaultCommand(new JoystickDrive());
     // setDefaultCommand(new MySpecialCommand());
   }
 
   public DriveTrain() {
+    super();
+    gyro = new ADXRS450_Gyro();
+
+    visionDistance = new VisionPIDSource(BallAlign.DISTANCE);
+    visionTurn = new VisionPIDSource(BallAlign.TURN);
+    gyro = new ADXRS450_Gyro();
+    visionDistanceOutput = new PIDOutputWrapper();
+    visionTurnOutput = new PIDOutputWrapper();
+    turnOutput = new PIDOutputWrapper();
+
     frontLeftMotor = new WPI_TalonSRX(RobotMap.driveFrontLeft);
     rearLeftMotor = new WPI_TalonSRX(RobotMap.driveRearLeft);
     frontRightMotor = new WPI_TalonSRX(RobotMap.driveFrontRight);
     rearRightMotor = new WPI_TalonSRX(RobotMap.driveRearRight);
 
-    frontLeftMotor.setSafetyEnabled(false);
-    frontRightMotor.setSafetyEnabled(false);
-    rearLeftMotor.setSafetyEnabled(false);
-    rearRightMotor.setSafetyEnabled(false);
-
-    analogGyro = new ADXRS450_Gyro();
-
-    // Configuring the Gyroscope and the PID controller for it
-
-    turnOutput = new PIDOutputWrapper();
-
-    gyroPID = new PIDController(Constants.kPGyro, Constants.kIGyro, Constants.kDGyro, (PIDSource) analogGyro,
-        turnOutput);
-    gyroPID.setInputRange(0, 360);
-    gyroPID.setContinuous(true);
-    gyroPID.setOutputRange(-0.5, 0.5);
-    gyroPID.setAbsoluteTolerance(3);
-
-    // Configuring the motors and encoders
-
-    frontRightMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.pidIdx, Constants.timeoutMs);
-    frontLeftMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.pidIdx, Constants.timeoutMs);
-    rearRightMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.pidIdx, Constants.timeoutMs);
-    rearLeftMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.pidIdx, Constants.timeoutMs);
-
-    // Inverts motor direction
-    frontRightMotor.setInverted(false);
-    frontLeftMotor.setInverted(true);
-    rearRightMotor.setInverted(false);
-    rearLeftMotor.setInverted(true);
-
-    // Sets the encoder sensors to be in phase/direction with motors
-    frontRightMotor.setSensorPhase(false);
-    frontLeftMotor.setSensorPhase(false);
-    rearRightMotor.setSensorPhase(false);
-    rearLeftMotor.setSensorPhase(false);
-
-    /* set the peak and nominal outputs, 1 means full */
-    frontRightMotor.configNominalOutputForward(0, Constants.timeoutMs);
-    frontRightMotor.configNominalOutputReverse(0, Constants.timeoutMs);
-    frontRightMotor.configPeakOutputForward(1, Constants.timeoutMs);
-    frontRightMotor.configPeakOutputReverse(-1, Constants.timeoutMs);
-
-    frontLeftMotor.configNominalOutputForward(0, Constants.timeoutMs);
-    frontLeftMotor.configNominalOutputReverse(0, Constants.timeoutMs);
-    frontLeftMotor.configPeakOutputForward(1, Constants.timeoutMs);
-    frontLeftMotor.configPeakOutputReverse(-1, Constants.timeoutMs);
-
-    /* set closed loop gains in slot0 - see documentation */
-    frontRightMotor.selectProfileSlot(RobotMap.slotIdx, RobotMap.pidIdx);
-    frontRightMotor.config_kF(RobotMap.slotIdx, Constants.kF, Constants.timeoutMs);
-    frontRightMotor.config_kP(RobotMap.slotIdx, Constants.kP, Constants.timeoutMs);
-    frontRightMotor.config_kI(RobotMap.slotIdx, Constants.kI, Constants.timeoutMs);
-    frontRightMotor.config_kD(RobotMap.slotIdx, Constants.kD, Constants.timeoutMs);
-    frontRightMotor.config_IntegralZone(RobotMap.slotIdx, Constants.kIZone, Constants.timeoutMs);
-
-    frontLeftMotor.selectProfileSlot(RobotMap.slotIdx, RobotMap.pidIdx);
-    frontLeftMotor.config_kF(RobotMap.slotIdx, Constants.kF, Constants.timeoutMs);
-    frontLeftMotor.config_kP(RobotMap.slotIdx, Constants.kP, Constants.timeoutMs);
-    frontLeftMotor.config_kI(RobotMap.slotIdx, Constants.kI, Constants.timeoutMs);
-    frontLeftMotor.config_kD(RobotMap.slotIdx, Constants.kD, Constants.timeoutMs);
-    frontLeftMotor.config_IntegralZone(RobotMap.slotIdx, Constants.kIZone, Constants.timeoutMs);
-
-    /* set acceleration and vcruise velocity - see documentation */
-    frontRightMotor.configMotionCruiseVelocity(velocity, Constants.timeoutMs);
-    frontRightMotor.configMotionAcceleration(accel, Constants.timeoutMs);
-    frontRightMotor.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeoutMs);
-
-    frontLeftMotor.configMotionCruiseVelocity(velocity, Constants.timeoutMs);
-    frontLeftMotor.configMotionAcceleration(accel, Constants.timeoutMs);
-    frontLeftMotor.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeoutMs);
+    // Configures motors and inverts them
+    talonConfig(frontRightMotor, false);
+    talonConfig(frontLeftMotor, true);
+    talonConfig(rearRightMotor, false);
+    talonConfig(rearLeftMotor, true);
 
     // Set Current limit
-    frontRightMotor.configContinuousCurrentLimit(20, Constants.timeoutMs);
-    frontRightMotor.configPeakCurrentLimit(22, Constants.timeoutMs);
-    frontRightMotor.configPeakCurrentDuration(50, Constants.timeoutMs);
-    frontRightMotor.enableCurrentLimit(true);
+    setCurrentLimit(frontRightMotor);
+    setCurrentLimit(frontLeftMotor);
+    setCurrentLimit(rearRightMotor);
+    setCurrentLimit(rearLeftMotor);
 
-    frontLeftMotor.configContinuousCurrentLimit(20, Constants.timeoutMs);
-    frontLeftMotor.configPeakCurrentLimit(22, Constants.timeoutMs);
-    frontLeftMotor.configPeakCurrentDuration(50, Constants.timeoutMs);
-    frontLeftMotor.enableCurrentLimit(true);
+    setMotionVelAccel(velocity, accel);
 
-    rearRightMotor.configContinuousCurrentLimit(20, Constants.timeoutMs);
-    rearRightMotor.configPeakCurrentLimit(22, Constants.timeoutMs);
-    rearRightMotor.configPeakCurrentDuration(50, Constants.timeoutMs);
-    rearRightMotor.enableCurrentLimit(true);
+    // Configuring the Gyroscope and the PID controller for it
+    gyroPID = new PIDController(Constants.gyroPID[0], Constants.gyroPID[1], Constants.gyroPID[2], (PIDSource) gyro,
+        turnOutput);
+    configPIDController(gyroPID, 0, 360, true, 0.5, 3);
 
-    rearLeftMotor.configContinuousCurrentLimit(20, Constants.timeoutMs);
-    rearLeftMotor.configPeakCurrentLimit(22, Constants.timeoutMs);
-    rearLeftMotor.configPeakCurrentDuration(50, Constants.timeoutMs);
-    rearLeftMotor.enableCurrentLimit(true);
+    // Configuring the Vision PID controllers
+    visionTurnController = new PIDController(Constants.cameraPID[0], Constants.cameraPID[1], Constants.cameraPID[2],
+        visionTurn, visionTurnOutput);
+    configPIDController(visionTurnController, 0, 320, false, 0.5, 10);
+
+    visionDistanceController = new PIDController(Constants.cameraPID[0], Constants.cameraPID[1], Constants.cameraPID[2],
+        visionDistance, visionDistanceOutput);
+    configPIDController(visionDistanceController, 0, 200, false, 0.5, 10);
 
     drive = new MecanumDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
     drive.setRightSideInverted(false);
     drive.setSafetyEnabled(false);
+  }
+
+  public void talonConfig(TalonSRX talon, boolean left) {
+    talon.configFactoryDefault();
+
+    talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.pidIdx, Constants.timeout);
+    talon.setInverted(left);
+    talon.setSensorPhase(true);
+
+    talon.configNominalOutputForward(0, Constants.timeout);
+    talon.configNominalOutputReverse(0, Constants.timeout);
+    talon.configPeakOutputForward(1, Constants.timeout);
+    talon.configPeakOutputReverse(-1, Constants.timeout);
+
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.timeout);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.timeout);
+
+    talon.selectProfileSlot(RobotMap.slotIdx, RobotMap.pidIdx);
+    talon.config_kF(RobotMap.slotIdx, Constants.driveTrainPID[0], Constants.timeout);
+    talon.config_kP(RobotMap.slotIdx, Constants.driveTrainPID[1], Constants.timeout);
+    talon.config_kI(RobotMap.slotIdx, Constants.driveTrainPID[2], Constants.timeout);
+    talon.config_kD(RobotMap.slotIdx, Constants.driveTrainPID[3], Constants.timeout);
+    talon.config_IntegralZone(RobotMap.slotIdx, (int) Constants.driveTrainPID[4], Constants.timeout);
+
+    talon.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeout);
+  }
+
+  public void setCurrentLimit(TalonSRX talon) {
+    talon.configContinuousCurrentLimit(Constants.continuousCurrentLimit, Constants.timeout);
+    talon.configPeakCurrentLimit(Constants.peakCurrentLimit, Constants.timeout);
+    talon.configPeakCurrentDuration(Constants.currentDuration, Constants.timeout);
+    talon.enableCurrentLimit(true);
+  }
+
+  public void configPIDController(PIDController controller, double inputMin, double inputMax, boolean continuous,
+      double outputMax, double tolerance) {
+    controller.setInputRange(inputMin, inputMax);
+    controller.setContinuous(continuous);
+    controller.setOutputRange(-outputMax, outputMax);
+    controller.setAbsoluteTolerance(tolerance);
   }
 
   /**
@@ -217,6 +213,17 @@ public class DriveTrain extends Subsystem {
     drive.drivePolar(magnitude, direction, rotationRate);
   }
 
+  public void tankDrive(double leftSpeed, double rightSpeed, boolean squareInputs) {
+    if (squareInputs) {
+      leftSpeed = Math.pow(leftSpeed, 2);
+      rightSpeed = Math.pow(rightSpeed, 2);
+    }
+    driveFrontLeft(leftSpeed);
+    driveRearLeft(leftSpeed);
+    driveFrontRight(rightSpeed);
+    driveFrontRight(rightSpeed);
+  }
+
   public void driveRearLeft(double percentage) {
     rearLeftMotor.set(percentage);
   }
@@ -233,12 +240,26 @@ public class DriveTrain extends Subsystem {
     frontRightMotor.set(percentage);
   }
 
+  public void driveStraightGyro(double power, double targetedAngle, double kP) {
+    double error = getAngle() - targetedAngle;
+    double turnPower = error * kP;
+    robotOrientedDrive(0, power, turnPower);
+  }
+
+  public void driveMotionMagic(double targetEncPosition) {
+    setMotionVelAccel(Constants.driveVel, Constants.driveAccel);
+    frontLeftMotor.set(ControlMode.MotionMagic, targetEncPosition);
+    frontRightMotor.set(ControlMode.MotionMagic, targetEncPosition);
+    rearLeftMotor.set(ControlMode.MotionMagic, targetEncPosition);
+    rearRightMotor.set(ControlMode.MotionMagic, targetEncPosition);
+  }
+
   public void calibrateGyro() {
-    analogGyro.calibrate();
+    gyro.calibrate();
   }
 
   public void resetGyro() {
-    analogGyro.reset();
+    gyro.reset();
   }
 
   public int getFrontLeftEncoder() {
@@ -274,10 +295,10 @@ public class DriveTrain extends Subsystem {
   }
 
   public void zeroEncoders() {
-    frontLeftMotor.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeoutMs);
-    rearLeftMotor.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeoutMs);
-    frontRightMotor.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeoutMs);
-    rearRightMotor.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeoutMs);
+    frontLeftMotor.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeout);
+    rearLeftMotor.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeout);
+    frontRightMotor.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeout);
+    rearRightMotor.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeout);
   }
 
   public void stop() {
@@ -298,93 +319,66 @@ public class DriveTrain extends Subsystem {
   }
 
   public double getAngle() {
-    return analogGyro.getAngle();
+    return gyro.getAngle();
   }
 
-  // public void fieldDrive(double ySpeed, double xSpeed, double zRotation, double
-  // gyroAngle) {
-  // // Compensate for gyro angle.
-  // Vector2d input = new Vector2d(ySpeed, xSpeed);
-  // input.rotate(-gyroAngle);
-
-  // double m_maxOutput = 1;
-
-  // double[] wheelSpeeds = new double[4];
-
-  // wheelSpeeds[0] = input.x + input.y + zRotation; // frontLeft
-  // wheelSpeeds[1] = -input.x + input.y - zRotation; // frontRight
-  // wheelSpeeds[2] = -input.x + input.y + zRotation; // rearLeft
-  // wheelSpeeds[3] = input.x + input.y - zRotation; // rearRight
-
-  // normalize(wheelSpeeds);
-
-  // frontLeftMotor.set(wheelSpeeds[0] * m_maxOutput);
-  // frontRightMotor.set(wheelSpeeds[1] * m_maxOutput);
-  // rearLeftMotor.set(wheelSpeeds[2] * m_maxOutput);
-  // rearRightMotor.set(wheelSpeeds[3] * m_maxOutput);
-  // }
-
-  // public void robotDrive(double ySpeed, double xSpeed, double zRotation) {
-  // fieldDrive(ySpeed, xSpeed, zRotation, 0);
-  // }
-
-  private void normalize(double[] wheelSpeeds) {
-    double maxMagnitude = Math.abs(wheelSpeeds[0]);
-    for (int i = 1; i < wheelSpeeds.length; i++) {
-      double temp = Math.abs(wheelSpeeds[i]);
-      if (maxMagnitude < temp) {
-        maxMagnitude = temp;
-      }
-    }
-    if (maxMagnitude > 1.0) {
-      for (int i = 0; i < wheelSpeeds.length; i++) {
-        wheelSpeeds[i] = wheelSpeeds[i] / maxMagnitude;
-      }
-    }
+  public void setMotionVelAccel(int velocity, int accel) {
+    frontLeftMotor.configMotionCruiseVelocity(velocity, Constants.timeout);
+    frontLeftMotor.configMotionAcceleration(accel, Constants.timeout);
+    frontRightMotor.configMotionCruiseVelocity(velocity, Constants.timeout);
+    frontRightMotor.configMotionAcceleration(accel, Constants.timeout);
+    rearLeftMotor.configMotionCruiseVelocity(velocity, Constants.timeout);
+    rearLeftMotor.configMotionAcceleration(accel, Constants.timeout);
+    rearRightMotor.configMotionCruiseVelocity(velocity, Constants.timeout);
+    rearRightMotor.configMotionAcceleration(accel, Constants.timeout);
   }
 
-  // public double getAngleBound180() {
-  // double angle = analogGyro.getAngle();
-  // while (angle > 180) {
-  // angle -= 180;
-  // }
-  // while (angle < -180) {
-  // angle += 180;
-  // }
-  // return angle;
-  // }
-
-  // public double getAngleBound360() {
-  // double angle = analogGyro.getAngle();
-  // while (angle > 360) {
-  // angle -= 360;
-  // }
-  // while (angle < 0) {
-  // angle += 360;
-  // }
-  // return angle;
-  // }
-
-  public boolean getTurnDone() {
-    return gyroPID.onTarget();
+  public void enablePIDController(PIDController controller) {
+    controller.reset();
+    controller.enable();
   }
 
-  public double getTurnPIDError() {
-    return gyroPID.getError();
+  public void disablePIDController(PIDController controller) {
+    controller.disable();
+  }
+
+  public void setTarget(PIDController controller, double target) {
+    controller.setSetpoint(target);
+  }
+
+  public boolean getPIDDone(PIDController controller) {
+    return controller.onTarget();
+  }
+
+  public double getPIDError(PIDController controller) {
+    return controller.getError();
   }
 
   public double getTurnOutput() {
     return turnOutput.getOutput();
   }
 
-  public void feedWatchdog() {
-    drive.feedWatchdog();
+  public double getVisionTurnOutput() {
+    return visionTurnOutput.getOutput();
   }
 
-  public void driveStraightGyro(double power, double targetedAngle, double kP) {
-    double error = getAngle() - targetedAngle;
-    double turnPower = error * kP;
-    robotOrientedDrive(0, power, turnPower);
+  public double getVisionDistanceOutput() {
+    return visionDistanceOutput.getOutput();
+  }
 
+  public boolean isObjectDetected() {
+    return visionDistance.isObjectDetected();
+  }
+
+  public PIDController getGyroController() {
+    return gyroPID;
+  }
+
+  public PIDController getVisionTurnController() {
+    return visionTurnController;
+  }
+
+  public PIDController getVisionDistanceController() {
+    return visionDistanceController;
   }
 }

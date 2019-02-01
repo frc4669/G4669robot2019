@@ -8,13 +8,17 @@
 package org.usfirst.frc.team4669.robot.commands;
 
 import org.usfirst.frc.team4669.robot.Robot;
+import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ElevatorControl extends Command {
-  public ElevatorControl() {
+public class ExtendRightElevator extends Command {
+  double position;
+
+  public ExtendRightElevator(double positionInches) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
+    this.position = positionInches * Constants.inchToEncoderElevator;
     requires(Robot.elevator);
   }
 
@@ -22,28 +26,37 @@ public class ElevatorControl extends Command {
   @Override
   protected void initialize() {
     Robot.elevator.stop();
+    Robot.elevator.setMotionMagic(Robot.elevator.getRightMotor(), position);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.elevator.controlPower(Robot.oi.leftY());
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    if (Math
+        .abs(position - Robot.elevator.getEncoderPos(Robot.elevator.getRightMotor())) < Constants.elevatorTolerance) {
+      return true;
+    }
+    if (Robot.oi.getLeftRawButton(10)) {
+      return true;
+    } else
+      return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    Robot.elevator.stop();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }
