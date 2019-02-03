@@ -53,7 +53,7 @@ public class VisionPIDSource implements PIDSource {
   public double pidGet() {
     switch (alignType) {
     case DISTANCE:
-      return visionEntries.getDistance();
+      return visionEntries.getDistanceIfCentered();
     case TURN:
       return visionEntries.getX();
     default:

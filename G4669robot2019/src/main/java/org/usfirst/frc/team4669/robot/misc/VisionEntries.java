@@ -5,7 +5,8 @@ import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 
 public class VisionEntries {
-    private int x = 0, y = 0, width = 0, height = 0;
+    private final int centerX = Constants.pixyWidth / 2, centerY = Constants.pixyHeight / 2;
+    private int x = 0, y = 0, width = 0, height = 0, horizontalAngle = 0, distance = 0;
 
     public VisionEntries() {
         updateEntries();
@@ -20,6 +21,10 @@ public class VisionEntries {
             width = Robot.visionTable.getEntry("orangeWidth").getNumber(0).intValue();
         if (Robot.visionTable.containsKey("orangeHeight"))
             height = Robot.visionTable.getEntry("orangeHeight").getNumber(0).intValue();
+        if (Robot.visionTable.containsKey("horizontalAngle"))
+            horizontalAngle = Robot.visionTable.getEntry("horizontalAngle").getNumber(0).intValue();
+        if (Robot.visionTable.containsKey("distance"))
+            distance = Robot.visionTable.getEntry("distance").getNumber(0).intValue();
     }
 
     public int getX() {
@@ -42,12 +47,17 @@ public class VisionEntries {
         return height;
     }
 
-    public double getDistance() {
+    public double getHorizontalAngle() {
         updateEntries();
-        return width;
+        return horizontalAngle;
+    }
+
+    public double getDistanceIfCentered() {
+        updateEntries();
+        return distance;
     }
 
     public boolean isObjectDetected() {
-        return !(width ==  0 ||height == 0);
+        return !(width == 0 || height == 0);
     }
 }

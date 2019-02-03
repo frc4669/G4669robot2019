@@ -23,6 +23,13 @@ public class Constants {
 	public static final double elbowGearRatio = 3;
 	public static final double wristGearRatio = 2;
 
+	public static final int pixyWidth = 320;
+	public static final int pixyHeight = 200;
+	public static final double pixyFocalLength = 2.8 / 25.4; // 2.8mm to inches
+	public static final double pixyFOV = 75; // 75 degrees
+
+	public static final int ballDiameter = 13;
+
 	// Constants for Pathfinder
 	public static final double maxVel = 88.9; // units in inches
 

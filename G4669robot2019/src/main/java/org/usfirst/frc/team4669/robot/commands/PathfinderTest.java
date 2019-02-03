@@ -50,7 +50,8 @@ public class PathfinderTest extends Command {
         rightFollower = new EncoderFollower(rightTrajectory);
 
         // Must configure PIDVA on the following line
-        leftFollower.configureEncoder(Robot.driveTrain.getFrontLeftEncoder(), 4096, Constants.wheelDiameter);
+        leftFollower.configureEncoder(Robot.driveTrain.getFrontLeftEncoder(), Constants.encoderTicksPerRotation,
+                Constants.wheelDiameter);
         leftFollower.configurePIDVA(Constants.driveTrainPID[1], 0, 0, 1 / Constants.maxVel, 0);
 
         rightFollower.configureEncoder(Robot.driveTrain.getFrontRightEncoder(), 4096, Constants.wheelDiameter);
