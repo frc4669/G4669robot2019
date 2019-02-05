@@ -1,11 +1,8 @@
 package org.usfirst.frc.team4669.robot.misc;
 
 import org.usfirst.frc.team4669.robot.Robot;
-import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.PIDSourceType;
 
 public class VisionEntries {
-    private final int centerX = Constants.pixyWidth / 2, centerY = Constants.pixyHeight / 2;
     private int x = 0, y = 0, width = 0, height = 0, horizontalAngle = 0, distance = 0;
 
     public VisionEntries() {

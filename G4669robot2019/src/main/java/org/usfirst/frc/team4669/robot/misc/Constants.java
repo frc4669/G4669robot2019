@@ -30,6 +30,15 @@ public class Constants {
 
 	public static final int ballDiameter = 13;
 
+	// Elevator Constants, figure out actual numbers later
+	public static final double elevatorTolerance = 100; // Units in encoder position
+	public static final double level2HeightInches = 6; // Rest of the units are inches
+	public static final double wheelElevatorOffSet = 0.5;
+	public static final double climbDriveDistance = 3;
+	public static final double climbDriveDistance2 = 15;
+	public static final double climbDriveDistance3 = 5;
+	public static final double level3HeightInches = 19;
+
 	// Constants for Pathfinder
 	public static final double maxVel = 88.9; // units in inches
 
@@ -91,11 +100,6 @@ public class Constants {
 	public static final int wristAccel = (int) (1500 * armScaleFactor);
 
 	public static final int armTolerance = 10; // units of encoder ticks
-
-	// Elevator Constants
-	public static final double elevatorTolerance = 10;
-	public static final double wheelElevatorOffset = 6;
-	public static final double level3Height = 19 + wheelElevatorOffset;
 
 	// Conversion factors and quick maffs
 	public static final double wheelCircumference = Math.PI * wheelDiameter;

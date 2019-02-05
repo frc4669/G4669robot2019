@@ -23,27 +23,8 @@ public class TeleopClimber extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        if (Robot.oi.getLeftRawButton(10))
-            Robot.elevator.stop();
-        else if (Robot.oi.getLeftRawButton(8)) {
-            if (Robot.elevator.getAccelY() < -0.1) {
-                Robot.elevator.percentOutputLeft(0.2);
-                Robot.elevator.zeroVelocity(Robot.elevator.getRightMotor());
-            } else if (Robot.elevator.getAccelY() > 0.1) {
-                Robot.elevator.percentOutputRight(0.2);
-                Robot.elevator.zeroVelocity(Robot.elevator.getLeftMotor());
-            } else {
-                Robot.elevator.percentOutputRight(0.2);
-                Robot.elevator.percentOutputLeft(0.2);
-            }
-        } else if (Robot.oi.getLeftRawButton(6))
-            Robot.elevator.percentOutputLeft(0.2);
-        else if (Robot.oi.getLeftRawButton(11))
-            Robot.elevator.percentOutputRight(0.2);
-        else {
-            Robot.elevator.zeroVelocity(Robot.elevator.getLeftMotor());
-            Robot.elevator.zeroVelocity(Robot.elevator.getRightMotor());
-        }
+        Robot.elevator.zeroVelocity(Robot.elevator.getLeftMotor());
+        Robot.elevator.zeroVelocity(Robot.elevator.getRightMotor());
 
     }
 

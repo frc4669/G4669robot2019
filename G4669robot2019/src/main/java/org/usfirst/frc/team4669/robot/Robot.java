@@ -11,6 +11,7 @@ import org.usfirst.frc.team4669.robot.commands.*;
 import org.usfirst.frc.team4669.robot.subsystems.*;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.command.Command;
@@ -39,9 +40,7 @@ public class Robot extends TimedRobot {
 	public static ElevatorClimber elevator;
 	public static Arm arm;
 	public static Grabber grabber;
-
 	public AnalogUltrasonic ultrasonic;
-	public Ultrasonic digitalUltrasonic;
 
 	Command autonomousCommand;
 	SendableChooser<String> chooser = new SendableChooser<String>();
@@ -58,15 +57,12 @@ public class Robot extends TimedRobot {
 		driveTrain = new DriveTrain();
 		arm = new Arm();
 		grabber = new Grabber();
-		ultrasonic = new AnalogUltrasonic(0);
-		digitalUltrasonic = new Ultrasonic(0, 1);
+		// ultrasonic = new AnalogUltrasonic(0);
 		oi = new OI();
 		f310 = new F310();
 		driveTrain.zeroEncoders();
 		driveTrain.resetGyro();
 		driveTrain.calibrateGyro();
-
-		digitalUltrasonic.setAutomaticMode(true);
 
 		// Sends Strings to chooser and not commands in the case of the command
 		// requiring something that only occurs during auto init
@@ -74,13 +70,6 @@ public class Robot extends TimedRobot {
 		chooser.addObject("Pathfinder", "Pathfinder");
 		SmartDashboard.putData("Auto mode", chooser);
 
-		SmartDashboard.putNumber("Target Shoulder", 0);
-		SmartDashboard.putNumber("Target Elbow", 0);
-		SmartDashboard.putNumber("Target Wrist", 0);
-
-		SmartDashboard.putNumber("Target X", 0);
-		SmartDashboard.putNumber("Target Y", 0);
-		SmartDashboard.putBoolean("Flip Elbow", false);
 	}
 
 	/**
@@ -192,7 +181,21 @@ public class Robot extends TimedRobot {
 	}
 
 	public void updateSmartDashboard() {
+		SmartDashboard.putData((Sendable) driveTrain.getGyro());
+		SmartDashboard.putData(driveTrain.getGyroController());
+	}
 
+	public void testSmartDashboardInit() {
+		SmartDashboard.putNumber("Target Shoulder", 0);
+		SmartDashboard.putNumber("Target Elbow", 0);
+		SmartDashboard.putNumber("Target Wrist", 0);
+
+		SmartDashboard.putNumber("Target X", 0);
+		SmartDashboard.putNumber("Target Y", 0);
+		SmartDashboard.putBoolean("Flip Elbow", false);
+
+		SmartDashboard.putNumber("Drive Position", 0);
+		SmartDashboard.putNumber("Strafe Position", 0);
 	}
 
 	public void testSmartDashboard() {
@@ -256,8 +259,7 @@ public class Robot extends TimedRobot {
 		 * SmartDashboard.putNumber("Left Elevator Vel",
 		 * Robot.elevator.getEncoderVel(Robot.elevator.getLeftMotor()));
 		 */
-		SmartDashboard.putNumber("Ultrasonic voltage", ultrasonic.getVoltage());
-		SmartDashboard.putNumber("Ultrasonic Distance", ultrasonic.getDistance());
-		SmartDashboard.putNumber("Digital Ultrasonic Distance", digitalUltrasonic.getRangeInches());
+		// SmartDashboard.putNumber("Ultrasonic voltage", ultrasonic.getVoltage());
+		// SmartDashboard.putNumber("Ultrasonic Distance", ultrasonic.getDistance());
 	}
 }

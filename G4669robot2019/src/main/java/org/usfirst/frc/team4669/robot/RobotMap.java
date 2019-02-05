@@ -25,18 +25,18 @@ public class RobotMap {
 	// public static int rangefinderModule = 1;
 
 	/** CAN IDs for motor controllers */
-	public static final int driveFrontLeft = 5;
-	public static final int driveRearLeft = 20; // 10
-	public static final int driveFrontRight = 8;
+	public static final int driveFrontLeft = 3;
+	public static final int driveRearLeft = 6;
+	public static final int driveFrontRight = 4;
 	public static final int driveRearRight = 7;
 
-	public static final int leftMotorElevator = 10;
-	public static final int rightMotorElevator = 22; // 2
-	public static final int wheelMotorElevator = 23;
+	public static final int leftMotorElevator = 1;
+	public static final int rightMotorElevator = 9; // 2
+	public static final int wheelMotorElevator = 2;
 
 	public static final int shoulderMotor = 11;
 	public static final int wristMotor = 13;
-	public static final int elbowMotor = 2; // 2
+	public static final int elbowMotor = 12; // 2
 
 	/** USB IDs for gamepad and joysticks */
 	public static final int leftJoystick = 0;

@@ -9,12 +9,12 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class DriveMotionMagic extends Command {
+public class StrafeMotionMagic extends Command {
 
     private double distance;
     private double timeOut = 0;
 
-    public DriveMotionMagic(double distance) {
+    public StrafeMotionMagic(double distance) {
         super();
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
@@ -22,7 +22,7 @@ public class DriveMotionMagic extends Command {
         requires(Robot.driveTrain);
     }
 
-    public DriveMotionMagic(double distance, double timeOut) {
+    public StrafeMotionMagic(double distance, double timeOut) {
         super();
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
@@ -37,7 +37,7 @@ public class DriveMotionMagic extends Command {
         if (timeOut != 0) {
             setTimeout(timeOut);
         }
-        Robot.driveTrain.driveMotionMagic(distance * Constants.inchToEncoderDrive); // Converts inches to encoder ticks
+        Robot.driveTrain.strafeMotionMagic(distance * Constants.inchToEncoderDrive); // Converts inches to encoder ticks
     }
 
     // Called repeatedly when this Command is scheduled to run

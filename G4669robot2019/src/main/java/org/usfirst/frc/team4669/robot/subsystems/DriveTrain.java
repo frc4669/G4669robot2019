@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -53,6 +54,8 @@ public class DriveTrain extends Subsystem {
   private PIDOutputWrapper visionTurnOutput;
   private PIDOutputWrapper visionDistanceOutput;
 
+  public Ultrasonic digitalUltrasonic;
+
   private Gyro gyro;
 
   int velocity = 2300; // About 200 RPM, vel units are in sensor units per 100ms
@@ -68,6 +71,8 @@ public class DriveTrain extends Subsystem {
   public DriveTrain() {
     super();
     gyro = new ADXRS450_Gyro();
+    // digitalUltrasonic = new Ultrasonic(0, 1);
+    // digitalUltrasonic.setAutomaticMode(true);
     visionDistance = new VisionPIDSource(BallAlign.DISTANCE);
     visionTurn = new VisionPIDSource(BallAlign.TURN);
     visionDistanceOutput = new PIDOutputWrapper();
@@ -250,6 +255,15 @@ public class DriveTrain extends Subsystem {
     rearRightMotor.set(ControlMode.MotionMagic, targetEncPosition);
   }
 
+  public void strafeMotionMagic(double targetEncPosition) {
+    setMotionVelAccel(Constants.driveVel, Constants.driveAccel);
+    frontLeftMotor.set(ControlMode.MotionMagic, targetEncPosition);
+    frontRightMotor.set(ControlMode.MotionMagic, -targetEncPosition);
+    rearLeftMotor.set(ControlMode.MotionMagic, -targetEncPosition);
+    rearRightMotor.set(ControlMode.MotionMagic, targetEncPosition);
+
+  }
+
   public void calibrateGyro() {
     gyro.calibrate();
   }
@@ -377,4 +391,12 @@ public class DriveTrain extends Subsystem {
   public PIDController getVisionDistanceController() {
     return visionDistanceController;
   }
+
+  public Gyro getGyro() {
+    return gyro;
+  }
+
+  // public double getFrontDistance() {
+  // return digitalUltrasonic.getRangeInches();
+  // }
 }

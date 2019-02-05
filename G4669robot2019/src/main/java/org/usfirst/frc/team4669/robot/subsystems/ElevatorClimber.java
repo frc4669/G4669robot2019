@@ -63,40 +63,10 @@ public class ElevatorClimber extends Subsystem {
         rightMotor.set(ControlMode.PercentOutput, percent);
     }
 
-    // public void setHeight(double height) {
-    // elevatorMotor.configMotionCruiseVelocity(Constants.elevatorVel,
-    // Constants.timeout);
-    // elevatorMotor.configMotionAcceleration(Constants.elevatorAccel,
-    // Constants.timeout);
-    // elevatorMotor.set(ControlMode.MotionMagic, height);
-    // }
-
-    // public void controlHeight(double power, double initialPos) {
-    // elevatorMotor.configMotionCruiseVelocity(400, Constants.timeout);
-    // elevatorMotor.configMotionAcceleration(400, Constants.timeout);
-    // double targetPos = initialPos;
-    // double distanceToTravel = (int) (3 * 4096 / (Math.PI * 2)); // 3 inches max,2
-    // inch sprocket diameter
-    // targetPos += power * distanceToTravel;
-    // elevatorMotor.set(ControlMode.MotionMagic, targetPos);
-    // }
-
-    // public void groundHeight() {
-    // elevatorMotor.configMotionCruiseVelocity(Constants.elevatorDownVel,
-    // Constants.timeout);
-    // elevatorMotor.configMotionAcceleration(Constants.elevatorDownAccel,
-    // Constants.timeout);
-    // elevatorMotor.set(ControlMode.MotionMagic, 0);
-
-    // }
-
-    // public double getClosedLoopError() {
-    // return elevatorMotor.getClosedLoopError(0);
-    // }
-
     public void stop() {
         leftMotor.set(0);
         rightMotor.set(0);
+        wheelMotor.set(0);
     }
 
     public void setupMotor(TalonSRX talon, boolean invert, double[] pidArray, int motionMagicVel, int motionMagicAccel,
