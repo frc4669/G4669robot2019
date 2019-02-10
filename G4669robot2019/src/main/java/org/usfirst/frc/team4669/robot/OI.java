@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team4669.robot;
 
+import org.usfirst.frc.team4669.robot.commands.ExtendBothElevator;
 import org.usfirst.frc.team4669.robot.commands.ExtendLeftElevator;
 import org.usfirst.frc.team4669.robot.commands.ExtendRightElevator;
 import org.usfirst.frc.team4669.robot.misc.Constants;
@@ -53,20 +54,28 @@ public class OI {
 	private Joystick rightStick = new Joystick(RobotMap.rightJoystick);
 	private Joystick extremeStick = new Joystick(RobotMap.extremeJoystick);
 
-	private Button[] leftButtons = new Button[11];
-	private Button[] rightButtons = new Button[11];
+	private Button leftButton1 = new JoystickButton(leftStick, 1), leftButton2 = new JoystickButton(leftStick, 2),
+			leftButton3 = new JoystickButton(leftStick, 3), leftButton4 = new JoystickButton(leftStick, 4),
+			leftButton5 = new JoystickButton(leftStick, 5), leftButton6 = new JoystickButton(leftStick, 6),
+			leftButton7 = new JoystickButton(leftStick, 7), leftButton8 = new JoystickButton(leftStick, 8),
+			leftButton9 = new JoystickButton(leftStick, 9), leftButton10 = new JoystickButton(leftStick, 10),
+			leftButton11 = new JoystickButton(leftStick, 11);
+
+	private Button rightButton1 = new JoystickButton(rightStick, 1), rightButton2 = new JoystickButton(rightStick, 2),
+			rightButton3 = new JoystickButton(rightStick, 3), rightButton4 = new JoystickButton(rightStick, 4),
+			rightButton5 = new JoystickButton(rightStick, 5), rightButton6 = new JoystickButton(rightStick, 6),
+			rightButton7 = new JoystickButton(rightStick, 7), rightButton8 = new JoystickButton(rightStick, 8),
+			rightButton9 = new JoystickButton(rightStick, 9), rightButton10 = new JoystickButton(rightStick, 10),
+			rightButton11 = new JoystickButton(rightStick, 11);
 
 	public OI() {
 		// Creates button objects for every button on logitech joystick
-		for (int i = 1; i <= 11; i++) {
-			leftButtons[i - 1] = new JoystickButton(leftStick, i);
-			rightButtons[i - 1] = new JoystickButton(rightStick, i);
-		}
 
-		leftButtons[5]
-				.whenPressed(new ExtendRightElevator(Constants.level3HeightInches + Constants.wheelElevatorOffSet));
-		leftButtons[4]
-				.whenPressed(new ExtendLeftElevator(Constants.level3HeightInches + Constants.wheelElevatorOffSet));
+		leftButton5.whenPressed(new ExtendRightElevator(Constants.level3HeightInches + Constants.wheelElevatorOffSet));
+		leftButton4.whenPressed(new ExtendLeftElevator(Constants.level3HeightInches + Constants.wheelElevatorOffSet));
+		leftButton2.whenPressed(new ExtendBothElevator(Constants.level2HeightInches + Constants.wheelElevatorOffSet));
+		leftButton3.whenPressed(new ExtendBothElevator(15 + Constants.wheelElevatorOffSet));
+		leftButton8.whenPressed(new ExtendBothElevator(0));
 	}
 
 	// Getting joystick values
@@ -102,7 +111,7 @@ public class OI {
 
 	public double extremeZ() {
 		double joystickValue = extremeStick.getZ();
-		return deadzone(joystickValue, 0.09);
+		return deadzone(joystickValue, 0.15);
 	}
 
 	public boolean getLeftRawButton(int button) {

@@ -44,7 +44,11 @@ public class ElevatorClimber extends Subsystem {
         accel = new BuiltInAccelerometer();
 
         setupMotor(leftMotor, false, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false);
+        leftMotor.configForwardSoftLimitEnable(true);
+        leftMotor.configForwardSoftLimitThreshold(0);
         setupMotor(rightMotor, true, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false);
+        rightMotor.configForwardSoftLimitEnable(true);
+        rightMotor.configForwardSoftLimitThreshold(0);
         setupMotor(wheelMotor, false, Constants.elevatorWheelPID, Constants.elevatorWheelVel,
                 Constants.elevatorWheelAccel, true);
     }
@@ -116,7 +120,7 @@ public class ElevatorClimber extends Subsystem {
     }
 
     public void setMotionMagic(TalonSRX talon, double position) {
-        talon.set(ControlMode.MotionMagic, position);
+        talon.set(ControlMode.MotionMagic, -position);
     }
 
     public double getEncoderPos(TalonSRX talon) {

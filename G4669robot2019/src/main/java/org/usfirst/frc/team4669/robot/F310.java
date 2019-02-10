@@ -13,21 +13,36 @@ public class F310 {
 
 	// x on back switch, mode light off
 	private Joystick f310;
-	private POVButton dPadButton;
-	private Button[] buttonArr = new Button[11];
+
+	private Button greenButtonObject;
+	private Button redButtonObject;
+	private Button blueButtonObject;
+	private Button orangeButtonObject;
+	private Button leftShoulderButtonObject;
+	private Button rightShoulderButtonObject;
+	private Button backButtonObject;
+	private Button startButtonObject;
+	private Button leftJoyButtonObject;
+	private Button rightJoyButtonObject;
 
 	public static final int greenButton = 1, redButton = 2, blueButton = 3, orangeButton = 4, leftShoulderButton = 5,
 			rightShoulderButton = 6, backButton = 7, startButton = 8, leftJoyButton = 9, rightJoyButton = 10;
 
 	public F310() {
 		f310 = new Joystick(RobotMap.f310);
-		for (int i = 1; i <= 10; i++) {
-			buttonArr[i - 1] = new JoystickButton(f310, i);
-		}
-		dPadButton = new POVButton(f310, getDPadPOV());
-		dPadButton.whenPressed(new TurnTo(getDPadPOV()));
-		buttonArr[F310.startButton].whenPressed(new StopAll());
-		buttonArr[F310.blueButton].whenPressed(new BallAlignment());
+
+		greenButtonObject = new JoystickButton(f310, F310.greenButton);
+		redButtonObject = new JoystickButton(f310, F310.redButton);
+		blueButtonObject = new JoystickButton(f310, F310.blueButton);
+		orangeButtonObject = new JoystickButton(f310, F310.orangeButton);
+		leftShoulderButtonObject = new JoystickButton(f310, F310.leftShoulderButton);
+		rightShoulderButtonObject = new JoystickButton(f310, F310.rightShoulderButton);
+		backButtonObject = new JoystickButton(f310, F310.backButton);
+		startButtonObject = new JoystickButton(f310, F310.startButton);
+		leftJoyButtonObject = new JoystickButton(f310, F310.leftJoyButton);
+		rightJoyButtonObject = new JoystickButton(f310, F310.rightJoyButton);
+		startButtonObject.whenPressed(new StopAll());
+		blueButtonObject.whenPressed(new BallAlignment());
 
 	}
 

@@ -29,9 +29,29 @@ public class ArmDefault extends Command {
   @Override
   protected void execute() {
     // Keeps the arm joints at 0 velocity so it doesn't move
-    Robot.arm.zeroVelocity(Robot.arm.getShoulderMotor());
-    Robot.arm.zeroVelocity(Robot.arm.getElbowMotor());
-    Robot.arm.zeroVelocity(Robot.arm.getWristMotor());
+    double wristPower = Robot.oi.extremeZ();
+    double elbowPower = Robot.oi.extremeX();
+    double shoulderPower = Robot.oi.extremeY();
+
+    if (Math.abs(wristPower) > Math.abs(elbowPower) && Math.abs(wristPower) > Math.abs(shoulderPower)) {
+      elbowPower = 0;
+      shoulderPower = 0;
+    }
+    if (Math.abs(elbowPower) > Math.abs(shoulderPower) && Math.abs(elbowPower) > Math.abs(wristPower)) {
+      wristPower = 0;
+      shoulderPower = 0;
+    }
+    if (Math.abs(shoulderPower) > Math.abs(elbowPower) && Math.abs(shoulderPower) > Math.abs(wristPower)) {
+      elbowPower = 0;
+      wristPower = 0;
+    }
+    if (wristPower == 0 && elbowPower == 0 && shoulderPower == 0) {
+      Robot.arm.zeroVelocity(Robot.arm.getShoulderMotor());
+      Robot.arm.zeroVelocity(Robot.arm.getElbowMotor());
+      Robot.arm.zeroVelocity(Robot.arm.getWristMotor());
+    } else {
+      Robot.arm.motorControl(shoulderPower, elbowPower, wristPower);
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()

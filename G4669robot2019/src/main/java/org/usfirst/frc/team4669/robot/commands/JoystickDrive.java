@@ -32,9 +32,15 @@ public class JoystickDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    double strafe = Robot.f310.getLeftX();
-    double forward = Robot.f310.getLeftY();
-    double rotation = Robot.f310.getRightX();
+    double strafe = 0.8 * Robot.f310.getLeftX();
+    double forward = 0.8 * Robot.f310.getLeftY();
+    double rotation = 0.8 * Robot.f310.getRightX();
+    if (Robot.f310.getButton(F310.rightShoulderButton)) {
+      strafe = 0.5 * Robot.f310.getLeftX();
+      forward = 0.3 * Robot.f310.getLeftY();
+      rotation = 0.5 * Robot.f310.getRightX();
+    }
+
     Robot.driveTrain.fieldOrientedDrive(strafe, forward, rotation, Robot.driveTrain.getAngle());
   }
 

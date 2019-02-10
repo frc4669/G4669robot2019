@@ -150,6 +150,10 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		if (f310.getDPadPOV() != -1) {
+			Command turn = new TurnTo(f310.getDPadPOV());
+			turn.start();
+		}
 		Scheduler.getInstance().run();
 		updateSmartDashboard();
 		testSmartDashboard();

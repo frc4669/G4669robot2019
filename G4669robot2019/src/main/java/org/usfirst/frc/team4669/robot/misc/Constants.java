@@ -30,7 +30,7 @@ public class Constants {
 
 	public static final int ballDiameter = 13;
 
-	// Elevator Constants, figure out actual numbers later
+	// Position Constants, figure out actual numbers later
 	public static final double elevatorTolerance = 100; // Units in encoder position
 	public static final double level2HeightInches = 6; // Rest of the units are inches
 	public static final double wheelElevatorOffSet = 0.5;
@@ -39,8 +39,15 @@ public class Constants {
 	public static final double climbDriveDistance3 = 5;
 	public static final double level3HeightInches = 19;
 
+	public static final double armGrabBallX = 15;
+	public static final double armGrabBallY = 6.5;
+
+	public static final double startingShoulderAngle = 70;// Units in degrees, not legitimate numbers
+	public static final double startingElbowAngle = -95;
+	public static final double startingWristAngle = 0;
+
 	// Constants for Pathfinder
-	public static final double maxVel = 88.9; // units in inches
+	public static final double maxVel = 77.4; // units in inches
 
 	/**
 	 * Array for accessing PID constants for turning drive train

@@ -121,7 +121,7 @@ public class DriveTrain extends Subsystem {
     talon.configFactoryDefault();
 
     talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.pidIdx, Constants.timeout);
-    talon.setInverted(left);
+    talon.setInverted(!left);
     talon.setSensorPhase(true);
 
     talon.configNominalOutputForward(0, Constants.timeout);
@@ -175,7 +175,7 @@ public class DriveTrain extends Subsystem {
    * @param gyroAngle    The angle of the robot relative to the field in degrees
    */
   public void fieldOrientedDrive(double ySpeed, double xSpeed, double rotationRate, double gyroAngle) {
-    drive.driveCartesian(ySpeed, xSpeed, rotationRate, gyroAngle);
+    drive.driveCartesian(ySpeed, xSpeed, rotationRate, -gyroAngle);
   }
 
   /**

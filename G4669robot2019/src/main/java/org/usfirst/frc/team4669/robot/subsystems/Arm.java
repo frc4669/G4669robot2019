@@ -44,7 +44,7 @@ public class Arm extends Subsystem {
     elbowMotor = new WPI_TalonSRX(RobotMap.elbowMotor);
     wristMotor = new WPI_TalonSRX(RobotMap.wristMotor);
 
-    talonConfig(shoulderMotor, true);
+    talonConfig(shoulderMotor, false);
     talonConfig(elbowMotor, true);
     talonConfig(wristMotor, false);
 
@@ -108,10 +108,11 @@ public class Arm extends Subsystem {
    * @return An array with the shoulder angle and elbow angle, or null or not a
    *         number if impossible
    */
-  public double[] calculateAngles(double x, double y, boolean flipUp) {
-    double x1 = x - a3; // Target length minus wrist length
+  public double[] calculateAngles(double x, double y, double targetGrabberAngle, boolean flipUp) {
+    double x1 = x - a3 * Math.cos(Math.toRadians(targetGrabberAngle));
+    y = y - a3 * Math.sin(Math.toRadians(targetGrabberAngle));
     double distance = Math.sqrt(Math.pow(x1, 2) + Math.pow(y, 2)); // distance is a function of arm base and target xy
-    if (distance - (a1 + a2) > 0.5 || (a1 - a2) - distance > 0.5 || Math.abs(x) > 30)
+    if (distance - (a1 + a2) > 0.5 || (a1 - a2) - distance > 0.5 || Math.abs(x) > 30 || y < 0)
       return null;
     // elbow angle is a function of distance
     // if distance> a1+a2 return false
@@ -135,10 +136,11 @@ public class Arm extends Subsystem {
           + Math.acos((Math.pow(a2, 2) - Math.pow(a1, 2) - Math.pow(x1, 2) - Math.pow(y, 2)) / (-2 * a1 * distance));
     double elbowDeg = Math.toDegrees(elbowRad);
     double shoulderDeg = Math.toDegrees(shoulderRad);
+    double wristDeg = targetGrabberAngle - shoulderDeg;
     if (shoulderDeg < 0 || shoulderDeg > 180 || Math.abs(elbowDeg) > 110 || shoulderDeg != shoulderDeg
         || elbowDeg != elbowDeg)
       return null;
-    double[] anglesArr = { shoulderDeg, elbowDeg };
+    double[] anglesArr = { shoulderDeg, elbowDeg, wristDeg };
     return anglesArr;
   }
 

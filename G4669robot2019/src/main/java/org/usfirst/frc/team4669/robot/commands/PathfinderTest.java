@@ -29,7 +29,7 @@ public class PathfinderTest extends Command {
     Notifier followerNotifier;
     double l, r, turn;
     double gyro_heading, desired_heading, angleDifference;
-    static final String pathName = "Straight";
+    static final String pathName = "Drive 5FT";
 
     public PathfinderTest() {
         // Use requires() here to declare subsystem dependencies
@@ -39,12 +39,15 @@ public class PathfinderTest extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+
         Robot.driveTrain.zeroEncoders();
         Robot.driveTrain.resetGyro();
-
+        System.out.print("Attempting to get trajectories from CSV File");
         /* Getting the left and right trajectories from the CSV files */
-        Trajectory leftTrajectory = PathfinderFRC.getTrajectory(pathName + ".left");
-        Trajectory rightTrajectory = PathfinderFRC.getTrajectory(pathName + ".right");
+        Trajectory rightTrajectory = PathfinderFRC.getTrajectory(pathName + ".left");
+        Trajectory leftTrajectory = PathfinderFRC.getTrajectory(pathName + ".right");
+
+        System.out.print("Got the trajectories successfully");
 
         leftFollower = new EncoderFollower(leftTrajectory);
         rightFollower = new EncoderFollower(rightTrajectory);
@@ -52,10 +55,10 @@ public class PathfinderTest extends Command {
         // Must configure PIDVA on the following line
         leftFollower.configureEncoder(Robot.driveTrain.getFrontLeftEncoder(), Constants.encoderTicksPerRotation,
                 Constants.wheelDiameter);
-        leftFollower.configurePIDVA(Constants.driveTrainPID[1], 0, 0, 1 / Constants.maxVel, 0);
+        leftFollower.configurePIDVA(0, 0, 0, 1 / Constants.maxVel, 0);
 
         rightFollower.configureEncoder(Robot.driveTrain.getFrontRightEncoder(), 4096, Constants.wheelDiameter);
-        rightFollower.configurePIDVA(Constants.driveTrainPID[1], 0, 0, 1 / Constants.maxVel, 0);
+        rightFollower.configurePIDVA(0, 0, 0, 1 / Constants.maxVel, 0);
 
         System.out.println("Starting path follow");
         followerNotifier = new Notifier(this::followPath);
@@ -89,7 +92,7 @@ public class PathfinderTest extends Command {
         } else {
             double left_speed = leftFollower.calculate(Robot.driveTrain.getFrontLeftEncoder());
             double right_speed = rightFollower.calculate(Robot.driveTrain.getFrontRightEncoder());
-            double heading = Robot.driveTrain.getAngle();
+            double heading = -Robot.driveTrain.getAngle();
             double desired_heading = Pathfinder.r2d(leftFollower.getHeading());
             double heading_difference = Pathfinder.boundHalfDegrees(desired_heading - heading);
             double turn = 0.8 * (-1.0 / 80.0) * heading_difference;

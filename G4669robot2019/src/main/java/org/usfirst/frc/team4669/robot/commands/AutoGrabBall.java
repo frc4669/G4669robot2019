@@ -7,14 +7,15 @@
 
 package org.usfirst.frc.team4669.robot.commands;
 
-import org.usfirst.frc.team4669.robot.Robot;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class ArmToPosition extends CommandGroup {
-
-  public ArmToPosition(double x, double y, double targetGrabberAngle, boolean flipUp) {
+public class AutoGrabBall extends CommandGroup {
+  /**
+   * Add your docs here.
+   */
+  public AutoGrabBall() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -31,15 +32,12 @@ public class ArmToPosition extends CommandGroup {
     // e.g. if Command1 requires chassis, and Command2 requires arm,
     // a CommandGroup containing them would require both the chassis and the
     // arm.
-    double shoulderAngle, elbowAngle, wristAngle;
-    // shoulderAngle = Robot.arm.targetToAngleShoulder(x, y);
-    // elbowAngle = Robot.arm.targetToAngleElbow(x, y);
-    if (Robot.arm.calculateAngles(x, y, targetGrabberAngle, flipUp) != null) {
-      shoulderAngle = Robot.arm.calculateAngles(x, y, targetGrabberAngle, flipUp)[0];
-      elbowAngle = Robot.arm.calculateAngles(x, y, targetGrabberAngle, flipUp)[1];
-      wristAngle = Robot.arm.calculateAngles(x, y, targetGrabberAngle, flipUp)[2];
-      if (!(shoulderAngle != shoulderAngle || elbowAngle != elbowAngle))
-        addSequential(new ArmAngleSet(shoulderAngle, elbowAngle, wristAngle));
-    }
+
+    addSequential(new BallAlignment());
+    addParallel(new OpenGrabber());
+    addSequential(new ArmToPosition(Constants.armGrabBallX, Constants.armGrabBallY, 0, false));
+    addSequential(new DriveForwardMotionMagic(2));
+    addSequential(new CloseGrabber());
+    addSequential(new RetractArm());
   }
 }
