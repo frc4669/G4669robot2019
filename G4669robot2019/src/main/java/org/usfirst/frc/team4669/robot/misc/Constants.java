@@ -53,7 +53,7 @@ public class Constants {
 	 * Array for accessing PID constants for turning drive train
 	 * {kF,kP,kI,kD,Integral Zone}
 	 */
-	public static final double[] driveTrainPID = { 0.3343, 0.4, 0.0003, 20, 50 };
+	public static final double[] driveTrainPID = { 0.4049, 8, 0.96, 160, 50 };
 
 	/** Array for accessing PID constants for the gyro turning {kP,kI,kD} */
 	public static final double[] gyroPID = { 0.25, 0, 0.045 };

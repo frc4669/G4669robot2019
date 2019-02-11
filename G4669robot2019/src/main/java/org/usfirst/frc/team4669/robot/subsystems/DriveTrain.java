@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -124,6 +125,8 @@ public class DriveTrain extends Subsystem {
     talon.setInverted(!left);
     talon.setSensorPhase(true);
 
+    talon.setNeutralMode(NeutralMode.Brake);
+
     talon.configNominalOutputForward(0, Constants.timeout);
     talon.configNominalOutputReverse(0, Constants.timeout);
     talon.configPeakOutputForward(1, Constants.timeout);
@@ -216,13 +219,17 @@ public class DriveTrain extends Subsystem {
 
   public void tankDrive(double leftSpeed, double rightSpeed, boolean squareInputs) {
     if (squareInputs) {
+      if (leftSpeed < 0)
+        leftSpeed = -Math.pow(leftSpeed, 2);
+      if (rightSpeed < 0)
+        rightSpeed = -Math.pow(rightSpeed, 2);
       leftSpeed = Math.pow(leftSpeed, 2);
       rightSpeed = Math.pow(rightSpeed, 2);
     }
     driveFrontLeft(leftSpeed);
     driveRearLeft(leftSpeed);
     driveFrontRight(rightSpeed);
-    driveFrontRight(rightSpeed);
+    driveRearRight(rightSpeed);
   }
 
   public void driveRearLeft(double percentage) {
@@ -273,35 +280,35 @@ public class DriveTrain extends Subsystem {
   }
 
   public int getFrontLeftEncoder() {
-    return frontLeftMotor.getSensorCollection().getQuadraturePosition();
+    return frontLeftMotor.getSelectedSensorPosition();
   }
 
   public int getFrontRightEncoder() {
-    return frontRightMotor.getSensorCollection().getQuadraturePosition();
+    return frontRightMotor.getSelectedSensorPosition();
   }
 
   public int getRearLeftEncoder() {
-    return rearLeftMotor.getSensorCollection().getQuadraturePosition();
+    return rearLeftMotor.getSelectedSensorPosition();
   }
 
   public int getRearRightEncoder() {
-    return rearRightMotor.getSensorCollection().getQuadraturePosition();
+    return rearRightMotor.getSelectedSensorPosition();
   }
 
   public double getFrontLeftEncoderSpeed() {
-    return frontLeftMotor.getSensorCollection().getQuadratureVelocity();
+    return frontLeftMotor.getSelectedSensorVelocity();
   }
 
   public double getFrontRightEncoderSpeed() {
-    return frontRightMotor.getSensorCollection().getQuadratureVelocity();
+    return frontRightMotor.getSelectedSensorVelocity();
   }
 
   public double getRearLeftEncoderSpeed() {
-    return rearLeftMotor.getSensorCollection().getQuadratureVelocity();
+    return rearLeftMotor.getSelectedSensorVelocity();
   }
 
   public double getRearRightEncoderSpeed() {
-    return rearRightMotor.getSensorCollection().getQuadratureVelocity();
+    return rearRightMotor.getSelectedSensorVelocity();
   }
 
   public void zeroEncoders() {
@@ -335,10 +342,13 @@ public class DriveTrain extends Subsystem {
   public void setMotionVelAccel(int velocity, int accel) {
     frontLeftMotor.configMotionCruiseVelocity(velocity, Constants.timeout);
     frontLeftMotor.configMotionAcceleration(accel, Constants.timeout);
+
     frontRightMotor.configMotionCruiseVelocity(velocity, Constants.timeout);
     frontRightMotor.configMotionAcceleration(accel, Constants.timeout);
+
     rearLeftMotor.configMotionCruiseVelocity(velocity, Constants.timeout);
     rearLeftMotor.configMotionAcceleration(accel, Constants.timeout);
+
     rearRightMotor.configMotionCruiseVelocity(velocity, Constants.timeout);
     rearRightMotor.configMotionAcceleration(accel, Constants.timeout);
   }

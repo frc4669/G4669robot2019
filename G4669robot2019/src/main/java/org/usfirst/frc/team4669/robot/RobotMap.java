@@ -27,12 +27,12 @@ public class RobotMap {
 	/** CAN IDs for motor controllers */
 	public static final int driveFrontLeft = 5;
 	public static final int driveRearLeft = 2;
-	public static final int driveFrontRight = 4;
+	public static final int driveFrontRight = 6;
 	public static final int driveRearRight = 9;
 
 	public static final int leftMotorElevator = 13;
 	public static final int rightMotorElevator = 1; // 2
-	public static final int wheelMotorElevator = 6;
+	public static final int wheelMotorElevator = 4;
 
 	public static final int shoulderMotor = 7;
 	public static final int wristMotor = 12;

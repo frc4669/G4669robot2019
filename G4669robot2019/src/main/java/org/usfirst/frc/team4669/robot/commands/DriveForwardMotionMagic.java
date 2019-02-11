@@ -38,6 +38,7 @@ public class DriveForwardMotionMagic extends Command {
             setTimeout(timeOut);
         }
         Robot.driveTrain.driveMotionMagic(distance * Constants.inchToEncoderDrive); // Converts inches to encoder ticks
+        System.out.println("Target Position: " + distance * Constants.inchToEncoderDrive);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -46,8 +47,11 @@ public class DriveForwardMotionMagic extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return ((Math.abs(distance * Constants.inchToEncoderDrive
-                - Robot.driveTrain.getFrontRightEncoder()) < Constants.driveTolerance)
+        return ((Math
+                .abs(distance * Constants.inchToEncoderDrive
+                        - Robot.driveTrain.getFrontRightEncoder()) < Constants.driveTolerance
+                && Math.abs(distance * Constants.inchToEncoderDrive
+                        - Robot.driveTrain.getFrontLeftEncoder()) < Constants.driveTolerance)
                 || Robot.f310.getButton(F310.redButton));
     }
 

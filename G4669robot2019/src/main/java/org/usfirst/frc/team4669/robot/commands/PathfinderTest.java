@@ -41,8 +41,9 @@ public class PathfinderTest extends Command {
     protected void initialize() {
 
         Robot.driveTrain.zeroEncoders();
+        Robot.driveTrain.calibrateGyro();
         Robot.driveTrain.resetGyro();
-        System.out.print("Attempting to get trajectories from CSV File");
+        System.out.println("Attempting to get trajectories from CSV File");
         /* Getting the left and right trajectories from the CSV files */
         Trajectory rightTrajectory = PathfinderFRC.getTrajectory(pathName + ".left");
         Trajectory leftTrajectory = PathfinderFRC.getTrajectory(pathName + ".right");
@@ -55,10 +56,11 @@ public class PathfinderTest extends Command {
         // Must configure PIDVA on the following line
         leftFollower.configureEncoder(Robot.driveTrain.getFrontLeftEncoder(), Constants.encoderTicksPerRotation,
                 Constants.wheelDiameter);
-        leftFollower.configurePIDVA(0, 0, 0, 1 / Constants.maxVel, 0);
+        leftFollower.configurePIDVA(0.3, 0, 0, 1 / Constants.maxVel, 0);
 
-        rightFollower.configureEncoder(Robot.driveTrain.getFrontRightEncoder(), 4096, Constants.wheelDiameter);
-        rightFollower.configurePIDVA(0, 0, 0, 1 / Constants.maxVel, 0);
+        rightFollower.configureEncoder(Robot.driveTrain.getFrontRightEncoder(), Constants.encoderTicksPerRotation,
+                Constants.wheelDiameter);
+        rightFollower.configurePIDVA(0.3, 0, 0, 1 / Constants.maxVel, 0);
 
         System.out.println("Starting path follow");
         followerNotifier = new Notifier(this::followPath);
@@ -92,14 +94,20 @@ public class PathfinderTest extends Command {
         } else {
             double left_speed = leftFollower.calculate(Robot.driveTrain.getFrontLeftEncoder());
             double right_speed = rightFollower.calculate(Robot.driveTrain.getFrontRightEncoder());
-            double heading = -Robot.driveTrain.getAngle();
-            double desired_heading = Pathfinder.r2d(leftFollower.getHeading());
-            double heading_difference = Pathfinder.boundHalfDegrees(desired_heading - heading);
-            double turn = 0.8 * (-1.0 / 80.0) * heading_difference;
-            System.out.println("Turn: " + turn);
-            System.out.println("Left speed: " + left_speed + " Combined: " + (left_speed + turn));
-            System.out.println("Right speed: " + right_speed + " Combined: " + (right_speed + turn));
-            Robot.driveTrain.tankDrive(left_speed + turn, right_speed - turn, false);
+            // double heading = -Robot.driveTrain.getAngle();
+            // double desired_heading = Pathfinder.r2d(leftFollower.getHeading());
+            // double heading_difference = Pathfinder.boundHalfDegrees(desired_heading -
+            // heading);
+            // double turn = 0.8 * (-1.0 / 80.0) * heading_difference;
+            // // System.out.println("Turn: " + turn);
+            // System.out.println("Left speed: " + left_speed + " Combined: " + (left_speed
+            // + turn));
+            // System.out.println("Right speed: " + right_speed + " Combined: " +
+            // (right_speed + turn));
+            System.out.println("Left speed: " + left_speed);
+            System.out.println("Right speed: " + right_speed);
+            // Robot.driveTrain.tankDrive(left_speed + turn, right_speed - turn, false);
+            Robot.driveTrain.tankDrive(left_speed, right_speed, false);
         }
     }
 }
