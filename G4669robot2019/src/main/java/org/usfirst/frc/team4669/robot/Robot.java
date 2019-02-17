@@ -8,6 +8,11 @@
 package org.usfirst.frc.team4669.robot;
 
 import org.usfirst.frc.team4669.robot.commands.*;
+import org.usfirst.frc.team4669.robot.commands.arm.*;
+import org.usfirst.frc.team4669.robot.commands.elevator.*;
+import org.usfirst.frc.team4669.robot.commands.driveTrain.*;
+import org.usfirst.frc.team4669.robot.commands.auto.*;
+import org.usfirst.frc.team4669.robot.commands.grabber.*;
 import org.usfirst.frc.team4669.robot.subsystems.*;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -39,7 +44,7 @@ public class Robot extends TimedRobot {
 	// public static Climber climber;
 	public static ElevatorClimber elevator;
 	public static Arm arm;
-	// public static Grabber grabber;
+	public static Grabber grabber;
 	public AnalogUltrasonic ultrasonic;
 
 	Command autonomousCommand;
@@ -56,7 +61,7 @@ public class Robot extends TimedRobot {
 		elevator = new ElevatorClimber();
 		driveTrain = new DriveTrain();
 		arm = new Arm();
-		// grabber = new Grabber();
+		grabber = new Grabber();
 		// ultrasonic = new AnalogUltrasonic(0);
 		oi = new OI();
 		f310 = new F310();
@@ -86,7 +91,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
-		driverStation = DriverStation.getInstance();
 		updateSmartDashboard();
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
@@ -155,6 +159,13 @@ public class Robot extends TimedRobot {
 			Command turn = new TurnTo(f310.getDPadPOV());
 			turn.start();
 		}
+		if (f310.getButton(F310.greenButton)) {
+			if (grabber.getGrabberOpen())
+				new CloseGrabber().start();
+			else
+				new OpenGrabber().start();
+		}
+
 		Scheduler.getInstance().run();
 		updateSmartDashboard();
 		testSmartDashboard();
@@ -191,6 +202,8 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putBoolean("Flip Elbow", false);
 
 		SmartDashboard.putNumber("Drive Position", 0);
+		SmartDashboard.putNumber("Strafe distance", 0);
+		SmartDashboard.putNumber("Turn To", 0);
 		// SmartDashboard.putNumber("Strafe Position", 0);
 
 	}
@@ -214,7 +227,11 @@ public class Robot extends TimedRobot {
 		double distance = SmartDashboard.getNumber("Drive Position", 0);
 		SmartDashboard.putData("Motion Magic Drive", new DriveForwardMotionMagic(distance));
 		SmartDashboard.putData("Zero Drive Train Encoders", new ZeroDriveTrainEncoder());
-
+		SmartDashboard.putData("BallAlignment", new BallAlignment());
+		double strafe = SmartDashboard.getNumber("Strafe distance", 0);
+		SmartDashboard.putData("Strafe Motion Magic", new StrafeMotionMagic(strafe));
+		double turnAngle = SmartDashboard.getNumber("Turn To", 0);
+		SmartDashboard.putData("Turn To Command", new TurnTo(turnAngle));
 		/**
 		 * SmartDashboard.putNumber("Shoulder Position",
 		 * arm.getEncoderPosition(arm.getShoulderMotor()));

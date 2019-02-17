@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.usfirst.frc.team4669.robot.commands;
+package org.usfirst.frc.team4669.robot.commands.auto;
 
 import org.usfirst.frc.team4669.robot.F310;
 import org.usfirst.frc.team4669.robot.Robot;

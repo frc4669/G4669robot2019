@@ -1,4 +1,4 @@
-package org.usfirst.frc.team4669.robot.commands;
+package org.usfirst.frc.team4669.robot.commands.driveTrain;
 
 import org.usfirst.frc.team4669.robot.F310;
 import org.usfirst.frc.team4669.robot.Robot;
@@ -37,7 +37,10 @@ public class StrafeMotionMagic extends Command {
         if (timeOut != 0) {
             setTimeout(timeOut);
         }
-        Robot.driveTrain.strafeMotionMagic(distance * Constants.inchToEncoderDrive); // Converts inches to encoder ticks
+        Robot.driveTrain.strafeMotionMagic(Constants.strafekP * distance * Constants.inchToEncoderDrive); // Converts
+                                                                                                          // inches to
+                                                                                                          // encoder
+                                                                                                          // ticks
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -47,8 +50,13 @@ public class StrafeMotionMagic extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
         return ((Math.abs(distance * Constants.inchToEncoderDrive
-                - Robot.driveTrain.getFrontRightEncoder()) < Constants.driveTolerance)
-                || Robot.f310.getButton(F310.redButton));
+                + Robot.driveTrain.getFrontRightEncoder()) < Constants.strafeTolerance)
+                && (Math.abs(distance * Constants.inchToEncoderDrive
+                        - Robot.driveTrain.getFrontLeftEncoder()) < Constants.strafeTolerance)
+                && (Math.abs(distance * Constants.inchToEncoderDrive
+                        - Robot.driveTrain.getRearRightEncoder()) < Constants.strafeTolerance)
+                && (Math.abs(distance * Constants.inchToEncoderDrive
+                        + Robot.driveTrain.getRearLeftEncoder()) < Constants.strafeTolerance));
     }
 
     // Called once after isFinished returns true

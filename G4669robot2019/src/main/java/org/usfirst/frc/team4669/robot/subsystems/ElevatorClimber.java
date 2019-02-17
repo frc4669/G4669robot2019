@@ -1,7 +1,7 @@
 package org.usfirst.frc.team4669.robot.subsystems;
 
 import org.usfirst.frc.team4669.robot.RobotMap;
-import org.usfirst.frc.team4669.robot.commands.TeleopClimber;
+import org.usfirst.frc.team4669.robot.commands.elevator.TeleopClimber;
 // import org.usfirst.frc.team4669.robot.commands.TeleopElevator;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 
@@ -43,7 +43,7 @@ public class ElevatorClimber extends Subsystem {
 
         accel = new BuiltInAccelerometer();
 
-        setupMotor(leftMotor, false, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false);
+        setupMotor(leftMotor, true, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false);
         leftMotor.configForwardSoftLimitEnable(true);
         leftMotor.configForwardSoftLimitThreshold(0);
         setupMotor(rightMotor, true, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false);

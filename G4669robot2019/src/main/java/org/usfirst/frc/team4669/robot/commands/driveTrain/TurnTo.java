@@ -1,4 +1,4 @@
-package org.usfirst.frc.team4669.robot.commands;
+package org.usfirst.frc.team4669.robot.commands.driveTrain;
 
 import org.usfirst.frc.team4669.robot.Robot;
 
@@ -21,6 +21,7 @@ public class TurnTo extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
         setTimeout(4);
+        System.out.println("Turn Angle: " + degree);
         Robot.driveTrain.stop();
         Robot.driveTrain.enablePIDController(Robot.driveTrain.getGyroController());
         Robot.driveTrain.setTarget(Robot.driveTrain.getGyroController(), degree);

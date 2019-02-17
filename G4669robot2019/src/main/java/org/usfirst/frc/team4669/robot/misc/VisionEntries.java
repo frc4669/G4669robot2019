@@ -12,16 +12,28 @@ public class VisionEntries {
     public void updateEntries() {
         if (Robot.visionTable.containsKey("orangeX"))
             x = Robot.visionTable.getEntry("orangeX").getNumber(0).intValue();
+        else
+            x = 0;
         if (Robot.visionTable.containsKey("orangeY"))
             y = Robot.visionTable.getEntry("orangeY").getNumber(0).intValue();
+        else
+            y = 0;
         if (Robot.visionTable.containsKey("orangeWidth"))
             width = Robot.visionTable.getEntry("orangeWidth").getNumber(0).intValue();
+        else
+            width = 0;
         if (Robot.visionTable.containsKey("orangeHeight"))
             height = Robot.visionTable.getEntry("orangeHeight").getNumber(0).intValue();
+        else
+            height = 0;
         if (Robot.visionTable.containsKey("horizontalAngle"))
             horizontalAngle = Robot.visionTable.getEntry("horizontalAngle").getNumber(0).intValue();
+        else
+            horizontalAngle = 0;
         if (Robot.visionTable.containsKey("distance"))
             distance = Robot.visionTable.getEntry("distance").getNumber(0).intValue();
+        else
+            distance = 0;
     }
 
     public int getX() {

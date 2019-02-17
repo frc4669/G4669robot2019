@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
 import org.usfirst.frc.team4669.robot.RobotMap;
-import org.usfirst.frc.team4669.robot.commands.JoystickDrive;
+import org.usfirst.frc.team4669.robot.commands.driveTrain.JoystickDrive;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 import org.usfirst.frc.team4669.robot.misc.PIDOutputWrapper;
 import org.usfirst.frc.team4669.robot.misc.VisionPIDSource;

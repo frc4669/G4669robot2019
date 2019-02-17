@@ -1,8 +1,8 @@
 package org.usfirst.frc.team4669.robot;
 
-import org.usfirst.frc.team4669.robot.commands.BallAlignment;
+import org.usfirst.frc.team4669.robot.commands.auto.BallAlignment;
 import org.usfirst.frc.team4669.robot.commands.StopAll;
-import org.usfirst.frc.team4669.robot.commands.TurnTo;
+import org.usfirst.frc.team4669.robot.commands.driveTrain.TurnTo;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
@@ -14,16 +14,16 @@ public class F310 {
 	// x on back switch, mode light off
 	private Joystick f310;
 
-	private Button greenButtonObject;
-	private Button redButtonObject;
-	private Button blueButtonObject;
-	private Button orangeButtonObject;
-	private Button leftShoulderButtonObject;
-	private Button rightShoulderButtonObject;
-	private Button backButtonObject;
-	private Button startButtonObject;
-	private Button leftJoyButtonObject;
-	private Button rightJoyButtonObject;
+	public Button greenButtonObject;
+	public Button redButtonObject;
+	public Button blueButtonObject;
+	public Button orangeButtonObject;
+	public Button leftShoulderButtonObject;
+	public Button rightShoulderButtonObject;
+	public Button backButtonObject;
+	public Button startButtonObject;
+	public Button leftJoyButtonObject;
+	public Button rightJoyButtonObject;
 
 	public static final int greenButton = 1, redButton = 2, blueButton = 3, orangeButton = 4, leftShoulderButton = 5,
 			rightShoulderButton = 6, backButton = 7, startButton = 8, leftJoyButton = 9, rightJoyButton = 10;

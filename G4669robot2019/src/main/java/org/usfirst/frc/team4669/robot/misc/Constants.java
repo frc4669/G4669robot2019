@@ -16,17 +16,21 @@ public class Constants {
 	public static final double elevatorSprocketDiameter = 1.775; // in inches
 	public static final double wheelBase = 22.25; // figure out real distance later
 	public static final int encoderTicksPerRotation = 4096;
-	public static final double shoulderLength = 29;
-	public static final double elbowLength = 21;
+	public static final double shoulderLength = 18.5;
+	public static final double shoulderHeight = 15.5;
+	public static final double elbowLength = 39.5;
 	public static final double wristLength = 0;
 	public static final double shoulderGearRatio = 3;
 	public static final double elbowGearRatio = 3;
 	public static final double wristGearRatio = 2;
 
-	public static final int pixyWidth = 320;
-	public static final int pixyHeight = 200;
+	public static final int pixyWidth = 320; // pixels
+	public static final int pixyHeight = 200; // pixels
 	public static final double pixyFocalLength = 2.8 / 25.4; // 2.8mm to inches
 	public static final double pixyFOV = 75; // 75 degrees
+
+	public static final int pixy2LineWidth = 636; // pixels
+	public static final int pixy2LineHeight = 104; // pixels
 
 	public static final int ballDiameter = 13;
 
@@ -48,6 +52,8 @@ public class Constants {
 
 	// Constants for Pathfinder
 	public static final double maxVel = 77.4; // units in inches
+
+	public static final double strafekP = 2;
 
 	/**
 	 * Array for accessing PID constants for turning drive train
@@ -130,6 +136,7 @@ public class Constants {
 	public static final double kPStraightGyro = 0.025;
 
 	public static final int driveTolerance = 200;
+	public static final int strafeTolerance = 400;
 
 	// Drive Train current limits
 	public static final int continuousCurrentLimit = 20;

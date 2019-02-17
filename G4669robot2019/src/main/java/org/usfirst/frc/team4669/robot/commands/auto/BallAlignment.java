@@ -5,18 +5,22 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.usfirst.frc.team4669.robot.commands;
+package org.usfirst.frc.team4669.robot.commands.auto;
 
 import org.usfirst.frc.team4669.robot.Robot;
-import org.usfirst.frc.team4669.robot.misc.LineAlignEntries;
+import org.usfirst.frc.team4669.robot.commands.driveTrain.DriveForwardMotionMagic;
+import org.usfirst.frc.team4669.robot.commands.driveTrain.TurnTo;
+import org.usfirst.frc.team4669.robot.misc.Constants;
+import org.usfirst.frc.team4669.robot.misc.VisionEntries;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.Timer;
 
-public class AlignToLineFront extends CommandGroup {
+public class BallAlignment extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public AlignToLineFront() {
+  public BallAlignment() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -34,10 +38,20 @@ public class AlignToLineFront extends CommandGroup {
     // a CommandGroup containing them would require both the chassis and the
     // arm.
 
-    LineAlignEntries tableEntries = new LineAlignEntries(true);
-    double angle = tableEntries.getAngle();
-    addSequential(new TurnTo(angle));
-    // double distance = Robot.driveTrain.getFrontDistance();
-    // addSequential(new DriveForwardMotionMagic(distance));
+    VisionEntries ballVisionValues = new VisionEntries();
+    if (ballVisionValues.isObjectDetected()) {
+      double turnAngle = ballVisionValues.getHorizontalAngle();
+      if (turnAngle < 0)
+        turnAngle += 360;
+      turnAngle += Robot.driveTrain.getAngle();
+      addSequential(new TurnTo(turnAngle));
+      Timer.delay(0.05);
+      double distance = ballVisionValues.getDistanceIfCentered();
+      if (distance > 20)
+        distance -= 20;
+      addSequential(new DriveForwardMotionMagic(distance));
+      addSequential(new TurnTo(turnAngle));
+
+    }
   }
 }

@@ -5,17 +5,19 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.usfirst.frc.team4669.robot.commands;
+package org.usfirst.frc.team4669.robot.commands.auto;
 
-import org.usfirst.frc.team4669.robot.misc.Constants;
+import org.usfirst.frc.team4669.robot.Robot;
+import org.usfirst.frc.team4669.robot.commands.driveTrain.TurnTo;
+import org.usfirst.frc.team4669.robot.misc.LineAlignEntries;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class AutoClimbLevel3 extends CommandGroup {
+public class AlignToLineFront extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public AutoClimbLevel3() {
+  public AlignToLineFront() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -33,13 +35,10 @@ public class AutoClimbLevel3 extends CommandGroup {
     // a CommandGroup containing them would require both the chassis and the
     // arm.
 
-    // establish an if command for conditions of : [1] not being correct distance
-    // from climbing [2] facing wrong direction
-    addSequential(new ExtendBothElevator(Constants.level3HeightInches + Constants.wheelElevatorOffSet));
-    addSequential(new DriveElevatorMotionMagic(Constants.climbDriveDistance));
-    addSequential(new ExtendRightElevator(Constants.wheelElevatorOffSet));
-    addSequential(new DriveElevatorMotionMagic(Constants.climbDriveDistance2));
-    addSequential(new ExtendLeftElevator(Constants.wheelElevatorOffSet));
-    addSequential(new StrafeMotionMagic(Constants.climbDriveDistance3));
+    LineAlignEntries tableEntries = new LineAlignEntries(true);
+    double angle = tableEntries.getAngle();
+    addSequential(new TurnTo(angle));
+    // double distance = Robot.driveTrain.getFrontDistance();
+    // addSequential(new DriveForwardMotionMagic(distance));
   }
 }

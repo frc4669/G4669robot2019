@@ -5,17 +5,19 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.usfirst.frc.team4669.robot.commands;
+package org.usfirst.frc.team4669.robot.commands.auto;
 
 import org.usfirst.frc.team4669.robot.misc.Constants;
+import org.usfirst.frc.team4669.robot.commands.driveTrain.StrafeMotionMagic;
+import org.usfirst.frc.team4669.robot.commands.elevator.*;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class AutoGrabBall extends CommandGroup {
+public class AutoClimbLevel3 extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public AutoGrabBall() {
+  public AutoClimbLevel3() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -33,11 +35,13 @@ public class AutoGrabBall extends CommandGroup {
     // a CommandGroup containing them would require both the chassis and the
     // arm.
 
-    addSequential(new BallAlignment());
-    // addParallel(new OpenGrabber());
-    addSequential(new ArmToPosition(Constants.armGrabBallX, Constants.armGrabBallY, 0, false));
-    addSequential(new DriveForwardMotionMagic(2));
-    // addSequential(new CloseGrabber());
-    addSequential(new RetractArm());
+    // establish an if command for conditions of : [1] not being correct distance
+    // from climbing [2] facing wrong direction
+    addSequential(new ExtendBothElevator(Constants.level3HeightInches + Constants.wheelElevatorOffSet));
+    addSequential(new DriveElevatorMotionMagic(Constants.climbDriveDistance));
+    addSequential(new ExtendRightElevator(Constants.wheelElevatorOffSet));
+    addSequential(new DriveElevatorMotionMagic(Constants.climbDriveDistance2));
+    addSequential(new ExtendLeftElevator(Constants.wheelElevatorOffSet));
+    addSequential(new StrafeMotionMagic(Constants.climbDriveDistance3));
   }
 }

@@ -5,17 +5,20 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.usfirst.frc.team4669.robot.commands;
+package org.usfirst.frc.team4669.robot.commands.auto;
 
+import org.usfirst.frc.team4669.robot.commands.driveTrain.StrafeMotionMagic;
+import org.usfirst.frc.team4669.robot.commands.driveTrain.TurnTo;
 import org.usfirst.frc.team4669.robot.misc.Constants;
+import org.usfirst.frc.team4669.robot.misc.LineAlignEntries;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class AutoClimbLevel2 extends CommandGroup {
+public class LineAlignment extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public AutoClimbLevel2() {
+  public LineAlignment() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -33,14 +36,9 @@ public class AutoClimbLevel2 extends CommandGroup {
     // a CommandGroup containing them would require both the chassis and the
     // arm.
 
-    // Add if statement to not run if not facing right direction and if distance
-    // isn't correct
-    addSequential(new ExtendBothElevator(Constants.level2HeightInches + Constants.wheelElevatorOffSet));
-    addSequential(new DriveElevatorMotionMagic(Constants.climbDriveDistance));
-    addSequential(new ExtendRightElevator(Constants.wheelElevatorOffSet));
-    addSequential(new DriveElevatorMotionMagic(Constants.climbDriveDistance2));
-    addSequential(new ExtendLeftElevator(Constants.wheelElevatorOffSet));
-    addSequential(new StrafeMotionMagic(Constants.climbDriveDistance3));
+    LineAlignEntries frontLine = new LineAlignEntries(true);
 
+    addSequential(new TurnTo(frontLine.getAngle()));
+    addSequential(new StrafeMotionMagic((Constants.pixy2LineWidth / 2) - frontLine.getX0()));
   }
 }

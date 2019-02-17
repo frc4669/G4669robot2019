@@ -12,7 +12,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.usfirst.frc.team4669.robot.RobotMap;
-import org.usfirst.frc.team4669.robot.commands.ArmDefault;
+import org.usfirst.frc.team4669.robot.commands.arm.ArmDefault;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -110,7 +110,7 @@ public class Arm extends Subsystem {
    */
   public double[] calculateAngles(double x, double y, double targetGrabberAngle, boolean flipUp) {
     double x1 = x - a3 * Math.cos(Math.toRadians(targetGrabberAngle));
-    y = y - a3 * Math.sin(Math.toRadians(targetGrabberAngle));
+    y = y - a3 * Math.sin(Math.toRadians(targetGrabberAngle)) - Constants.shoulderHeight;
     double distance = Math.sqrt(Math.pow(x1, 2) + Math.pow(y, 2)); // distance is a function of arm base and target xy
     if (distance - (a1 + a2) > 0.5 || (a1 - a2) - distance > 0.5 || Math.abs(x) > 30 || y < 0)
       return null;

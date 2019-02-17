@@ -1,4 +1,4 @@
-package org.usfirst.frc.team4669.robot.commands;
+package org.usfirst.frc.team4669.robot.commands.driveTrain;
 
 import org.usfirst.frc.team4669.robot.F310;
 import org.usfirst.frc.team4669.robot.Robot;
@@ -37,6 +37,7 @@ public class DriveForwardMotionMagic extends Command {
         if (timeOut != 0) {
             setTimeout(timeOut);
         }
+        System.out.println(distance);
         Robot.driveTrain.driveMotionMagic(distance * Constants.inchToEncoderDrive); // Converts inches to encoder ticks
         System.out.println("Target Position: " + distance * Constants.inchToEncoderDrive);
     }

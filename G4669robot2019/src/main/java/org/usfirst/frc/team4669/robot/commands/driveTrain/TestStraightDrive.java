@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.usfirst.frc.team4669.robot.commands;
+package org.usfirst.frc.team4669.robot.commands.driveTrain;
 
 import org.usfirst.frc.team4669.robot.F310;
 import org.usfirst.frc.team4669.robot.Robot;
@@ -13,11 +13,11 @@ import org.usfirst.frc.team4669.robot.subsystems.DriveTrain;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class JoystickDrive extends Command {
+public class TestStraightDrive extends Command {
 
   boolean turnRunning = false;
 
-  public JoystickDrive() {
+  public TestStraightDrive() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     requires(Robot.driveTrain);
@@ -32,16 +32,19 @@ public class JoystickDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    double strafe = 0.8 * Robot.f310.getLeftX();
-    double forward = 0.8 * Robot.f310.getLeftY();
-    double rotation = 0.8 * Robot.f310.getRightX();
-    if (Robot.f310.getButton(F310.rightShoulderButton)) {
-      strafe = 0.5 * Robot.f310.getLeftX();
-      forward = 0.3 * Robot.f310.getLeftY();
-      rotation = 0.5 * Robot.f310.getRightX();
+    boolean angleSet = false;
+    double angle = 0.0;
+    if (Robot.f310.getButton(F310.leftShoulderButton)) {
+      if (angleSet == false) {
+        angle = Robot.driveTrain.getAngle();
+        angleSet = true;
+      }
+      Robot.driveTrain.driveStraightGyro(Robot.f310.getLeftY(), angle, 0.03);
+    } else {
+      angleSet = false;
+      Robot.driveTrain.robotOrientedDrive(Robot.f310.getLeftX(), Robot.f310.getLeftY(), Robot.f310.getRightX());
     }
 
-    Robot.driveTrain.fieldOrientedDrive(strafe, forward, rotation, Robot.driveTrain.getAngle());
   }
 
   // Make this return true when this Command no longer needs to run execute()

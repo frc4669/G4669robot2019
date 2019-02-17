@@ -27,16 +27,16 @@ public class RobotMap {
 	/** CAN IDs for motor controllers */
 	public static final int driveFrontLeft = 5;
 	public static final int driveRearLeft = 2;
-	public static final int driveFrontRight = 6;
+	public static final int driveFrontRight = 11;
 	public static final int driveRearRight = 9;
 
 	public static final int leftMotorElevator = 13;
-	public static final int rightMotorElevator = 1; // 2
-	public static final int wheelMotorElevator = 4;
+	public static final int rightMotorElevator = 7; // 2
+	public static final int wheelMotorElevator = 3;
 
-	public static final int shoulderMotor = 7;
+	public static final int shoulderMotor = 1;
 	public static final int wristMotor = 12;
-	public static final int elbowMotor = 3; // 2
+	public static final int elbowMotor = 6; // 2
 
 	/** USB IDs for gamepad and joysticks */
 	public static final int leftJoystick = 0;
@@ -54,9 +54,7 @@ public class RobotMap {
 	public static final int closeInfared = 1; // Analog channel 1
 
 	/** Pneumatic Channels */
-	public static final int leftSolenoidForward = 0;
-	public static final int leftSolenoidReverse = 1;
-	public static final int rightSolenoidForward = 3;
-	public static final int rightSolenoidReverse = 2;
+	public static final int solenoidForward = 0;
+	public static final int solenoidReverse = 1;
 
 }

@@ -5,17 +5,17 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.usfirst.frc.team4669.robot.commands;
+package org.usfirst.frc.team4669.robot.commands.arm;
 
-import org.usfirst.frc.team4669.robot.misc.VisionEntries;
+import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class BallAlignment extends CommandGroup {
+public class RetractArm extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public BallAlignment() {
+  public RetractArm() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -32,11 +32,7 @@ public class BallAlignment extends CommandGroup {
     // e.g. if Command1 requires chassis, and Command2 requires arm,
     // a CommandGroup containing them would require both the chassis and the
     // arm.
-
-    VisionEntries ballVisionValues = new VisionEntries();
-    double turnAngle = ballVisionValues.getHorizontalAngle();
-    addSequential(new TurnTo(turnAngle));
-    double distance = ballVisionValues.getDistanceIfCentered();
-    addSequential(new DriveForwardMotionMagic(distance));
+    addSequential(
+        new ArmAngleSet(Constants.startingShoulderAngle, Constants.startingElbowAngle, Constants.startingWristAngle));
   }
 }

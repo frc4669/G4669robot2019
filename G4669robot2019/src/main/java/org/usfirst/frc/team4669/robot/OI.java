@@ -7,9 +7,9 @@
 
 package org.usfirst.frc.team4669.robot;
 
-import org.usfirst.frc.team4669.robot.commands.ExtendBothElevator;
-import org.usfirst.frc.team4669.robot.commands.ExtendLeftElevator;
-import org.usfirst.frc.team4669.robot.commands.ExtendRightElevator;
+import org.usfirst.frc.team4669.robot.commands.elevator.ExtendBothElevator;
+import org.usfirst.frc.team4669.robot.commands.elevator.ExtendLeftElevator;
+import org.usfirst.frc.team4669.robot.commands.elevator.ExtendRightElevator;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.Joystick;

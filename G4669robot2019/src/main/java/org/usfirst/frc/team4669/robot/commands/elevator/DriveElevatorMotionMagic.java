@@ -5,20 +5,20 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.usfirst.frc.team4669.robot.commands;
+package org.usfirst.frc.team4669.robot.commands.elevator;
 
 import org.usfirst.frc.team4669.robot.Robot;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ExtendLeftElevator extends Command {
+public class DriveElevatorMotionMagic extends Command {
   double position;
 
-  public ExtendLeftElevator(double positionInches) {
+  public DriveElevatorMotionMagic(double positionInches) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    this.position = positionInches * Constants.inchToEncoderElevator;
+    this.position = positionInches * Constants.inchToEncoderDrive;
     requires(Robot.elevator);
   }
 
@@ -26,7 +26,7 @@ public class ExtendLeftElevator extends Command {
   @Override
   protected void initialize() {
     Robot.elevator.stop();
-    Robot.elevator.setMotionMagic(Robot.elevator.getLeftMotor(), position);
+    Robot.elevator.setMotionMagic(Robot.elevator.getWheelMotor(), position);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -37,8 +37,7 @@ public class ExtendLeftElevator extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (Math
-        .abs(position - Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor())) < Constants.elevatorTolerance) {
+    if (Math.abs(position - Robot.elevator.getEncoderPos(Robot.elevator.getWheelMotor())) < Constants.driveTolerance) {
       return true;
     }
     if (Robot.oi.getLeftRawButton(10)) {

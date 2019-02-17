@@ -20,20 +20,21 @@ public class Grabber extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  private DoubleSolenoid leftDoubleAction = new DoubleSolenoid(RobotMap.leftSolenoidForward,
-      RobotMap.leftSolenoidReverse);
-  private DoubleSolenoid rightDoubleAction = new DoubleSolenoid(RobotMap.rightSolenoidForward,
-      RobotMap.rightSolenoidReverse);
-  // Channels are reversed because left and right sides are mirrored
+  private DoubleSolenoid doubleAction = new DoubleSolenoid(RobotMap.solenoidForward, RobotMap.solenoidReverse);
 
   public void open() {
-    leftDoubleAction.set(DoubleSolenoid.Value.kForward);
-    rightDoubleAction.set(DoubleSolenoid.Value.kForward);
+    doubleAction.set(DoubleSolenoid.Value.kForward);
   }
 
   public void close() {
-    leftDoubleAction.set(DoubleSolenoid.Value.kReverse);
-    rightDoubleAction.set(DoubleSolenoid.Value.kReverse);
+    doubleAction.set(DoubleSolenoid.Value.kReverse);
+  }
+
+  public boolean getGrabberOpen() {
+    if (doubleAction.get() == DoubleSolenoid.Value.kForward) {
+      return true;
+    }
+    return false;
   }
 
   @Override

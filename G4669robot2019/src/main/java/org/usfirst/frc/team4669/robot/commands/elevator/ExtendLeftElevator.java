@@ -5,64 +5,58 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.usfirst.frc.team4669.robot.commands;
+package org.usfirst.frc.team4669.robot.commands.elevator;
 
-import org.usfirst.frc.team4669.robot.F310;
 import org.usfirst.frc.team4669.robot.Robot;
-import org.usfirst.frc.team4669.robot.subsystems.DriveTrain;
+import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class TestStraightDrive extends Command {
+public class ExtendLeftElevator extends Command {
+  double position;
 
-  boolean turnRunning = false;
-
-  public TestStraightDrive() {
+  public ExtendLeftElevator(double positionInches) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(Robot.driveTrain);
+    this.position = positionInches * Constants.inchToEncoderElevator;
+    requires(Robot.elevator);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.driveTrain.stop();
+    Robot.elevator.stop();
+    Robot.elevator.setMotionMagic(Robot.elevator.getLeftMotor(), position);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    boolean angleSet = false;
-    double angle = 0.0;
-    if (Robot.f310.getButton(F310.leftShoulderButton)) {
-      if (angleSet == false) {
-        angle = Robot.driveTrain.getAngle();
-        angleSet = true;
-      }
-      Robot.driveTrain.driveStraightGyro(Robot.f310.getLeftY(), angle, 0.03);
-    } else {
-      angleSet = false;
-      Robot.driveTrain.robotOrientedDrive(Robot.f310.getLeftX(), Robot.f310.getLeftY(), Robot.f310.getRightX());
-    }
-
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    if (Math
+        .abs(position - Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor())) < Constants.elevatorTolerance) {
+      return true;
+    }
+    if (Robot.oi.getLeftRawButton(10)) {
+      return true;
+    } else
+      return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.driveTrain.stop();
+    Robot.elevator.stop();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.driveTrain.stop();
+    end();
   }
 }
