@@ -26,7 +26,8 @@ public class DriveElevatorMotionMagic extends Command {
   @Override
   protected void initialize() {
     Robot.elevator.stop();
-    Robot.elevator.setMotionMagic(Robot.elevator.getWheelMotor(), position);
+    Robot.elevator.zeroWheelEncoder();
+    Robot.elevator.setMotionMagic(Robot.elevator.getWheelMotor(), -position);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -37,13 +38,8 @@ public class DriveElevatorMotionMagic extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (Math.abs(position - Robot.elevator.getEncoderPos(Robot.elevator.getWheelMotor())) < Constants.driveTolerance) {
-      return true;
-    }
-    if (Robot.oi.getLeftRawButton(10)) {
-      return true;
-    } else
-      return false;
+    return (Math
+        .abs(position - Robot.elevator.getEncoderPos(Robot.elevator.getWheelMotor())) < Constants.driveTolerance);
   }
 
   // Called once after isFinished returns true

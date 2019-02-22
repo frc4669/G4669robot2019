@@ -43,14 +43,20 @@ public class ElevatorClimber extends Subsystem {
 
         accel = new BuiltInAccelerometer();
 
-        setupMotor(leftMotor, true, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false);
+        setupMotor(leftMotor, true, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false, true);
         leftMotor.configForwardSoftLimitEnable(true);
         leftMotor.configForwardSoftLimitThreshold(0);
-        setupMotor(rightMotor, true, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false);
+        leftMotor.configReverseSoftLimitEnable(true);
+        leftMotor.configReverseSoftLimitThreshold((int) (-Constants.limitMaxHeight * Constants.inchToEncoderElevator));
+
+        setupMotor(rightMotor, true, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false,
+                true);
         rightMotor.configForwardSoftLimitEnable(true);
         rightMotor.configForwardSoftLimitThreshold(0);
-        setupMotor(wheelMotor, false, Constants.elevatorWheelPID, Constants.elevatorWheelVel,
-                Constants.elevatorWheelAccel, true);
+        rightMotor.configReverseSoftLimitEnable(true);
+        rightMotor.configReverseSoftLimitThreshold((int) (-Constants.limitMaxHeight * Constants.inchToEncoderElevator));
+        setupMotor(wheelMotor, true, Constants.elevatorWheelPID, Constants.elevatorWheelVel,
+                Constants.elevatorWheelAccel, true, false);
     }
 
     public void initDefaultCommand() {
@@ -67,14 +73,23 @@ public class ElevatorClimber extends Subsystem {
         rightMotor.set(ControlMode.PercentOutput, percent);
     }
 
+    public void percentOutputWheel(double percent) {
+        wheelMotor.set(ControlMode.PercentOutput, percent);
+    }
+
     public void stop() {
         leftMotor.set(0);
         rightMotor.set(0);
         wheelMotor.set(0);
     }
 
+    public void setMagicVelAccel(TalonSRX talon, int velocity, int accel) {
+        talon.configMotionCruiseVelocity(velocity);
+        talon.configMotionAcceleration(accel);
+    }
+
     public void setupMotor(TalonSRX talon, boolean invert, double[] pidArray, int motionMagicVel, int motionMagicAccel,
-            boolean isWheel) {
+            boolean isWheel, boolean sensorPhase) {
         talon.configFactoryDefault();
         talon.configNominalOutputForward(0, timeout);
         talon.configNominalOutputReverse(0, timeout);
@@ -89,7 +104,7 @@ public class ElevatorClimber extends Subsystem {
 
         // Sets up sensor
         talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, pidIdx, timeout);
-        talon.setSensorPhase(false);
+        talon.setSensorPhase(sensorPhase);
         talon.setInverted(invert);
         talon.setSelectedSensorPosition(0, pidIdx, timeout);
 
@@ -136,8 +151,12 @@ public class ElevatorClimber extends Subsystem {
     }
 
     public void zeroEncoders() {
-        leftMotor.setSelectedSensorPosition(0, pidIdx, timeout);
-        rightMotor.setSelectedSensorPosition(0, pidIdx, timeout);
+        leftMotor.setSelectedSensorPosition(0);
+        rightMotor.setSelectedSensorPosition(0);
+    }
+
+    public void zeroWheelEncoder() {
+        wheelMotor.setSelectedSensorPosition(0);
     }
 
     public boolean getForwardLimit(TalonSRX talon) {

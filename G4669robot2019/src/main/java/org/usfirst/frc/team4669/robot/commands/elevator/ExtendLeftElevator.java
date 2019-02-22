@@ -26,6 +26,7 @@ public class ExtendLeftElevator extends Command {
   @Override
   protected void initialize() {
     Robot.elevator.stop();
+    Robot.elevator.setMagicVelAccel(Robot.elevator.getLeftMotor(), Constants.elevatorVel, Constants.elevatorAccel);
     Robot.elevator.setMotionMagic(Robot.elevator.getLeftMotor(), position);
   }
 
@@ -37,14 +38,8 @@ public class ExtendLeftElevator extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (Math
-        .abs(position - Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor())) < Constants.elevatorTolerance) {
-      return true;
-    }
-    if (Robot.oi.getLeftRawButton(10)) {
-      return true;
-    } else
-      return false;
+    return (Math
+        .abs(position - Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor())) < Constants.elevatorTolerance);
   }
 
   // Called once after isFinished returns true

@@ -13,9 +13,11 @@ import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import org.usfirst.frc.team4669.robot.RobotMap;
 import org.usfirst.frc.team4669.robot.commands.driveTrain.JoystickDrive;
 import org.usfirst.frc.team4669.robot.misc.Constants;
+import org.usfirst.frc.team4669.robot.misc.LineAlignEntries;
 import org.usfirst.frc.team4669.robot.misc.PIDOutputWrapper;
-import org.usfirst.frc.team4669.robot.misc.VisionPIDSource;
-import org.usfirst.frc.team4669.robot.misc.VisionPIDSource.BallAlign;
+import org.usfirst.frc.team4669.robot.misc.PIDSourceWrapper;
+import org.usfirst.frc.team4669.robot.misc.VisionEntries;
+
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.PIDController;
@@ -44,16 +46,20 @@ public class DriveTrain extends Subsystem {
 
   private MecanumDrive drive;
 
-  public VisionPIDSource visionDistance;
-  public VisionPIDSource visionTurn;
+  public PIDSourceWrapper visionDistance;
+  public PIDSourceWrapper visionTurn;
+  public PIDSourceWrapper strafeWrapper;
 
   public PIDController gyroPID;
   public PIDController visionTurnController;
   public PIDController visionDistanceController;
+  public PIDController strafeController;
 
   private PIDOutputWrapper turnOutput;
   private PIDOutputWrapper visionTurnOutput;
   private PIDOutputWrapper visionDistanceOutput;
+  private PIDOutputWrapper strafeOutput;
+
 
   public Ultrasonic digitalUltrasonic;
 
@@ -74,11 +80,16 @@ public class DriveTrain extends Subsystem {
     gyro = new ADXRS450_Gyro();
     // digitalUltrasonic = new Ultrasonic(0, 1);
     // digitalUltrasonic.setAutomaticMode(true);
-    visionDistance = new VisionPIDSource(BallAlign.DISTANCE);
-    visionTurn = new VisionPIDSource(BallAlign.TURN);
+    
+    strafeWrapper = new PIDSourceWrapper(0);
+    visionDistance = new PIDSourceWrapper(0);
+    visionTurn = new PIDSourceWrapper(0);
+
     visionDistanceOutput = new PIDOutputWrapper();
     visionTurnOutput = new PIDOutputWrapper();
     turnOutput = new PIDOutputWrapper();
+    strafeOutput = new PIDOutputWrapper();
+
 
     frontLeftMotor = new WPI_TalonSRX(RobotMap.driveFrontLeft);
     rearLeftMotor = new WPI_TalonSRX(RobotMap.driveRearLeft);
@@ -107,11 +118,14 @@ public class DriveTrain extends Subsystem {
     // Configuring the Vision PID controllers
     visionTurnController = new PIDController(Constants.cameraPID[0], Constants.cameraPID[1], Constants.cameraPID[2],
         visionTurn, visionTurnOutput);
-    configPIDController(visionTurnController, 0, 320, false, 0.5, 10);
+    configPIDController(visionTurnController, Constants.pixyWidth-1, 320, false, 0.5, 10);
 
     visionDistanceController = new PIDController(Constants.cameraPID[0], Constants.cameraPID[1], Constants.cameraPID[2],
         visionDistance, visionDistanceOutput);
-    configPIDController(visionDistanceController, 0, 200, false, 0.5, 10);
+    configPIDController(visionDistanceController, 0, Constants.pixyHeight-1, false, 0.5, 10);
+
+    strafeController = new PIDController(Constants.strafekP, 0, 0, strafeWrapper, strafeOutput);
+    configPIDController(strafeController, 0, Constants.pixy2LineWidth, false, 0.3, 5);
 
     drive = new MecanumDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
     drive.setRightSideInverted(false);
@@ -129,8 +143,8 @@ public class DriveTrain extends Subsystem {
 
     talon.configNominalOutputForward(0, Constants.timeout);
     talon.configNominalOutputReverse(0, Constants.timeout);
-    talon.configPeakOutputForward(1, Constants.timeout);
-    talon.configPeakOutputReverse(-1, Constants.timeout);
+    talon.configPeakOutputForward(0.95, Constants.timeout);
+    talon.configPeakOutputReverse(-0.95, Constants.timeout);
 
     talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.timeout);
     talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.timeout);
@@ -386,8 +400,20 @@ public class DriveTrain extends Subsystem {
     return visionDistanceOutput.getOutput();
   }
 
-  public boolean isObjectDetected() {
-    return visionDistance.isObjectDetected();
+  public double getStrafeOutput() {
+    return strafeOutput.getOutput();
+  }
+
+  public void updateVisionTurnInput(double input){
+    visionTurn.setInput(input);
+  }
+
+  public void updateVisionDriveInput(double input){
+    visionDistance.setInput(input);
+  }
+
+  public void updateStrafeInput(double input){
+    strafeWrapper.setInput(input);
   }
 
   public PIDController getGyroController() {
@@ -400,6 +426,10 @@ public class DriveTrain extends Subsystem {
 
   public PIDController getVisionDistanceController() {
     return visionDistanceController;
+  }
+
+  public PIDController getStrafeController() {
+    return strafeController;
   }
 
   public Gyro getGyro() {

@@ -97,7 +97,7 @@ public class PathfinderTest extends Command {
             double heading = -Robot.driveTrain.getAngle();
             double desired_heading = Pathfinder.r2d(leftFollower.getHeading());
             double heading_difference = Pathfinder.boundHalfDegrees(desired_heading - heading);
-            double turn = 1 * (-1.0 / 80.0) * heading_difference;
+            double turn = 0.2 * (-1.0 / 80.0) * heading_difference;
             System.out.println("Turn: " + turn);
             System.out.println("Left speed: " + left_speed + " Combined: " + (left_speed + turn));
             System.out.println("Right speed: " + right_speed + " Combined: " + (right_speed - turn));

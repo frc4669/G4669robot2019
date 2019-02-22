@@ -8,7 +8,6 @@
 package org.usfirst.frc.team4669.robot.commands.auto;
 
 import org.usfirst.frc.team4669.robot.misc.Constants;
-import org.usfirst.frc.team4669.robot.commands.driveTrain.StrafeMotionMagic;
 import org.usfirst.frc.team4669.robot.commands.elevator.*;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -42,7 +41,6 @@ public class AutoClimbLevel2 extends CommandGroup {
     addSequential(new ExtendRightElevator(Constants.wheelElevatorOffSet));
     addSequential(new DriveElevatorMotionMagic(Constants.climbDriveDistance2));
     addSequential(new ExtendLeftElevator(Constants.wheelElevatorOffSet));
-    addSequential(new StrafeMotionMagic(Constants.climbDriveDistance3));
 
   }
 }

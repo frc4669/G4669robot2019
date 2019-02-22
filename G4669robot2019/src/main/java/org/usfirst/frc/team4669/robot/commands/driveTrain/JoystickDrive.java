@@ -38,10 +38,10 @@ public class JoystickDrive extends Command {
     if (Robot.f310.getButton(F310.rightShoulderButton)) {
       strafe = 0.5 * Robot.f310.getLeftX();
       forward = 0.3 * Robot.f310.getLeftY();
-      rotation = 0.5 * Robot.f310.getRightX();
+      rotation = 0.3 * Robot.f310.getRightX();
     }
 
-    Robot.driveTrain.fieldOrientedDrive(strafe, forward, rotation, Robot.driveTrain.getAngle());
+    Robot.driveTrain.robotOrientedDrive(strafe, forward, rotation);
   }
 
   // Make this return true when this Command no longer needs to run execute()

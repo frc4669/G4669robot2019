@@ -12,6 +12,8 @@ import org.usfirst.frc.team4669.robot.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ArmDefault extends Command {
+  boolean holdShoulder = false, holdElbow = false, holdWrist = false;
+  double shoulderPos = 0, elbowPos = 0, wristPos = 0;
   public ArmDefault() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -22,7 +24,7 @@ public class ArmDefault extends Command {
   @Override
   protected void initialize() {
     Robot.arm.stop();
-
+    
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -45,12 +47,38 @@ public class ArmDefault extends Command {
       elbowPower = 0;
       wristPower = 0;
     }
-    if (wristPower == 0 && elbowPower == 0 && shoulderPower == 0) {
-      Robot.arm.zeroVelocity(Robot.arm.getShoulderMotor());
-      Robot.arm.zeroVelocity(Robot.arm.getElbowMotor());
-      Robot.arm.zeroVelocity(Robot.arm.getWristMotor());
-    } else {
-      Robot.arm.motorControl(shoulderPower, elbowPower, wristPower);
+    if(shoulderPower == 0){
+      if(!holdShoulder){
+        shoulderPos = Robot.arm.getEncoderPosition(Robot.arm.getShoulderMotor());
+        holdShoulder = true;
+      }
+      Robot.arm.setPosition(Robot.arm.getShoulderMotor(),shoulderPos);
+    }
+    else{
+      Robot.arm.motorControl(Robot.arm.getShoulderMotor(), shoulderPower);
+      holdShoulder = false;
+    } 
+    if(elbowPower == 0){
+      if(!holdElbow){
+        elbowPos = Robot.arm.getEncoderPosition(Robot.arm.getElbowMotor());
+        holdElbow = true;
+      }
+      Robot.arm.setPosition(Robot.arm.getElbowMotor(),elbowPos);
+        }
+    else{
+      Robot.arm.motorControl(Robot.arm.getElbowMotor(), elbowPower);
+      holdElbow = false;
+    }
+    if(wristPower == 0){
+      if(!holdWrist){
+        wristPos = Robot.arm.getEncoderPosition(Robot.arm.getWristMotor());
+        holdWrist = true;
+      }
+      Robot.arm.setPosition(Robot.arm.getWristMotor(), wristPos);
+    }
+    else{
+      Robot.arm.motorControl(Robot.arm.getWristMotor(), wristPower);
+      holdWrist = false;
     }
   }
 
@@ -64,6 +92,7 @@ public class ArmDefault extends Command {
   @Override
   protected void end() {
     Robot.arm.stop();
+    holdWrist = holdElbow = holdShoulder = false;
   }
 
   // Called when another command which requires one or more of the same

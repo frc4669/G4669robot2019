@@ -1,44 +1,59 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
+// /*----------------------------------------------------------------------------*/
+// /* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
+// /* Open Source Software - may be modified and shared by FRC teams. The code   */
+// /* must be accompanied by the FIRST BSD license file in the root directory of */
+// /* the project.                                                               */
+// /*----------------------------------------------------------------------------*/
 
-package org.usfirst.frc.team4669.robot.commands.auto;
+// package org.usfirst.frc.team4669.robot.commands.auto;
 
-import org.usfirst.frc.team4669.robot.commands.driveTrain.StrafeMotionMagic;
-import org.usfirst.frc.team4669.robot.commands.driveTrain.TurnTo;
-import org.usfirst.frc.team4669.robot.misc.Constants;
-import org.usfirst.frc.team4669.robot.misc.LineAlignEntries;
+// import org.usfirst.frc.team4669.robot.misc.Constants;
+// import org.usfirst.frc.team4669.robot.misc.LineAlignEntries;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
+// import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class LineAlignment extends CommandGroup {
-  /**
-   * Add your docs here.
-   */
-  public LineAlignment() {
-    // Add Commands here:
-    // e.g. addSequential(new Command1());
-    // addSequential(new Command2());
-    // these will run in order.
 
-    // To run multiple commands at the same time,
-    // use addParallel()
-    // e.g. addParallel(new Command1());
-    // addSequential(new Command2());
-    // Command1 and Command2 will run in parallel.
 
-    // A command group will require all of the subsystems that each member
-    // would require.
-    // e.g. if Command1 requires chassis, and Command2 requires arm,
-    // a CommandGroup containing them would require both the chassis and the
-    // arm.
+// public class LineAlignment extends CommandGroup {
+//   /**
+//    * Add your docs here.
+//    */
 
-    LineAlignEntries frontLine = new LineAlignEntries(true);
+//   public enum Direction {
+//     FRONT, BACK;
+//   }
 
-    addSequential(new TurnTo(frontLine.getAngle()));
-    addSequential(new StrafeMotionMagic((Constants.pixy2LineWidth / 2) - frontLine.getX0()));
-  }
-}
+//   public LineAlignment(Direction direction) {
+//     // Add Commands here:
+//     // e.g. addSequential(new Command1());
+//     // addSequential(new Command2());
+//     // these will run in order.
+
+//     // To run multiple commands at the same time,
+//     // use addParallel()
+//     // e.g. addParallel(new Command1());
+//     // addSequential(new Command2());
+//     // Command1 and Command2 will run in parallel.
+
+//     // A command group will require all of the subsystems that each member
+//     // would require.
+//     // e.g. if Command1 requires chassis, and Command2 requires arm,
+//     // a CommandGroup containing them would require both the chassis and the
+//     // arm.
+//     LineAlignEntries lineEntries;
+//     switch (direction){
+//       case FRONT:
+//         lineEntries = new LineAlignEntries(true);
+//         break;
+//       case BACK:
+//         lineEntries = new LineAlignEntries(false);
+//         break;
+//       default: 
+//         lineEntries = new LineAlignEntries(true);
+//         break;
+//     }    
+ 
+//     addSequential(new TurnTo(lineEntries.getAngle()));
+//     addSequential(new ((Constants.pixy2LineWidth / 2) - lineEntries.getX0()));
+//   }
+// }

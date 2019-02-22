@@ -26,6 +26,9 @@ public class ExtendBothElevator extends Command {
   @Override
   protected void initialize() {
     Robot.elevator.stop();
+    System.out.println(position);
+    Robot.elevator.setMagicVelAccel(Robot.elevator.getLeftMotor(), Constants.elevatorVel, Constants.elevatorAccel);
+    Robot.elevator.setMagicVelAccel(Robot.elevator.getRightMotor(), Constants.elevatorVel, Constants.elevatorAccel);
     Robot.elevator.setMotionMagic(Robot.elevator.getLeftMotor(), position);
     Robot.elevator.setMotionMagic(Robot.elevator.getRightMotor(), position);
   }
@@ -38,15 +41,10 @@ public class ExtendBothElevator extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (Math.abs(position - Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor())) < Constants.elevatorTolerance
+    return (Math
+        .abs(position - Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor())) < Constants.elevatorTolerance
         && Math.abs(
-            position - Robot.elevator.getEncoderPos(Robot.elevator.getRightMotor())) < Constants.elevatorTolerance) {
-      return true;
-    }
-    if (Robot.oi.getLeftRawButton(10)) {
-      return true;
-    } else
-      return false;
+            position - Robot.elevator.getEncoderPos(Robot.elevator.getRightMotor())) < Constants.elevatorTolerance);
   }
 
   // Called once after isFinished returns true

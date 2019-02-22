@@ -74,7 +74,7 @@ public class OI {
 		leftButton5.whenPressed(new ExtendRightElevator(Constants.level3HeightInches + Constants.wheelElevatorOffSet));
 		leftButton4.whenPressed(new ExtendLeftElevator(Constants.level3HeightInches + Constants.wheelElevatorOffSet));
 		leftButton2.whenPressed(new ExtendBothElevator(Constants.level2HeightInches + Constants.wheelElevatorOffSet));
-		leftButton3.whenPressed(new ExtendBothElevator(15 + Constants.wheelElevatorOffSet));
+		leftButton3.whenPressed(new ExtendBothElevator(Constants.wheelElevatorOffSet));
 		leftButton8.whenPressed(new ExtendBothElevator(0));
 	}
 

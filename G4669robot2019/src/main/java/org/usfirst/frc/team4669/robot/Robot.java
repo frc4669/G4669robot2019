@@ -12,7 +12,11 @@ import org.usfirst.frc.team4669.robot.commands.arm.*;
 import org.usfirst.frc.team4669.robot.commands.elevator.*;
 import org.usfirst.frc.team4669.robot.commands.driveTrain.*;
 import org.usfirst.frc.team4669.robot.commands.auto.*;
+import org.usfirst.frc.team4669.robot.commands.auto.AlignToLine.Direction;
 import org.usfirst.frc.team4669.robot.commands.grabber.*;
+import org.usfirst.frc.team4669.robot.misc.Constants;
+import org.usfirst.frc.team4669.robot.misc.LineAlignEntries;
+import org.usfirst.frc.team4669.robot.misc.VisionEntries;
 import org.usfirst.frc.team4669.robot.subsystems.*;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -40,12 +44,18 @@ public class Robot extends TimedRobot {
 	public static F310 f310;
 	public static DriverStation driverStation;
 	public static DriveTrain driveTrain;
+	public static LineAlignEntries frontLineEntries;
+	public static LineAlignEntries backLineEntries;
+	public static VisionEntries visionEntries;
 	// public static CubeIntake intake;
 	// public static Climber climber;
 	public static ElevatorClimber elevator;
 	public static Arm arm;
 	public static Grabber grabber;
-	public AnalogUltrasonic ultrasonic;
+	public static PixySubsystem pixySub;
+	public static AnalogDistanceSensor ultrasonic;
+	public static int elevatorVel = 300;
+	public static int elevatorAccel = 600;
 
 	Command autonomousCommand;
 	SendableChooser<String> chooser = new SendableChooser<String>();
@@ -62,12 +72,20 @@ public class Robot extends TimedRobot {
 		driveTrain = new DriveTrain();
 		arm = new Arm();
 		grabber = new Grabber();
+		pixySub = new PixySubsystem();
 		// ultrasonic = new AnalogUltrasonic(0);
 		oi = new OI();
 		f310 = new F310();
+
+		visionEntries = new VisionEntries();
+		frontLineEntries = new LineAlignEntries(true);
+		backLineEntries = new LineAlignEntries(false);
+
 		driveTrain.zeroEncoders();
 		driveTrain.resetGyro();
 		driveTrain.calibrateGyro();
+
+		
 
 		// Sends Strings to chooser and not commands in the case of the command
 		// requiring something that only occurs during auto init
@@ -76,6 +94,10 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Auto mode", chooser);
 		testSmartDashboardInit();
 
+	}
+
+	public void robotPeriodic(){
+		updateSmartDashboard();
 	}
 
 	/**
@@ -91,7 +113,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
-		updateSmartDashboard();
+		// updateSmartDashboard();
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
 
@@ -136,7 +158,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
-		updateSmartDashboard();
+		// updateSmartDashboard();
 	}
 
 	@Override
@@ -159,16 +181,9 @@ public class Robot extends TimedRobot {
 			Command turn = new TurnTo(f310.getDPadPOV());
 			turn.start();
 		}
-		if (f310.getButton(F310.greenButton)) {
-			if (grabber.getGrabberOpen())
-				new CloseGrabber().start();
-			else
-				new OpenGrabber().start();
-		}
-
 		Scheduler.getInstance().run();
-		updateSmartDashboard();
-		testSmartDashboard();
+		// updateSmartDashboard();
+		// testSmartDashboard();
 
 	}
 
@@ -182,34 +197,39 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
 		Scheduler.getInstance().run();
-		testSmartDashboard();
+		// testSmartDashboard();
 
 	}
 
 	public void updateSmartDashboard() {
 		SmartDashboard.putData((Sendable) driveTrain.getGyro());
-		SmartDashboard.putData(driveTrain.getGyroController());
+		// SmartDashboard.putData(driveTrain.getGyroController());
 		testSmartDashboard();
 	}
 
 	public void testSmartDashboardInit() {
-		// SmartDashboard.putNumber("Target Shoulder", 0);
-		// SmartDashboard.putNumber("Target Elbow", 0);
-		// SmartDashboard.putNumber("Target Wrist", 0);
+		SmartDashboard.putNumber("Arm/Target Shoulder", 0);
+		SmartDashboard.putNumber("Arm/Target Elbow", 0);
+		SmartDashboard.putNumber("Arm/Target Wrist", 0);
 
-		// SmartDashboard.putNumber("Target X", 0);
-		// SmartDashboard.putNumber("Target Y", 0);
-		// SmartDashboard.putBoolean("Flip Elbow", false);
+		SmartDashboard.putNumber("Arm/Target X", 0);
+		SmartDashboard.putNumber("Arm/Target Y", 0);
+		SmartDashboard.putBoolean("Arm/Flip Wrist", false);
+		SmartDashboard.putBoolean("Arm/Flip Elbow", false);
 
-		SmartDashboard.putNumber("Drive Position", 0);
-		SmartDashboard.putNumber("Strafe distance", 0);
-		SmartDashboard.putNumber("Turn To", 0);
+		SmartDashboard.putData("Line Align", new AlignToLine(Direction.FRONT));
+		// SmartDashboard.putNumber("Elevator Distance", 0);
+		// SmartDashboard.putNumber("Elevator Drive", 0);
+
+		// SmartDashboard.putNumber("Drive Position", 0);
+		// SmartDashboard.putNumber("Strafe distance", 0);
+		// SmartDashboard.putNumber("Turn To", 0);
 		// SmartDashboard.putNumber("Strafe Position", 0);
 
 	}
 
 	public void testSmartDashboard() {
-		// SmartDashboard.putNumber("Gyro Angle", driveTrain.getAngle());
+		SmartDashboard.putNumber("Gyro Angle", driveTrain.getAngle());
 		// SmartDashboard.putNumber("Vision Turn Error",
 		// driveTrain.getPIDError(driveTrain.getVisionTurnController()));
 		// SmartDashboard.putNumber("Vision Distance Error",
@@ -220,65 +240,89 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putData("Vision Distance PID Controller",
 		// driveTrain.getVisionDistanceController());
 		// SmartDashboard.putData("Align to Ball", new AlignToBall());
-		SmartDashboard.putNumber("Front Left Encoder", driveTrain.getFrontLeftEncoder());
-		SmartDashboard.putNumber("Front Right Encoder", driveTrain.getFrontRightEncoder());
-		SmartDashboard.putNumber("Front Left Vel", driveTrain.getFrontLeftEncoderSpeed());
-		SmartDashboard.putNumber("Front Right Vel", driveTrain.getFrontRightEncoderSpeed());
-		double distance = SmartDashboard.getNumber("Drive Position", 0);
-		SmartDashboard.putData("Motion Magic Drive", new DriveForwardMotionMagic(distance));
-		SmartDashboard.putData("Zero Drive Train Encoders", new ZeroDriveTrainEncoder());
-		SmartDashboard.putData("BallAlignment", new BallAlignment());
-		double strafe = SmartDashboard.getNumber("Strafe distance", 0);
-		SmartDashboard.putData("Strafe Motion Magic", new StrafeMotionMagic(strafe));
-		double turnAngle = SmartDashboard.getNumber("Turn To", 0);
-		SmartDashboard.putData("Turn To Command", new TurnTo(turnAngle));
-		/**
-		 * SmartDashboard.putNumber("Shoulder Position",
-		 * arm.getEncoderPosition(arm.getShoulderMotor()));
-		 * SmartDashboard.putNumber("Shoulder Velocity",
-		 * arm.getEncoderVelocity(arm.getShoulderMotor()));
-		 * SmartDashboard.putNumber("Elbow Position",
-		 * arm.getEncoderPosition(arm.getElbowMotor())); SmartDashboard.putNumber("Elbow
-		 * Velocity", arm.getEncoderVelocity(arm.getElbowMotor()));
-		 * SmartDashboard.putNumber("Wrist Position",
-		 * arm.getEncoderPosition(arm.getWristMotor())); SmartDashboard.putNumber("Wrist
-		 * Velocity", arm.getEncoderVelocity(arm.getWristMotor()));
-		 * SmartDashboard.putNumber("Shoulder Angle",
-		 * arm.getMotorAngle(arm.getShoulderMotor())); SmartDashboard.putNumber("Elbow
-		 * Angle", arm.getMotorAngle(arm.getElbowMotor()));
-		 * SmartDashboard.putNumber("Wrist Angle",
-		 * arm.getMotorAngle(arm.getWristMotor())); double targetShoulder =
-		 * SmartDashboard.getNumber("Target Shoulder", 0); double targetElbow =
-		 * SmartDashboard.getNumber("Target Elbow", 0); double targetWrist =
-		 * SmartDashboard.getNumber("Target Wrist", 0);
-		 * 
-		 * double targetX = SmartDashboard.getNumber("Target X", 0); double targetY =
-		 * SmartDashboard.getNumber("Target Y", 50);
-		 * 
-		 * // SmartDashboard.putData("Start Arm Magic", new
-		 * ArmMotionMagic(targetShoulder, // targetElbow, targetWrist));
-		 * SmartDashboard.putData("Set Arm Angle", new ArmAngleSet(targetShoulder,
-		 * targetElbow, targetWrist)); boolean flipUp = SmartDashboard.getBoolean("Flip
-		 * Elbow", false);
-		 * 
-		 * SmartDashboard.putData("Arm to Position", new ArmToPosition(targetX, targetY,
-		 * flipUp)); SmartDashboard.putData("Zero Arm Encoders", new ZeroArmEncoders());
-		 * 
-		 * SmartDashboard.putNumber("Acceleration X", Robot.elevator.getAccelX());
-		 * SmartDashboard.putNumber("Acceleration Y", Robot.elevator.getAccelY());
-		 * 
-		 * double rightElevatorVel = SmartDashboard.getNumber("Target Right Elevator
-		 * Vel", 0); double leftElevatorVel = SmartDashboard.getNumber("Target Left
-		 * Elevator Vel", 0);
-		 * 
-		 * SmartDashboard.putData("Set Elevator Speed", new
-		 * SetElevatorVelocity(leftElevatorVel, rightElevatorVel));
-		 * SmartDashboard.putNumber("Right Elevator Vel",
-		 * Robot.elevator.getEncoderVel(Robot.elevator.getRightMotor()));
-		 * SmartDashboard.putNumber("Left Elevator Vel",
-		 * Robot.elevator.getEncoderVel(Robot.elevator.getLeftMotor()));
+		/*
+		 * SmartDashboard.putNumber("Front Left Encoder",
+		 * driveTrain.getFrontLeftEncoder());
+		 * SmartDashboard.putNumber("Front Right Encoder",
+		 * driveTrain.getFrontRightEncoder());
+		 * SmartDashboard.putNumber("Front Left Vel",
+		 * driveTrain.getFrontLeftEncoderSpeed());
+		 * SmartDashboard.putNumber("Front Right Vel",
+		 * driveTrain.getFrontRightEncoderSpeed()); double distance =
+		 * SmartDashboard.getNumber("Drive Position", 0);
+		 * SmartDashboard.putData("Motion Magic Drive", new
+		 * DriveForwardMotionMagic(distance));
+		 * SmartDashboard.putData("Zero Drive Train Encoders", new
+		 * ZeroDriveTrainEncoder()); SmartDashboard.putData("BallAlignment", new
+		 * BallAlignment()); double strafe = SmartDashboard.getNumber("Strafe distance",
+		 * 0); SmartDashboard.putData("Strafe Motion Magic", new
+		 * StrafeMotionMagic(strafe)); double turnAngle =
+		 * SmartDashboard.getNumber("Turn To", 0);
+		 * SmartDashboard.putData("Turn To Command", new TurnTo(turnAngle));
 		 */
+
+		SmartDashboard.putNumber("Arm/Shoulder Position", arm.getEncoderPosition(arm.getShoulderMotor()));
+		SmartDashboard.putNumber("Arm/Shoulder Velocity", arm.getEncoderVelocity(arm.getShoulderMotor()));
+		SmartDashboard.putNumber("Arm/Elbow Position", arm.getEncoderPosition(arm.getElbowMotor()));
+		SmartDashboard.putNumber("Arm/Elbow Velocity", arm.getEncoderVelocity(arm.getElbowMotor()));
+		SmartDashboard.putNumber("Arm/Wrist Position", arm.getEncoderPosition(arm.getWristMotor()));
+		SmartDashboard.putNumber("Arm/Wrist Velocity", arm.getEncoderVelocity(arm.getWristMotor()));
+		SmartDashboard.putNumber("Arm/Shoulder Angle", arm.getMotorAngle(arm.getShoulderMotor()));
+		SmartDashboard.putNumber("Arm/Elbow Angle", arm.getMotorAngle(arm.getElbowMotor()));
+		SmartDashboard.putNumber("Arm/Wrist Angle", arm.getMotorAngle(arm.getWristMotor()));
+		double targetShoulder = // *
+				SmartDashboard.getNumber("Arm/Target Shoulder", 0);
+		double targetElbow = // *
+				SmartDashboard.getNumber("Arm/Target Elbow", 0);
+		double targetWrist = // *
+				SmartDashboard.getNumber("Arm/Target Wrist", 0);
+
+		double targetX = SmartDashboard.getNumber("Arm/Target X", 20);
+		double targetY = SmartDashboard.getNumber("Arm/Target Y", 20);
+		double wristAngle = 0;
+		if(SmartDashboard.getBoolean("Arm/Flip Wrist",false)){
+			wristAngle = 180;
+		}
+
+		SmartDashboard.putData("Arm/Set Arm Angle", new ArmAngleSet(targetShoulder, targetElbow, targetWrist));
+		boolean flipUp = SmartDashboard.getBoolean("Arm/Flip Elbow", false);
+
+		SmartDashboard.putData("Arm/Arm to Position", new ArmToPosition(targetX, targetY, wristAngle, flipUp));
+		SmartDashboard.putData("Arm/Zero Arm Encoders", new ZeroArmEncoders());
+
+		// SmartDashboard.putNumber("Acceleration X", Robot.elevator.getAccelX());
+		// SmartDashboard.putNumber("Acceleration Y", Robot.elevator.getAccelY());
+
+		// SmartDashboard.putNumber("Right Elevator Inches",
+		// elevator.getEncoderPos(elevator.getRightMotor()) *
+		// Constants.encoderToInchElevator);
+		// SmartDashboard.putNumber("Left Elevator Inches",
+		// elevator.getEncoderPos(elevator.getLeftMotor()) *
+		// Constants.encoderToInchElevator);
+
+		// SmartDashboard.putNumber("Wheel Elevator Inches",
+		// elevator.getEncoderPos(elevator.getWheelMotor()) *
+		// Constants.encoderToInchDrive);
+
+		// double distance = SmartDashboard.getNumber("Elevator Distance", 0);
+		// double elevatorDrive = SmartDashboard.getNumber("Elevator Drive", 0);
+		// SmartDashboard.putData("Extend Elevators", new ExtendBothElevator(distance));
+		// SmartDashboard.putData("Extend Elevators Left", new
+		// ExtendLeftElevator(distance));
+		// SmartDashboard.putData("Extend Elevators Right", new
+		// ExtendRightElevator(distance));
+
+		// SmartDashboard.putData("Drive Elevator Cmd", new
+		// DriveElevatorMotionMagic(elevatorDrive));
+
+		// SmartDashboard.putNumber("Right Elevator Vel",
+		// Robot.elevator.getEncoderVel(Robot.elevator.getRightMotor()));
+		// SmartDashboard.putNumber("Left Elevator Vel",
+		// Robot.elevator.getEncoderVel(Robot.elevator.getLeftMotor()));
+		// SmartDashboard.putNumber("Wheel Elevator Vel",
+		// Robot.elevator.getEncoderVel(Robot.elevator.getWheelMotor()));
 		// SmartDashboard.putNumber("Ultrasonic voltage", ultrasonic.getVoltage());
 		// SmartDashboard.putNumber("Ultrasonic Distance", ultrasonic.getDistance());
 	}
+
 }

@@ -7,24 +7,20 @@
 
 package org.usfirst.frc.team4669.robot.misc;
 
-import org.usfirst.frc.team4669.robot.Robot;
-
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 
-public class VisionPIDSource implements PIDSource {
+public class PIDSourceWrapper implements PIDSource {
 
-  public enum BallAlign {
-    DISTANCE, TURN;
+  private double input;
+  private PIDSourceType pidSourceType = PIDSourceType.kDisplacement;
+
+  public PIDSourceWrapper(double input) {
+    this.input = input;
   }
 
-  private PIDSourceType pidSourceType = PIDSourceType.kDisplacement;
-  private BallAlign alignType;
-  private VisionEntries visionEntries = new VisionEntries();
-
-  public VisionPIDSource(BallAlign align) {
-    alignType = align;
+  public void setInput(double input){
+    this.input = input;
   }
 
   @Override
@@ -36,28 +32,11 @@ public class VisionPIDSource implements PIDSource {
   public PIDSourceType getPIDSourceType() {
     return pidSourceType;
   }
-
-  public BallAlign getBallAlignType() {
-    return alignType;
-  }
-
-  public void setBallAlignType(BallAlign align) {
-    alignType = align;
-  }
-
-  public boolean isObjectDetected() {
-    return visionEntries.isObjectDetected();
-  }
+  
 
   @Override
   public double pidGet() {
-    switch (alignType) {
-    case DISTANCE:
-      return visionEntries.getDistanceIfCentered();
-    case TURN:
-      return visionEntries.getX();
-    default:
-      return 0;
-    }
+    return input;
   }
+
 }

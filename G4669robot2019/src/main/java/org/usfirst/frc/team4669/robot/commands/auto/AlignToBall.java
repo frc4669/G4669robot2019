@@ -28,10 +28,12 @@ public class AlignToBall extends Command {
   @Override
   protected void initialize() {
     Robot.driveTrain.stop();
+    Robot.driveTrain.updateVisionTurnInput(Robot.visionEntries.getX());
     Robot.driveTrain.enablePIDController(Robot.driveTrain.getVisionTurnController());
     Robot.driveTrain.setTarget(Robot.driveTrain.getVisionTurnController(), centerX);
+    Robot.driveTrain.updateVisionDriveInput(Robot.visionEntries.getHeight());
     Robot.driveTrain.enablePIDController(Robot.driveTrain.getVisionDistanceController());
-    Robot.driveTrain.setTarget(Robot.driveTrain.getVisionDistanceController(), 200);
+    Robot.driveTrain.setTarget(Robot.driveTrain.getVisionDistanceController(), 150);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -45,7 +47,7 @@ public class AlignToBall extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (Robot.f310.getButton(F310.redButton) || !Robot.driveTrain.isObjectDetected()
+    return (!Robot.visionEntries.isObjectDetected()
         || Robot.driveTrain.getPIDDone(Robot.driveTrain.getVisionTurnController())
             && Robot.driveTrain.getPIDDone(Robot.driveTrain.getVisionDistanceController()));
   }

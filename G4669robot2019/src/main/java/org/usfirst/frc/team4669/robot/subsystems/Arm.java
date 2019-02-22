@@ -10,6 +10,7 @@ package org.usfirst.frc.team4669.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.usfirst.frc.team4669.robot.RobotMap;
 import org.usfirst.frc.team4669.robot.commands.arm.ArmDefault;
@@ -45,8 +46,8 @@ public class Arm extends Subsystem {
     wristMotor = new WPI_TalonSRX(RobotMap.wristMotor);
 
     talonConfig(shoulderMotor, false);
-    talonConfig(elbowMotor, true);
-    talonConfig(wristMotor, false);
+    talonConfig(elbowMotor, false);
+    talonConfig(wristMotor, true);
 
     setCurrentLimit(elbowMotor);
     setCurrentLimit(wristMotor);
@@ -74,14 +75,14 @@ public class Arm extends Subsystem {
    * @param elbowMotorPower    Controls the elbow motor, inputs [-1,1]
    * @param wristMotorPower    Controls the wrist motor, inputs [-1,1]
    */
-  public void motorControl(double shoulderMotorPower, double elbowMotorPower, double wristMotorPower) {
-    shoulderMotor.set(shoulderMotorPower);
-    elbowMotor.set(elbowMotorPower);
-    wristMotor.set(wristMotorPower);
+  public void motorControl(TalonSRX talon, double power) {
+    talon.set(ControlMode.PercentOutput,power);
   }
 
   public void stop() {
-    motorControl(0.0, 0.0, 0.0);
+    shoulderMotor.set(0);
+    elbowMotor.set(0);
+    wristMotor.set(0);
   }
 
   public void setCurrentLimit(TalonSRX talon) {
@@ -110,19 +111,13 @@ public class Arm extends Subsystem {
    */
   public double[] calculateAngles(double x, double y, double targetGrabberAngle, boolean flipUp) {
     double x1 = x - a3 * Math.cos(Math.toRadians(targetGrabberAngle));
-    y = y - a3 * Math.sin(Math.toRadians(targetGrabberAngle)) - Constants.shoulderHeight;
-    double distance = Math.sqrt(Math.pow(x1, 2) + Math.pow(y, 2)); // distance is a function of arm base and target xy
-    if (distance - (a1 + a2) > 0.5 || (a1 - a2) - distance > 0.5 || Math.abs(x) > 30 || y < 0)
+    y = y - a3 * Math.sin(Math.toRadians(targetGrabberAngle));
+    if (y < 6.5)
       return null;
-    // elbow angle is a function of distance
-    // if distance> a1+a2 return false
-    // if distance<a1-a2 return false
-    // if absolute val of elbow angle is >100 deg return false
-    // shoulders to distance vector angle
-    // shoulder angle is arcsin of (ytarget/distance) + shoulder to distance vector
-    // angle
-    // check shoulder angle if less than 0 or greater than 180 return false
-    // for elbow bending up, subtract from arcsin instead
+    y -= Constants.shoulderHeight;
+    double distance = Math.sqrt(Math.pow(x1, 2) + Math.pow(y, 2)); // distance is a function of arm base and target xy
+    if (distance > a1 + a2 || distance < Math.abs(a1 - a2) || y < 0)
+      return null;
 
     double elbowRad = Math.acos((Math.pow(distance, 2) - Math.pow(a1, 2) - Math.pow(a2, 2)) / (-2 * a1 * a2)) - Math.PI;
     if (flipUp)
@@ -137,7 +132,7 @@ public class Arm extends Subsystem {
     double elbowDeg = Math.toDegrees(elbowRad);
     double shoulderDeg = Math.toDegrees(shoulderRad);
     double wristDeg = targetGrabberAngle - shoulderDeg;
-    if (shoulderDeg < 0 || shoulderDeg > 180 || Math.abs(elbowDeg) > 110 || shoulderDeg != shoulderDeg
+    if (shoulderDeg < 0 || shoulderDeg > 180 || Math.abs(elbowDeg) > 150 || shoulderDeg != shoulderDeg
         || elbowDeg != elbowDeg)
       return null;
     double[] anglesArr = { shoulderDeg, elbowDeg, wristDeg };
@@ -218,8 +213,8 @@ public class Arm extends Subsystem {
     talon.configMotionAcceleration(accel, Constants.timeout);
   }
 
-  public void zeroVelocity(TalonSRX talon) {
-    talon.set(ControlMode.Velocity, 0);
+  public void setPosition(TalonSRX talon, double position) {
+    talon.set(ControlMode.MotionMagic, position);
   }
 
   public void talonConfig(TalonSRX talon, boolean invert) {
@@ -232,7 +227,8 @@ public class Arm extends Subsystem {
       pidArr = Constants.elbowPID;
     if (talon == wristMotor)
       pidArr = Constants.wristPID;
-
+    
+    talon.setNeutralMode(NeutralMode.Brake);
     talon.setInverted(invert);
     talon.setSensorPhase(true);
     talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.pidIdx, Constants.timeout);
