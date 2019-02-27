@@ -218,6 +218,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("Arm/Flip Elbow", false);
 
 		SmartDashboard.putData("Line Align", new AlignToLine(Direction.FRONT));
+		SmartDashboard.putData("Toggle Compressor", new ToggleCompressor());
+
 		// SmartDashboard.putNumber("Elevator Distance", 0);
 		// SmartDashboard.putNumber("Elevator Drive", 0);
 

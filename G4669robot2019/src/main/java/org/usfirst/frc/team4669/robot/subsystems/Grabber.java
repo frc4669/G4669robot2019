@@ -10,6 +10,7 @@ package org.usfirst.frc.team4669.robot.subsystems;
 import org.usfirst.frc.team4669.robot.RobotMap;
 // import org.usfirst.frc.team4669.robot.commands.OpenGrabber;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -21,7 +22,7 @@ public class Grabber extends Subsystem {
   // here. Call these from Commands.
 
   private DoubleSolenoid doubleAction = new DoubleSolenoid(RobotMap.solenoidForward, RobotMap.solenoidReverse);
-
+  private Compressor compressor = new Compressor();
   public void open() {
     doubleAction.set(DoubleSolenoid.Value.kForward);
   }
@@ -35,6 +36,18 @@ public class Grabber extends Subsystem {
       return true;
     }
     return false;
+  }
+
+  public void startCompressor(){
+    compressor.start();
+  }
+
+  public void stopCompressor(){
+    compressor.stop();
+  }
+
+  public boolean isCompressorRunning(){
+    return compressor.enabled();
   }
 
   @Override

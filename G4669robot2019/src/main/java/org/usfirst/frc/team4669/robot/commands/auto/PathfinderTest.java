@@ -1,6 +1,7 @@
 package org.usfirst.frc.team4669.robot.commands.auto;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.usfirst.frc.team4669.robot.Robot;
 import org.usfirst.frc.team4669.robot.RobotMap;
@@ -28,7 +29,7 @@ public class PathfinderTest extends Command {
     EncoderFollower rightFollower;
     Notifier followerNotifier;
     double l, r, turn;
-    double gyro_heading, desired_heading, angleDifference;
+    double gyro_heading, desired_heading, angleDifference, initial_Heading;
     static final String pathName = "Turn";
 
     public PathfinderTest() {
@@ -41,14 +42,19 @@ public class PathfinderTest extends Command {
     protected void initialize() {
 
         Robot.driveTrain.zeroEncoders();
-        // Robot.driveTrain.calibrateGyro();
-        // Robot.driveTrain.resetGyro();
+        Robot.driveTrain.calibrateGyro();
+        initial_Heading = Robot.driveTrain.getAngle();
         System.out.println("Attempting to get trajectories from CSV File");
         /* Getting the left and right trajectories from the CSV files */
-        Trajectory rightTrajectory = PathfinderFRC.getTrajectory(pathName + ".left");
-        Trajectory leftTrajectory = PathfinderFRC.getTrajectory(pathName + ".right");
-
-        System.out.print("Got the trajectories successfully");
+        Trajectory rightTrajectory = null, leftTrajectory = null;
+        try{
+            rightTrajectory = PathfinderFRC.getTrajectory(pathName + ".left");
+            leftTrajectory = PathfinderFRC.getTrajectory(pathName + ".right");
+        } catch(Exception E){
+            System.out.println("Could not retrieve trajectories, exception : " + E);
+            end();
+        }
+        System.out.println("Got the trajectories successfully");
 
         leftFollower = new EncoderFollower(leftTrajectory);
         rightFollower = new EncoderFollower(rightTrajectory);
@@ -78,7 +84,8 @@ public class PathfinderTest extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-        followerNotifier.stop();
+        if(followerNotifier != null)
+            followerNotifier.stop();
         Robot.driveTrain.stop();
 
     }
@@ -97,14 +104,15 @@ public class PathfinderTest extends Command {
             double heading = -Robot.driveTrain.getAngle();
             double desired_heading = Pathfinder.r2d(leftFollower.getHeading());
             double heading_difference = Pathfinder.boundHalfDegrees(desired_heading - heading);
-            double turn = 0.2 * (-1.0 / 80.0) * heading_difference;
+            double turn = 2 * (-1.0 / 80.0) * heading_difference;
             System.out.println("Turn: " + turn);
-            System.out.println("Left speed: " + left_speed + " Combined: " + (left_speed + turn));
-            System.out.println("Right speed: " + right_speed + " Combined: " + (right_speed - turn));
+            System.out.println("Left speed: " + left_speed + " Combined: " + (left_speed - turn));
+            System.out.println("Right speed: " + right_speed + " Combined: " + (right_speed + turn));
             // System.out.println("Left speed: " + left_speed);
             // System.out.println("Right speed: " + right_speed);
-            Robot.driveTrain.tankDrive(left_speed + turn, right_speed - turn, false);
+            Robot.driveTrain.tankDrive(left_speed - turn, right_speed + turn, false);
             // Robot.driveTrain.tankDrive(left_speed, right_speed, false);
         }
     }
+
 }
