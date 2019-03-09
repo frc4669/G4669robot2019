@@ -1,0 +1,73 @@
+
+public class InverseKinematics {
+    static double a1 = 29;
+    static double a2 = 21;
+    static double a3 = 0;
+
+    public static double targetToAngleElbow(double x, double y) {
+        double x1 = x - a3; // Target length minus wrist length
+
+        double angleRad = Math.acos(
+                (Math.pow(x1, 2) + Math.pow(y, 2) - Math.pow(a1, 2) - Math.pow(a2, 2)) / (-2 * a1 * a2)) - Math.PI;
+
+        double angleDeg = Math.toDegrees(angleRad);
+        return angleDeg;
+    }
+
+    public static double targetToAngleShoulder(double x, double y) {
+        double x1 = x - a3; // Target length minus wrist length
+
+        double angleRad = Math.acos((Math.pow(a2, 2) - Math.pow(a1, 2) - Math.pow(x1, 2) - Math.pow(y, 2))
+                / (-2 * a1 * Math.sqrt(Math.pow(x1, 2) + Math.pow(y, 2)))) + Math.atan2(y, x1);
+
+        double angleDeg = Math.toDegrees(angleRad);
+        return angleDeg;
+    }
+
+    public static double[] calculateAngles(double x, double y, boolean flipUp) {
+        
+    }
+
+    public static double checkX(double shoulderAngle, double elbowAngle) {
+        double x = a3 + a1 * Math.cos(Math.toRadians(shoulderAngle))
+                + a2 * Math.cos(Math.toRadians(shoulderAngle) + Math.toRadians(elbowAngle));
+        return x;
+    }
+
+    public static double checkY(double shoulderAngle, double elbowAngle) {
+        double y = a1 * Math.sin(Math.toRadians(shoulderAngle))
+                + a2 * Math.sin(Math.toRadians(shoulderAngle) + Math.toRadians(elbowAngle));
+        return y;
+    }
+
+    public static double solveForElbow(double x, double shoulderAngle) {
+        y = a1 * Math.sin(Math.toRadians(shoulderAngle))
+                + a2 * Math.sin(Math.toRadians(shoulderAngle) - Math.toRadians(elbowAngle));
+        // x = a3 + a1 * Math.cos(Math.toRadians(shoulderAngle)) + a2 *
+        // Math.cos(Math.toRadians(shoulderAngle) - Math.toRadians(elbowAngle));
+        elbowAngle = Math.acos((Math.pow(x, 2) + Math.pow(y, 2) - Math.pow(a1, 2) - Math.pow(a2, 2)) / (-2 * a1 * a2))
+                - Math.PI;
+    }
+
+    public static void main(String[] args) {
+        double x = -20;
+        double y = 25;
+        // double shoulderAngle = targetToAngleShoulder(x, y);
+        // double elbowAngle = targetToAngleElbow(x, y);
+        if (calculateAngles(x, y, false) == null) {
+            System.out.println("Not possible");
+        } else {
+            double shoulderAngle = calculateAngles(x, y, false)[0];
+            double elbowAngle = calculateAngles(x, y, false)[1];
+            double checkX = checkX(shoulderAngle, elbowAngle);
+            double checkY = checkY(shoulderAngle, elbowAngle);
+            System.out.println("x: " + x);
+            System.out.println("y: " + y);
+            System.out.println("shoulder angle: " + shoulderAngle);
+            System.out.println("elbow angle: " + elbowAngle);
+            System.out.println("check x: " + checkX);
+            System.out.println("check y: " + checkY);
+        }
+    }
+
+}
