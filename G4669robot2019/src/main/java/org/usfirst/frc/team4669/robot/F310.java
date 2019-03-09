@@ -1,6 +1,8 @@
 package org.usfirst.frc.team4669.robot;
 
+import org.usfirst.frc.team4669.robot.commands.auto.AlignToLine;
 import org.usfirst.frc.team4669.robot.commands.auto.BallAlignment;
+import org.usfirst.frc.team4669.robot.commands.auto.AlignToLine.Direction;
 import org.usfirst.frc.team4669.robot.commands.StopAll;
 import org.usfirst.frc.team4669.robot.commands.driveTrain.TurnTo;
 import org.usfirst.frc.team4669.robot.commands.grabber.CloseGrabber;
@@ -44,6 +46,7 @@ public class F310 {
 		leftJoyButtonObject = new JoystickButton(f310, F310.leftJoyButton);
 		rightJoyButtonObject = new JoystickButton(f310, F310.rightJoyButton);
 		startButtonObject.whenPressed(new StopAll());
+		orangeButtonObject.whenPressed(new AlignToLine(Direction.BACK));
 		blueButtonObject.whenPressed(new BallAlignment());
 		greenButtonObject.whenPressed(new OpenGrabber());
 		redButtonObject.whenPressed(new CloseGrabber());

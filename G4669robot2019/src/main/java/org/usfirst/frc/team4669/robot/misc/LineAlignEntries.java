@@ -5,9 +5,10 @@ import org.usfirst.frc.team4669.robot.Robot;
 public class LineAlignEntries {
     private int x0 = 0, y0 = 0, x1 = 0, y1 = 0;
     private double angle = 0;
-    private boolean front = true;
+    private boolean front = true, isLineDetected = false;
 
     public LineAlignEntries(boolean front) {
+        this.front = front;
         updateEntries();
     }
 
@@ -23,6 +24,7 @@ public class LineAlignEntries {
                 x1 = Robot.visionTable.getEntry("LineX1F").getNumber(0).intValue();
             if (Robot.visionTable.containsKey("LineY1F"))
                 y1 = Robot.visionTable.getEntry("LineY1F").getNumber(0).intValue();
+            isLineDetected = Robot.visionTable.getEntry("isLineFDetected").getBoolean(false);
         } else {
             if (Robot.visionTable.containsKey("LineX0R"))
                 x0 = Robot.visionTable.getEntry("LineX0R").getNumber(0).intValue();
@@ -34,6 +36,7 @@ public class LineAlignEntries {
                 x1 = Robot.visionTable.getEntry("LineX1R").getNumber(0).intValue();
             if (Robot.visionTable.containsKey("LineY1R"))
                 y1 = Robot.visionTable.getEntry("LineY1R").getNumber(0).intValue();
+            isLineDetected = Robot.visionTable.getEntry("isLineRDetected").getBoolean(false);
         }
     }
 
@@ -64,5 +67,9 @@ public class LineAlignEntries {
 
     public boolean isFrontFacing() {
         return front;
+    }
+
+    public boolean isLineDetected() {
+        return isLineDetected;
     }
 }

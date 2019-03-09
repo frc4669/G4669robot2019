@@ -50,27 +50,28 @@ public class PathfinderTest extends Command {
         try{
             rightTrajectory = PathfinderFRC.getTrajectory(pathName + ".left");
             leftTrajectory = PathfinderFRC.getTrajectory(pathName + ".right");
+            System.out.println("Got the trajectories successfully");
+
+            leftFollower = new EncoderFollower(leftTrajectory);
+            rightFollower = new EncoderFollower(rightTrajectory);
+
+            // Must configure PIDVA on the following line
+            leftFollower.configureEncoder(Robot.driveTrain.getFrontLeftEncoder(), Constants.encoderTicksPerRotation,
+                    Constants.wheelDiameter);
+            leftFollower.configurePIDVA(0.225, 0, 0.0016, 0.8 / Constants.maxVel, 0);
+
+            rightFollower.configureEncoder(Robot.driveTrain.getFrontRightEncoder(), Constants.encoderTicksPerRotation,
+                    Constants.wheelDiameter);
+            rightFollower.configurePIDVA(0.225, 0, 0.0016, 0.8 / Constants.maxVel, 0);
+
+            System.out.println("Starting path follow");
+            followerNotifier = new Notifier(this::followPath);
+            followerNotifier.startPeriodic(leftTrajectory.get(0).dt);
         } catch(Exception E){
             System.out.println("Could not retrieve trajectories, exception : " + E);
             end();
         }
-        System.out.println("Got the trajectories successfully");
-
-        leftFollower = new EncoderFollower(leftTrajectory);
-        rightFollower = new EncoderFollower(rightTrajectory);
-
-        // Must configure PIDVA on the following line
-        leftFollower.configureEncoder(Robot.driveTrain.getFrontLeftEncoder(), Constants.encoderTicksPerRotation,
-                Constants.wheelDiameter);
-        leftFollower.configurePIDVA(0.225, 0, 0.0016, 0.8 / Constants.maxVel, 0);
-
-        rightFollower.configureEncoder(Robot.driveTrain.getFrontRightEncoder(), Constants.encoderTicksPerRotation,
-                Constants.wheelDiameter);
-        rightFollower.configurePIDVA(0.225, 0, 0.0016, 0.8 / Constants.maxVel, 0);
-
-        System.out.println("Starting path follow");
-        followerNotifier = new Notifier(this::followPath);
-        followerNotifier.startPeriodic(leftTrajectory.get(0).dt);
+        
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -93,6 +94,7 @@ public class PathfinderTest extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+        end();
     }
 
     public void followPath() {

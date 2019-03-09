@@ -124,7 +124,7 @@ public class DriveTrain extends Subsystem {
         visionDistance, visionDistanceOutput);
     configPIDController(visionDistanceController, 0, Constants.pixyHeight-1, false, 0.5, 10);
 
-    strafeController = new PIDController(Constants.strafekP, 0, 0, strafeWrapper, strafeOutput);
+    strafeController = new PIDController(Constants.strafekP, 0, Constants.strafekD, strafeWrapper, strafeOutput);
     configPIDController(strafeController, 0, Constants.pixy2LineWidth, false, 0.3, 5);
 
     drive = new MecanumDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
@@ -140,6 +140,8 @@ public class DriveTrain extends Subsystem {
     talon.setSensorPhase(true);
 
     talon.setNeutralMode(NeutralMode.Brake);
+
+    talon.configOpenloopRamp(0.2,Constants.timeout);
 
     talon.configNominalOutputForward(0, Constants.timeout);
     talon.configNominalOutputReverse(0, Constants.timeout);

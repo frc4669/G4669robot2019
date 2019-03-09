@@ -18,10 +18,12 @@ public class Constants {
 	public static final double elevatorSprocketDiameter = 1.775; // in inches
 	public static final double wheelBase = 22.25; // figure out real distance later
 	public static final int encoderTicksPerRotation = 4096;
-	public static final double shoulderLength = 18.5;
-	public static final double shoulderHeight = 27;
-	public static final double elbowLength = 35.375;
-	public static final double wristLength = 0;
+	public static final double upperArmLength = 17.5;
+	public static final double shoulderHeight = 26;
+	public static final double armHeightOffset = 2;
+	public static final double forearmLength = 35.375;
+	public static final double handHookLength = 8.5;
+	public static final double handHoopLength = 13;
 	public static final double shoulderGearRatio = 4.5;
 	public static final double elbowGearRatio = 4.5;
 	public static final double wristGearRatio = 2;
@@ -46,6 +48,16 @@ public class Constants {
 	public static final double level3HeightInches = 19 + 0.5;
 	public static final double limitMaxHeight = 22;
 
+	public static final double xDistanceToPlace = 18;
+	public static final double hatch1Height = 18.3;
+	public static final double hatch2Height = 46.3;
+	public static final double hatch3Height = 74.3;
+	public static final double ball1Height = 26.8;
+	public static final double ball2Height = 54.8;
+	public static final double ball3Height = 82.8;
+	public static final double robotToArmFront = 20.9;
+	public static final double robotToArmBack = 8.5;
+
 	public static final double armGrabBallX = 15;
 	public static final double armGrabBallY = 6.5;
 
@@ -56,7 +68,8 @@ public class Constants {
 	// Constants for Pathfinder
 	public static final double maxVel = 77.4; // units in inches
 
-	public static final double strafekP = 2;
+	public static final double strafekP = 1.5;
+	public static final double strafekD = 5;
 
 	/**
 	 * Array for accessing PID constants for turning drive train
@@ -107,6 +120,10 @@ public class Constants {
 
 	public static final double armScaleFactor = 1;
 
+	public static final int defaultShoulder = 5229;
+	public static final int defaultElbow = -7710;
+	public static final int defaultWrist = 45;
+
 	public static final int shoulderVel = (int) (300 * armScaleFactor);
 	public static final int shoulderAccel = (int) (375 * armScaleFactor);
 	public static final int elbowVel = (int) (400 * armScaleFactor);
@@ -148,5 +165,6 @@ public class Constants {
 	public static final double ultraSonic5V = 1000 * 5 / 4.8 / 25.4; // 4.88mV per 5 mm sensitivity, convert voltage to
 																		// inches
 	public static final double infrared = 1 / 0.165 / 2.54; // Divide by this to get voltage scaling factor to inches
-
+	
+	public static final int arduinoBaudRate = 9600;
 }

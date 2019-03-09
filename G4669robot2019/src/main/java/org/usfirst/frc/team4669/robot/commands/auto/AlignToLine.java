@@ -31,14 +31,19 @@ public class AlignToLine extends Command {
     Robot.driveTrain.enablePIDController(Robot.driveTrain.getGyroController());
     switch(direction){
       case FRONT:
+        if(!Robot.frontLineEntries.isLineDetected())
+          end();
         Robot.driveTrain.updateStrafeInput(Robot.frontLineEntries.getX0());
         Robot.driveTrain.enablePIDController(Robot.driveTrain.getStrafeController());
-        Robot.driveTrain.setTarget(Robot.driveTrain.getStrafeController(), Constants.pixy2LineHeight/2);
+        Robot.driveTrain.setTarget(Robot.driveTrain.getStrafeController(), Constants.pixy2LineWidth/2);
         Robot.driveTrain.setTarget(Robot.driveTrain.getGyroController(), Robot.driveTrain.getAngle());
         break;
       case BACK:
+        if(!Robot.backLineEntries.isLineDetected())
+          end();
         Robot.driveTrain.updateStrafeInput(Robot.backLineEntries.getX0());
         Robot.driveTrain.enablePIDController(Robot.driveTrain.getStrafeController());
+        Robot.driveTrain.setTarget(Robot.driveTrain.getStrafeController(), Constants.pixy2LineWidth/2);
         Robot.driveTrain.setTarget(Robot.driveTrain.getStrafeController(), Robot.driveTrain.getAngle());
         break;
     }
@@ -55,7 +60,11 @@ public class AlignToLine extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.driveTrain.getPIDDone(Robot.driveTrain.getGyroController()) && Robot.driveTrain.getPIDDone(Robot.driveTrain.getStrafeController());
+    if(direction==Direction.FRONT&&!Robot.frontLineEntries.isLineDetected())
+      return true;
+    if(direction==Direction.BACK&&!Robot.backLineEntries.isLineDetected())
+      return true;
+    return (Robot.driveTrain.getPIDDone(Robot.driveTrain.getGyroController()) && Robot.driveTrain.getPIDDone(Robot.driveTrain.getStrafeController()));
   }
 
   // Called once after isFinished returns true

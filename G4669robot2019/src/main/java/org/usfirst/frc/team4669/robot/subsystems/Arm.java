@@ -25,9 +25,8 @@ public class Arm extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  double a1 = Constants.shoulderLength;
-  double a2 = Constants.elbowLength;
-  double a3 = Constants.wristLength;
+  double a1 = Constants.upperArmLength;
+  double a2 = Constants.forearmLength;
 
   private WPI_TalonSRX shoulderMotor;
   private WPI_TalonSRX elbowMotor;
@@ -46,8 +45,13 @@ public class Arm extends Subsystem {
     wristMotor = new WPI_TalonSRX(RobotMap.wristMotor);
 
     talonConfig(shoulderMotor, false);
+    shoulderMotor.setSelectedSensorPosition(Constants.defaultShoulder);
+
     talonConfig(elbowMotor, false);
+    elbowMotor.setSelectedSensorPosition(Constants.defaultElbow);
+
     talonConfig(wristMotor, true);
+    wristMotor.setSelectedSensorPosition(Constants.defaultWrist);
 
     setCurrentLimit(elbowMotor);
     setCurrentLimit(wristMotor);
@@ -61,10 +65,8 @@ public class Arm extends Subsystem {
     setMotionVelAccel(elbowMotor, Constants.elbowVel, Constants.elbowAccel);
     setMotionVelAccel(wristMotor, Constants.wristVel, Constants.wristAccel);
 
-    zeroEncoders();
-
     shoulderMotor.configOpenloopRamp(2);
-    elbowMotor.configOpenloopRamp(0.25);
+    elbowMotor.configOpenloopRamp(0.5);
 
   }
 
@@ -109,16 +111,27 @@ public class Arm extends Subsystem {
    * @return An array with the shoulder angle and elbow angle, or null or not a
    *         number if impossible
    */
-  public double[] calculateAngles(double x, double y, double targetGrabberAngle, boolean flipUp) {
+  public double[] calculateAngles(double x, double y, double targetGrabberAngle, boolean flipUp, boolean ballMode) {
+    double a3;
+    targetGrabberAngle -= 90;
+    if(ballMode)
+      a3 = Constants.handHoopLength;
+    else 
+      a3 = Constants.handHookLength;
+    if(!ballMode)
+      targetGrabberAngle+=180;
     double x1 = x - a3 * Math.cos(Math.toRadians(targetGrabberAngle));
     y = y - a3 * Math.sin(Math.toRadians(targetGrabberAngle));
-    if (y < 6.5)
+    if (y < 6.5){
+      System.out.println("Impossible Position, height too low");
       return null;
+    }
     y -= Constants.shoulderHeight;
     double distance = Math.sqrt(Math.pow(x1, 2) + Math.pow(y, 2)); // distance is a function of arm base and target xy
-    if (distance > a1 + a2 || distance < Math.abs(a1 - a2) || y < 0)
+    if (distance > a1 + a2 || distance < Math.abs(a1 - a2) || y < 0){
+      System.out.println("Impossible Position, cannot reach");
       return null;
-
+    }
     double elbowRad = Math.acos((Math.pow(distance, 2) - Math.pow(a1, 2) - Math.pow(a2, 2)) / (-2 * a1 * a2)) - Math.PI;
     if (flipUp)
       elbowRad = -elbowRad;
@@ -133,8 +146,10 @@ public class Arm extends Subsystem {
     double shoulderDeg = Math.toDegrees(shoulderRad);
     double wristDeg = targetGrabberAngle - shoulderDeg;
     if (shoulderDeg < 0 || shoulderDeg > 180 || Math.abs(elbowDeg) > 150 || shoulderDeg != shoulderDeg
-        || elbowDeg != elbowDeg)
-      return null;
+        || elbowDeg != elbowDeg){
+        System.out.println("Impossible Position, angles are impossible");
+        return null;
+    }
     double[] anglesArr = { shoulderDeg, elbowDeg, wristDeg };
     return anglesArr;
   }
@@ -167,7 +182,12 @@ public class Arm extends Subsystem {
    * 
    * @return x position of the arm
    */
-  public double getX() {
+  public double getX(boolean ballMode) {
+    double a3;
+    if(ballMode)
+      a3 = Constants.handHoopLength;
+    else 
+      a3 = Constants.handHookLength;
     double shoulderAngle = getMotorAngle(getShoulderMotor());
     double elbowAngle = getMotorAngle(getElbowMotor());
     double x = a3 + a1 * Math.cos(Math.toRadians(shoulderAngle))
@@ -238,14 +258,16 @@ public class Arm extends Subsystem {
     talon.config_kI(RobotMap.slotIdx, pidArr[2], Constants.timeout);
     talon.config_kD(RobotMap.slotIdx, pidArr[3], Constants.timeout);
     talon.config_IntegralZone(RobotMap.slotIdx, (int) pidArr[4], Constants.timeout);
+    talon.configClearPositionOnLimitF(false, Constants.timeout);
+    talon.configClearPositionOnLimitR(false, Constants.timeout);
     talon.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeout);
+
   }
 
   public void zeroEncoders() {
     shoulderMotor.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeout);
     elbowMotor.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeout);
     wristMotor.setSelectedSensorPosition(0, RobotMap.pidIdx, Constants.timeout);
-
   }
 
   public double getEncoderPosition(TalonSRX talon) {

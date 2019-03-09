@@ -7,6 +7,8 @@
 
 package org.usfirst.frc.team4669.robot;
 
+import java.awt.Color;
+
 import org.usfirst.frc.team4669.robot.commands.*;
 import org.usfirst.frc.team4669.robot.commands.arm.*;
 import org.usfirst.frc.team4669.robot.commands.elevator.*;
@@ -14,6 +16,7 @@ import org.usfirst.frc.team4669.robot.commands.driveTrain.*;
 import org.usfirst.frc.team4669.robot.commands.auto.*;
 import org.usfirst.frc.team4669.robot.commands.auto.AlignToLine.Direction;
 import org.usfirst.frc.team4669.robot.commands.grabber.*;
+import org.usfirst.frc.team4669.robot.misc.ArduinoCommunicator;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 import org.usfirst.frc.team4669.robot.misc.LineAlignEntries;
 import org.usfirst.frc.team4669.robot.misc.VisionEntries;
@@ -22,6 +25,7 @@ import org.usfirst.frc.team4669.robot.subsystems.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -42,7 +46,7 @@ public class Robot extends TimedRobot {
 	public static NetworkTable visionTable;
 	public static OI oi;
 	public static F310 f310;
-	public static DriverStation driverStation;
+	public static ButtonBoard buttonBoard;
 	public static DriveTrain driveTrain;
 	public static LineAlignEntries frontLineEntries;
 	public static LineAlignEntries backLineEntries;
@@ -56,6 +60,8 @@ public class Robot extends TimedRobot {
 	public static AnalogDistanceSensor ultrasonic;
 	public static int elevatorVel = 300;
 	public static int elevatorAccel = 600;
+	public static ArduinoCommunicator arduinoCommunicator;
+	public static boolean endgameStarted = false;
 
 	Command autonomousCommand;
 	SendableChooser<String> chooser = new SendableChooser<String>();
@@ -76,6 +82,9 @@ public class Robot extends TimedRobot {
 		// ultrasonic = new AnalogUltrasonic(0);
 		oi = new OI();
 		f310 = new F310();
+		buttonBoard = new ButtonBoard();
+		
+		arduinoCommunicator = new ArduinoCommunicator();
 
 		visionEntries = new VisionEntries();
 		frontLineEntries = new LineAlignEntries(true);
@@ -98,6 +107,8 @@ public class Robot extends TimedRobot {
 
 	public void robotPeriodic(){
 		updateSmartDashboard();
+		if(arm.getElbowMotor().getSensorCollection().isRevLimitSwitchClosed()) 
+			arm.getElbowMotor().setSelectedSensorPosition(Constants.defaultElbow,RobotMap.pidIdx, Constants.timeout);
 	}
 
 	/**
@@ -144,6 +155,7 @@ public class Robot extends TimedRobot {
 			autonomousCommand = new DoNothing();
 		if (chooser.getSelected().equals("Pathfinder"))
 			autonomousCommand = new PathfinderTest();
+		arduinoCommunicator.sendRGB(255,128,0);
 
 		// schedule the autonomous command (example)
 		if (autonomousCommand != null) {
@@ -170,6 +182,11 @@ public class Robot extends TimedRobot {
 		if (autonomousCommand != null) {
 			autonomousCommand.cancel();
 		}
+		if(DriverStation.getInstance().getAlliance()==DriverStation.Alliance.Red)
+			arduinoCommunicator.sendRGB(Color.red.getRed(),Color.red.getGreen(),Color.red.getBlue());
+		else if(DriverStation.getInstance().getAlliance()==DriverStation.Alliance.Blue)
+			arduinoCommunicator.sendRGB(Color.blue.getRed(),Color.blue.getGreen(),Color.blue.getBlue());
+
 	}
 
 	/**
@@ -180,6 +197,10 @@ public class Robot extends TimedRobot {
 		if (f310.getDPadPOV() != -1) {
 			Command turn = new TurnTo(f310.getDPadPOV());
 			turn.start();
+		}
+		if(Timer.getMatchTime()<=30&&!endgameStarted){
+			arduinoCommunicator.sendString("endgame");
+			endgameStarted = true;
 		}
 		Scheduler.getInstance().run();
 		// updateSmartDashboard();
@@ -214,11 +235,14 @@ public class Robot extends TimedRobot {
 
 		SmartDashboard.putNumber("Arm/Target X", 0);
 		SmartDashboard.putNumber("Arm/Target Y", 0);
-		SmartDashboard.putBoolean("Arm/Flip Wrist", false);
+		SmartDashboard.putNumber("Arm/Wrist Angle", 0);
+
+		SmartDashboard.putBoolean("Arm/Flip Wrist", true);
 		SmartDashboard.putBoolean("Arm/Flip Elbow", false);
 
 		SmartDashboard.putData("Line Align", new AlignToLine(Direction.FRONT));
 		SmartDashboard.putData("Toggle Compressor", new ToggleCompressor());
+		SmartDashboard.putData("Arm/Starter Arm", new StarterArm());
 
 		// SmartDashboard.putNumber("Elevator Distance", 0);
 		// SmartDashboard.putNumber("Elevator Drive", 0);
@@ -281,15 +305,13 @@ public class Robot extends TimedRobot {
 
 		double targetX = SmartDashboard.getNumber("Arm/Target X", 20);
 		double targetY = SmartDashboard.getNumber("Arm/Target Y", 20);
-		double wristAngle = 0;
-		if(SmartDashboard.getBoolean("Arm/Flip Wrist",false)){
-			wristAngle = 180;
-		}
+		double wristAngle = SmartDashboard.getNumber("Arm/Wrist Angle", 0);
+		boolean flipWrist = SmartDashboard.getBoolean("Arm/Flip Wrist",false);
 
 		SmartDashboard.putData("Arm/Set Arm Angle", new ArmAngleSet(targetShoulder, targetElbow, targetWrist));
 		boolean flipUp = SmartDashboard.getBoolean("Arm/Flip Elbow", false);
 
-		SmartDashboard.putData("Arm/Arm to Position", new ArmToPosition(targetX, targetY, wristAngle, flipUp));
+		SmartDashboard.putData("Arm/Arm to Position", new ArmToPosition(targetX, targetY, wristAngle, flipUp, flipWrist));
 		SmartDashboard.putData("Arm/Zero Arm Encoders", new ZeroArmEncoders());
 
 		// SmartDashboard.putNumber("Acceleration X", Robot.elevator.getAccelX());

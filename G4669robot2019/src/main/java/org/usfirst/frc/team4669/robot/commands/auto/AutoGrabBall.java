@@ -38,7 +38,7 @@ public class AutoGrabBall extends CommandGroup {
 
     addSequential(new BallAlignment());
     // addParallel(new OpenGrabber());
-    addSequential(new ArmToPosition(Constants.armGrabBallX, Constants.armGrabBallY, 0, false));
+    addSequential(new ArmToPosition(Constants.armGrabBallX, Constants.armGrabBallY, 0, false, true));
     addSequential(new DriveForwardMotionMagic(2));
     // addSequential(new CloseGrabber());
     addSequential(new RetractArm());

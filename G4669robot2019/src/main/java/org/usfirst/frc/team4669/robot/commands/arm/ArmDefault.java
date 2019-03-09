@@ -8,6 +8,7 @@
 package org.usfirst.frc.team4669.robot.commands.arm;
 
 import org.usfirst.frc.team4669.robot.Robot;
+import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -24,7 +25,10 @@ public class ArmDefault extends Command {
   @Override
   protected void initialize() {
     Robot.arm.stop();
-    
+    Robot.arm.setMotorPosMagic(Robot.arm.getShoulderMotor(), Constants.defaultShoulder);
+    Robot.arm.setMotorPosMagic(Robot.arm.getElbowMotor(), Constants.defaultElbow);
+    Robot.arm.setMotorPosMagic(Robot.arm.getWristMotor(), Constants.defaultWrist);
+  
   }
 
   // Called repeatedly when this Command is scheduled to run

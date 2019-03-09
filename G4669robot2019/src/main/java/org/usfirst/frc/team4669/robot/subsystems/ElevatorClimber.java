@@ -43,16 +43,16 @@ public class ElevatorClimber extends Subsystem {
 
         accel = new BuiltInAccelerometer();
 
-        setupMotor(leftMotor, true, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false, true);
-        leftMotor.configForwardSoftLimitEnable(true);
-        leftMotor.configForwardSoftLimitThreshold(0);
+        setupMotor(leftMotor, false, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false, true);
+        leftMotor.configForwardSoftLimitEnable(false);
+        // leftMotor.configForwardSoftLimitThreshold(0);
         leftMotor.configReverseSoftLimitEnable(true);
         leftMotor.configReverseSoftLimitThreshold((int) (-Constants.limitMaxHeight * Constants.inchToEncoderElevator));
 
-        setupMotor(rightMotor, true, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false,
+        setupMotor(rightMotor, false, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false,
                 true);
-        rightMotor.configForwardSoftLimitEnable(true);
-        rightMotor.configForwardSoftLimitThreshold(0);
+        rightMotor.configForwardSoftLimitEnable(false);
+        // rightMotor.configForwardSoftLimitThreshold(0);
         rightMotor.configReverseSoftLimitEnable(true);
         rightMotor.configReverseSoftLimitThreshold((int) (-Constants.limitMaxHeight * Constants.inchToEncoderElevator));
         setupMotor(wheelMotor, true, Constants.elevatorWheelPID, Constants.elevatorWheelVel,
@@ -138,11 +138,11 @@ public class ElevatorClimber extends Subsystem {
         talon.set(ControlMode.MotionMagic, -position);
     }
 
-    public double getEncoderPos(TalonSRX talon) {
+    public int getEncoderPos(TalonSRX talon) {
         return talon.getSelectedSensorPosition();
     }
 
-    public double getEncoderVel(TalonSRX talon) {
+    public int getEncoderVel(TalonSRX talon) {
         return talon.getSelectedSensorVelocity();
     }
 
