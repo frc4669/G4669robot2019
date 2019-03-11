@@ -106,32 +106,47 @@ public class Arm extends Subsystem {
    * position
    * 
    * @param x      Target length away from the base of the arm. Units in inches
-   * @param y      Target height away from the base of the arm. Units in inches
+   * @param y      Target height from the ground. Units in inches
    * @param flipUp Changes whether to flip up the elbow or not
-   * @return An array with the shoulder angle and elbow angle, or null or not a
-   *         number if impossible
+   * @param ballMode Whether we're trying to grab a cargo or hatch panel
+   * @return An array with the shoulder angle and elbow angle, null, or NaN if impossible
    */
   public double[] calculateAngles(double x, double y, double targetGrabberAngle, boolean flipUp, boolean ballMode) {
     double a3;
-    targetGrabberAngle -= 90;
-    if(ballMode)
+    //Changes the mode of the wrist depending on whether we want the hatch or the cargo 
+    if(ballMode){
       a3 = Constants.handHoopLength;
-    else 
+    }
+    else  {
       a3 = Constants.handHookLength;
-    if(!ballMode)
+    }
+    if(!ballMode){
       targetGrabberAngle+=180;
+    }
+
+    //Corrects our x and y position based on the length of the hand
     double x1 = x - a3 * Math.cos(Math.toRadians(targetGrabberAngle));
     y = y - a3 * Math.sin(Math.toRadians(targetGrabberAngle));
+
+    //Wrist correction factor
+    targetGrabberAngle -= 90;
+
+    //Avoids making the target height too low
     if (y < 6.5){
-      System.out.println("Impossible Position, height too low");
       return null;
     }
+    //Corrects the height target to now be referenced from the joint base of the arm
     y -= Constants.shoulderHeight;
-    double distance = Math.sqrt(Math.pow(x1, 2) + Math.pow(y, 2)); // distance is a function of arm base and target xy
+
+    //Gets the distance from the base of the arm to the target position
+    double distance = Math.sqrt(Math.pow(x1, 2) + Math.pow(y, 2));
+
+    //Checks if target position is feasible with the lengths of the arm
     if (distance > a1 + a2 || distance < Math.abs(a1 - a2) || y < 0){
-      System.out.println("Impossible Position, cannot reach");
       return null;
     }
+
+    //Now calculate the angles for each motor
     double elbowRad = Math.acos((Math.pow(distance, 2) - Math.pow(a1, 2) - Math.pow(a2, 2)) / (-2 * a1 * a2)) - Math.PI;
     if (flipUp)
       elbowRad = -elbowRad;
@@ -145,11 +160,13 @@ public class Arm extends Subsystem {
     double elbowDeg = Math.toDegrees(elbowRad);
     double shoulderDeg = Math.toDegrees(shoulderRad);
     double wristDeg = targetGrabberAngle - shoulderDeg;
-    if (shoulderDeg < 0 || shoulderDeg > 180 || Math.abs(elbowDeg) > 150 || shoulderDeg != shoulderDeg
-        || elbowDeg != elbowDeg){
-        System.out.println("Impossible Position, angles are impossible");
+
+    //Checks if our angles are too large, or if angles aren't possible
+    if (shoulderDeg < 0 || shoulderDeg > 180 || Math.abs(elbowDeg) > 150 || shoulderDeg != shoulderDeg || elbowDeg != elbowDeg){
         return null;
     }
+
+    //Returns the angles in the form of an array
     double[] anglesArr = { shoulderDeg, elbowDeg, wristDeg };
     return anglesArr;
   }
