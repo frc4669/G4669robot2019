@@ -29,6 +29,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
@@ -51,12 +56,9 @@ public class Robot extends TimedRobot {
 	public static LineAlignEntries frontLineEntries;
 	public static LineAlignEntries backLineEntries;
 	public static VisionEntries visionEntries;
-	// public static CubeIntake intake;
-	// public static Climber climber;
 	public static ElevatorClimber elevator;
 	public static Arm arm;
 	public static Grabber grabber;
-	public static PixySubsystem pixySub;
 	public static AnalogDistanceSensor ultrasonic;
 	public static int elevatorVel = 300;
 	public static int elevatorAccel = 600;
@@ -78,7 +80,6 @@ public class Robot extends TimedRobot {
 		driveTrain = new DriveTrain();
 		arm = new Arm();
 		grabber = new Grabber();
-		pixySub = new PixySubsystem();
 		// ultrasonic = new AnalogUltrasonic(0);
 		oi = new OI();
 		f310 = new F310();
@@ -94,20 +95,23 @@ public class Robot extends TimedRobot {
 		driveTrain.resetGyro();
 		driveTrain.calibrateGyro();
 
-		
-
 		// Sends Strings to chooser and not commands in the case of the command
 		// requiring something that only occurs during auto init
 		chooser.addDefault("Do Nothing", "DoNothing");
 		chooser.addObject("Pathfinder", "Pathfinder");
-		SmartDashboard.putData("Auto mode", chooser);
-		testSmartDashboardInit();
+
+		competitionDashboardInit();
+
+		// SmartDashboard.putData("Auto mode", chooser);
+		// testSmartDashboardInit();
 
 	}
 
 	public void robotPeriodic(){
 		updateSmartDashboard();
-		if(arm.getElbowMotor().getSensorCollection().isRevLimitSwitchClosed()) 
+
+		//Calibrate Elbow encoder position upon reaching reverse limit switch
+		if(arm.getElbowMotor().getSensorCollection().isRevLimitSwitchClosed())
 			arm.getElbowMotor().setSelectedSensorPosition(Constants.defaultElbow,RobotMap.pidIdx, Constants.timeout);
 	}
 
@@ -124,7 +128,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
-		// updateSmartDashboard();
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
 
@@ -182,6 +185,7 @@ public class Robot extends TimedRobot {
 		if (autonomousCommand != null) {
 			autonomousCommand.cancel();
 		}
+		//Sends alliance color to Arduino for RGB lighting
 		if(DriverStation.getInstance().getAlliance()==DriverStation.Alliance.Red)
 			arduinoCommunicator.sendRGB(Color.red.getRed(),Color.red.getGreen(),Color.red.getBlue());
 		else if(DriverStation.getInstance().getAlliance()==DriverStation.Alliance.Blue)
@@ -218,7 +222,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
 		Scheduler.getInstance().run();
-		// testSmartDashboard();
 
 	}
 
@@ -243,6 +246,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Line Align", new AlignToLine(Direction.FRONT));
 		SmartDashboard.putData("Toggle Compressor", new ToggleCompressor());
 		SmartDashboard.putData("Arm/Starter Arm", new StarterArm());
+		SmartDashboard.putData("Arm/Zero Arm Encoders", new ZeroArmEncoders());
+
 
 		// SmartDashboard.putNumber("Elevator Distance", 0);
 		// SmartDashboard.putNumber("Elevator Drive", 0);
@@ -252,6 +257,24 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putNumber("Turn To", 0);
 		// SmartDashboard.putNumber("Strafe Position", 0);
 
+	}
+
+	public void competitionDashboardInit(){
+		ShuffleboardTab compTab = Shuffleboard.getTab("Competition");
+		compTab.add("Auto Mode", chooser).withSize(3, 1).withPosition(5, 5);
+	}
+
+	public void competitionDashboardPeriodic(){
+		ShuffleboardTab compTab = Shuffleboard.getTab("Competition");
+		compTab.add("Gyro",driveTrain.getAngle()).withWidget(BuiltInWidgets.kGyro);
+		ShuffleboardLayout compressor = compTab.getLayout("Compressor", BuiltInLayouts.kList).withSize(2, 2);
+		compressor.add("Compressor Enabled", grabber.isCompressorRunning());
+		compressor.add("Pressure Low", grabber.isPressureLow());
+		ShuffleboardLayout distanceSensors = compTab.getLayout("Distance", BuiltInLayouts.kList).withSize(1, 2);
+		distanceSensors.add("Front Dist", driveTrain.getFrontDistance());
+		distanceSensors.add("Rear Dist", driveTrain.getRearDistance());
+
+		
 	}
 
 	public void testSmartDashboard() {
@@ -288,11 +311,8 @@ public class Robot extends TimedRobot {
 		 */
 
 		SmartDashboard.putNumber("Arm/Shoulder Position", arm.getEncoderPosition(arm.getShoulderMotor()));
-		SmartDashboard.putNumber("Arm/Shoulder Velocity", arm.getEncoderVelocity(arm.getShoulderMotor()));
 		SmartDashboard.putNumber("Arm/Elbow Position", arm.getEncoderPosition(arm.getElbowMotor()));
-		SmartDashboard.putNumber("Arm/Elbow Velocity", arm.getEncoderVelocity(arm.getElbowMotor()));
 		SmartDashboard.putNumber("Arm/Wrist Position", arm.getEncoderPosition(arm.getWristMotor()));
-		SmartDashboard.putNumber("Arm/Wrist Velocity", arm.getEncoderVelocity(arm.getWristMotor()));
 		SmartDashboard.putNumber("Arm/Shoulder Angle", arm.getMotorAngle(arm.getShoulderMotor()));
 		SmartDashboard.putNumber("Arm/Elbow Angle", arm.getMotorAngle(arm.getElbowMotor()));
 		SmartDashboard.putNumber("Arm/Wrist Angle", arm.getMotorAngle(arm.getWristMotor()));
@@ -312,7 +332,6 @@ public class Robot extends TimedRobot {
 		boolean flipUp = SmartDashboard.getBoolean("Arm/Flip Elbow", false);
 
 		SmartDashboard.putData("Arm/Arm to Position", new ArmToPosition(targetX, targetY, wristAngle, flipUp, flipWrist));
-		SmartDashboard.putData("Arm/Zero Arm Encoders", new ZeroArmEncoders());
 
 		// SmartDashboard.putNumber("Acceleration X", Robot.elevator.getAccelX());
 		// SmartDashboard.putNumber("Acceleration Y", Robot.elevator.getAccelY());

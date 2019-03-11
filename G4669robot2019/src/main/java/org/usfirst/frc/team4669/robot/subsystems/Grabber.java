@@ -50,6 +50,11 @@ public class Grabber extends Subsystem {
     return compressor.enabled();
   }
 
+  public boolean isPressureLow(){
+    return compressor.getPressureSwitchValue();
+  }
+
+
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.

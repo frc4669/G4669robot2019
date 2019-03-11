@@ -1,8 +1,8 @@
 package org.usfirst.frc.team4669.robot.subsystems;
 
+import org.usfirst.frc.team4669.robot.AnalogDistanceSensor;
 import org.usfirst.frc.team4669.robot.RobotMap;
 import org.usfirst.frc.team4669.robot.commands.elevator.TeleopClimber;
-// import org.usfirst.frc.team4669.robot.commands.TeleopElevator;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import com.ctre.phoenix.ParamEnum;
@@ -28,6 +28,10 @@ public class ElevatorClimber extends Subsystem {
     private WPI_TalonSRX rightMotor;
     private Accelerometer accel;
 
+    private AnalogDistanceSensor leftSensor;
+    private AnalogDistanceSensor rightSensor;
+
+
     private int timeout = Constants.timeout;
     private int slotIdx = RobotMap.slotIdx;
     private int pidIdx = RobotMap.pidIdx;
@@ -40,6 +44,12 @@ public class ElevatorClimber extends Subsystem {
         leftMotor = new WPI_TalonSRX(RobotMap.leftMotorElevator);
         rightMotor = new WPI_TalonSRX(RobotMap.rightMotorElevator);
         wheelMotor = new WPI_TalonSRX(RobotMap.wheelMotorElevator);
+
+        leftSensor = new AnalogDistanceSensor(RobotMap.infrared);
+        rightSensor = new AnalogDistanceSensor(Constants.infrared);
+
+        leftSensor.setScaleFactor(Constants.infrared);
+        rightSensor.setScaleFactor(Constants.infrared);
 
         accel = new BuiltInAccelerometer();
 
@@ -169,6 +179,14 @@ public class ElevatorClimber extends Subsystem {
 
     public void zeroVelocity(TalonSRX talon) {
         talon.set(ControlMode.Velocity, 0);
+    }
+
+    public double getLeftHeight(){
+        return leftSensor.getDistance();
+    }
+
+    public double getRightHeight(){
+        return leftSensor.getDistance();
     }
 
     public double getAccelX() {

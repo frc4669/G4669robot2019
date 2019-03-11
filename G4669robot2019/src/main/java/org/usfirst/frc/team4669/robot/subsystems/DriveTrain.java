@@ -13,16 +13,13 @@ import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import org.usfirst.frc.team4669.robot.RobotMap;
 import org.usfirst.frc.team4669.robot.commands.driveTrain.JoystickDrive;
 import org.usfirst.frc.team4669.robot.misc.Constants;
-import org.usfirst.frc.team4669.robot.misc.LineAlignEntries;
 import org.usfirst.frc.team4669.robot.misc.PIDOutputWrapper;
 import org.usfirst.frc.team4669.robot.misc.PIDSourceWrapper;
-import org.usfirst.frc.team4669.robot.misc.VisionEntries;
 
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
@@ -46,22 +43,23 @@ public class DriveTrain extends Subsystem {
 
   private MecanumDrive drive;
 
-  public PIDSourceWrapper visionDistance;
-  public PIDSourceWrapper visionTurn;
-  public PIDSourceWrapper strafeWrapper;
+  private PIDSourceWrapper visionDistance;
+  private PIDSourceWrapper visionTurn;
+  private PIDSourceWrapper strafeWrapper;
 
-  public PIDController gyroPID;
-  public PIDController visionTurnController;
-  public PIDController visionDistanceController;
-  public PIDController strafeController;
+  private PIDController gyroPID;
+  private PIDController visionTurnController;
+  private PIDController visionDistanceController;
+  private PIDController strafeController;
 
   private PIDOutputWrapper turnOutput;
   private PIDOutputWrapper visionTurnOutput;
   private PIDOutputWrapper visionDistanceOutput;
   private PIDOutputWrapper strafeOutput;
 
+  private Ultrasonic frontUltrasonic;
+  private Ultrasonic rearUltrasonic;
 
-  public Ultrasonic digitalUltrasonic;
 
   private Gyro gyro;
 
@@ -78,8 +76,10 @@ public class DriveTrain extends Subsystem {
   public DriveTrain() {
     super();
     gyro = new ADXRS450_Gyro();
-    // digitalUltrasonic = new Ultrasonic(0, 1);
-    // digitalUltrasonic.setAutomaticMode(true);
+    frontUltrasonic = new Ultrasonic(0, 1);
+    frontUltrasonic.setAutomaticMode(true);
+    rearUltrasonic = new Ultrasonic(2, 3);
+    rearUltrasonic.setAutomaticMode(true);
     
     strafeWrapper = new PIDSourceWrapper(0);
     visionDistance = new PIDSourceWrapper(0);
@@ -438,7 +438,11 @@ public class DriveTrain extends Subsystem {
     return gyro;
   }
 
-  // public double getFrontDistance() {
-  // return digitalUltrasonic.getRangeInches();
-  // }
+  public double getFrontDistance() {
+    return frontUltrasonic.getRangeInches();
+  }
+
+  public double getRearDistance() {
+    return rearUltrasonic.getRangeInches();
+  }
 }

@@ -9,8 +9,9 @@ package org.usfirst.frc.team4669.robot;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 
-/** Class that implements analog inputs for use with ultrasonic sensor. */
+/** Class that implements analog inputs for use with analog distance sensors. */
 public class AnalogDistanceSensor extends AnalogInput {
+    double scaleFactor = 1;
 
     public AnalogDistanceSensor(int port) {
         super(port);
@@ -19,11 +20,16 @@ public class AnalogDistanceSensor extends AnalogInput {
     /**
      * @return The instantaneous distance measured by the sensor.
      */
-    public double getDistance(double scaleFactor) {
+    public double getDistance() {
         return getVoltage() * scaleFactor;
     }
 
+    public void setScaleFactor(double scaleFactor){
+        this.scaleFactor = scaleFactor;
+    }
+
     /** @return The instantaneous voltage value of the sensor */
+    @Override
     public double getVoltage() {
         return super.getVoltage();
     }
