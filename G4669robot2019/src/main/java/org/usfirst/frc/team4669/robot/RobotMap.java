@@ -50,8 +50,12 @@ public class RobotMap {
 	public static final int pidIdx = 0;
 
 	/** Sensor IDs */
-	public static final int farUltrasonic = 0; // Analog channel 0
-	public static final int closeInfared = 1; // Analog channel 1
+	public static final int frontUltrasonicEcho = 0;
+	public static final int frontUltrasonicTrigger = 1;
+	public static final int rearUltrasonicEcho = 2;
+	public static final int rearUltrasonicTrigger = 3;
+	public static final int leftInfrared = 1; // Infrared sensors use analog channels;
+	public static final int rightInfrared = 2;
 
 	/** Pneumatic Channels */
 	public static final int solenoidForward = 0;

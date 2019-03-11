@@ -28,9 +28,4 @@ public class AnalogDistanceSensor extends AnalogInput {
         this.scaleFactor = scaleFactor;
     }
 
-    /** @return The instantaneous voltage value of the sensor */
-    @Override
-    public double getVoltage() {
-        return super.getVoltage();
-    }
 }

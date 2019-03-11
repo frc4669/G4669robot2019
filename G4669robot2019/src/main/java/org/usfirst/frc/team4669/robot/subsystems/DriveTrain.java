@@ -76,9 +76,9 @@ public class DriveTrain extends Subsystem {
   public DriveTrain() {
     super();
     gyro = new ADXRS450_Gyro();
-    frontUltrasonic = new Ultrasonic(0, 1);
+    frontUltrasonic = new Ultrasonic(RobotMap.frontUltrasonicEcho,RobotMap.frontUltrasonicTrigger);
     frontUltrasonic.setAutomaticMode(true);
-    rearUltrasonic = new Ultrasonic(2, 3);
+    rearUltrasonic = new Ultrasonic(RobotMap.rearUltrasonicEcho,RobotMap.rearUltrasonicTrigger);
     rearUltrasonic.setAutomaticMode(true);
     
     strafeWrapper = new PIDSourceWrapper(0);

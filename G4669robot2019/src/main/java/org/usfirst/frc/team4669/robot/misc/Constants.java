@@ -164,7 +164,7 @@ public class Constants {
 	/** Sensor constants */
 	public static final double ultraSonic5V = 1000 * 5 / 4.8 / 25.4; // 4.88mV per 5 mm sensitivity, convert voltage to
 																		// inches
-	public static final double infrared = 1 / 0.165 / 2.54; // Divide by this to get voltage scaling factor to inches
+	public static final double infraredScale = 1 / 0.165 / 2.54; // Divide by this to get voltage scaling factor to inches
 	
 	public static final int arduinoBaudRate = 9600;
 }

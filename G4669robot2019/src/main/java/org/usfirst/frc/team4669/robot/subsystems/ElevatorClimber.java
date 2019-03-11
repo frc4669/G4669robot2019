@@ -45,11 +45,11 @@ public class ElevatorClimber extends Subsystem {
         rightMotor = new WPI_TalonSRX(RobotMap.rightMotorElevator);
         wheelMotor = new WPI_TalonSRX(RobotMap.wheelMotorElevator);
 
-        leftSensor = new AnalogDistanceSensor(RobotMap.infrared);
-        rightSensor = new AnalogDistanceSensor(Constants.infrared);
+        leftSensor = new AnalogDistanceSensor(RobotMap.leftInfrared);
+        rightSensor = new AnalogDistanceSensor(RobotMap.rightInfrared);
 
-        leftSensor.setScaleFactor(Constants.infrared);
-        rightSensor.setScaleFactor(Constants.infrared);
+        leftSensor.setScaleFactor(Constants.infraredScale);
+        rightSensor.setScaleFactor(Constants.infraredScale);
 
         accel = new BuiltInAccelerometer();
 
