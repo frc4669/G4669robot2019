@@ -65,6 +65,8 @@ public class Robot extends TimedRobot {
 	public static ArduinoCommunicator arduinoCommunicator;
 	public static boolean endgameStarted = false;
 
+	public static boolean toggleBallMode = false;
+
 	Command autonomousCommand;
 	SendableChooser<String> chooser = new SendableChooser<String>();
 
@@ -112,6 +114,9 @@ public class Robot extends TimedRobot {
 		//Calibrate Elbow encoder position upon reaching reverse limit switch
 		if(arm.getElbowMotor().getSensorCollection().isRevLimitSwitchClosed())
 			arm.getElbowMotor().setSelectedSensorPosition(Constants.startElbow,RobotMap.pidIdx, Constants.timeout);
+		if(buttonBoard.getButton(1)){
+			toggleBallMode =!toggleBallMode;
+		}
 	}
 
 	/**
@@ -172,6 +177,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
+		if (f310.getDPadPOV() != -1) {
+			Command turn = new TurnTo(f310.getDPadPOV());
+			turn.start();
+		}
 		// updateSmartDashboard();
 	}
 

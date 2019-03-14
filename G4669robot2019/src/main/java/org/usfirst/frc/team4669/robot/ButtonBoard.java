@@ -29,15 +29,25 @@ public class ButtonBoard {
 		button11 = new JoystickButton(buttonBoard, 11);
 		button12 = new JoystickButton(buttonBoard, 12);
 
+		if(Robot.toggleBallMode){
+			button4.whenPressed(new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, Constants.hatch1Height, 0, false, true));
+			button5.whenPressed(new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, Constants.hatch2Height, 0, false, true));
+			button6.whenPressed(new ArmToPosition(Constants.robotToArmFront, Constants.hatch3Height, 0, false, true));
 
-		button4.whenPressed(new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, Constants.hatch1Height, 0, false, false));
-		button5.whenPressed(new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, Constants.hatch2Height, 0, false, false));
-		button6.whenPressed(new ArmToPosition(Constants.robotToArmFront, Constants.hatch3Height, 0, false, false));
+			button10.whenPressed(new ArmToPosition(-(Constants.robotToArmBack + 30), Constants.hatch1Height, 180, true, true));
+			button11.whenPressed(new ArmToPosition(-(Constants.robotToArmBack + Constants.xDistanceToPlace), Constants.hatch2Height, 180, true, true));
+			button12.whenPressed(new ArmToPosition(-(Constants.robotToArmBack), Constants.hatch3Height, 180, false, true));
+			
+		} else {
+			button4.whenPressed(new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, Constants.hatch1Height, 0, false, false));
+			button5.whenPressed(new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, Constants.hatch2Height, 0, false, false));
+			button6.whenPressed(new ArmToPosition(Constants.robotToArmFront, Constants.hatch3Height, 0, false, false));
 
-		button10.whenPressed(new ArmToPosition(-(Constants.robotToArmBack + 30), Constants.hatch1Height, 180, true, false));
-		button11.whenPressed(new ArmToPosition(-(Constants.robotToArmBack + Constants.xDistanceToPlace), Constants.hatch2Height, 180, true, false));
-		button12.whenPressed(new ArmToPosition(-(Constants.robotToArmBack), Constants.hatch3Height, 180, false, false));
-
+			button10.whenPressed(new ArmToPosition(-(Constants.robotToArmBack + 30), Constants.hatch1Height, 180, true, false));
+			button11.whenPressed(new ArmToPosition(-(Constants.robotToArmBack + Constants.xDistanceToPlace), Constants.hatch2Height, 180, true, false));
+			button12.whenPressed(new ArmToPosition(-(Constants.robotToArmBack), Constants.hatch3Height, 180, false, false));
+			
+		}
 
 	}
 

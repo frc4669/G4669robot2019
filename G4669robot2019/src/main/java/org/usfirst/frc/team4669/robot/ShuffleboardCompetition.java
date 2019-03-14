@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class ShuffleboardCompetition {
     static ShuffleboardTab compTab = Shuffleboard.getTab("Competition");
-    private static NetworkTableEntry frontDist,rearDist, compStatus, pressureStatus,leftDist,rightDist;
+    private static NetworkTableEntry frontDist,rearDist, compStatus, pressureStatus,leftDist,rightDist, ballModeToggle;
     public static void initialize(){
 		compTab.add((Sendable) Robot.driveTrain.getGyro()).withProperties(Map.of("Label position", "HIDDEN"));
 		ShuffleboardLayout compressor = compTab.getLayout("Compressor", BuiltInLayouts.kList).withSize(2, 4);
@@ -31,7 +31,8 @@ public class ShuffleboardCompetition {
     distanceSensors.add("Front Dist", Robot.driveTrain.frontUltrasonic).withWidget("Ultrasonic");
     distanceSensors.add("Rear Dist", Robot.driveTrain.rearUltrasonic).withWidget("Ultrasonic");
     leftDist = distanceSensors.add("Left Dist", Robot.elevator.getLeftHeight()).getEntry();
-		rightDist = distanceSensors.add("Right Dist", Robot.elevator.getRightHeight()).getEntry();
+    rightDist = distanceSensors.add("Right Dist", Robot.elevator.getRightHeight()).getEntry();
+    ballModeToggle = compTab.add("Ball Mode", Robot.toggleBallMode).getEntry();
     }
 
     public static void createAuto(SendableChooser chooser){
@@ -45,5 +46,6 @@ public class ShuffleboardCompetition {
       pressureStatus.setBoolean(Robot.grabber.isPressureLow());
       leftDist.setDouble(Robot.elevator.getLeftHeight());
       rightDist.setDouble(Robot.elevator.getRightHeight());
+      ballModeToggle.setBoolean(Robot.toggleBallMode);
     }
 }
