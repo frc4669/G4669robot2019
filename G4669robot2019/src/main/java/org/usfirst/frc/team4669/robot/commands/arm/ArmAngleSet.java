@@ -30,11 +30,11 @@ public class ArmAngleSet extends Command {
     System.out.println("Starting Arm Motion Magic");
     Robot.arm.stop();
     System.out.println("Setting Shoulder Target");
-    Robot.arm.setToAngle(Robot.arm.getShoulderMotor(), shoulderAngle, false);
+    Robot.arm.setToAngle(Robot.arm.getShoulderMotor(), shoulderAngle);
     System.out.println("Setting Elbow Target");
-    Robot.arm.setToAngle(Robot.arm.getElbowMotor(), elbowAngle, false);
+    Robot.arm.setToAngle(Robot.arm.getElbowMotor(), elbowAngle);
     System.out.println("Setting Wrist Target");
-    Robot.arm.setToAngle(Robot.arm.getWristMotor(), wristAngle, false);
+    Robot.arm.setToAngle(Robot.arm.getWristMotor(), wristAngle);
   }
 
   // Called repeatedly when this Command is scheduled to run

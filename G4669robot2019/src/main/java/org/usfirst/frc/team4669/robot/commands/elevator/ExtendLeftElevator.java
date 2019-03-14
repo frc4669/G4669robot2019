@@ -18,7 +18,7 @@ public class ExtendLeftElevator extends Command {
   public ExtendLeftElevator(double positionInches) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    this.position = positionInches * Constants.inchToEncoderElevator;
+    this.position = -positionInches * Constants.inchToEncoderElevator;
     requires(Robot.elevator);
   }
 

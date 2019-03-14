@@ -73,6 +73,7 @@ public class OI {
 		leftButton2.whenPressed(new ExtendBothElevator(Constants.level2HeightInches + Constants.wheelElevatorOffSet));
 		leftButton3.whenPressed(new ExtendBothElevator(Constants.level3HeightInches + Constants.wheelElevatorOffSet));
 		leftButton8.whenPressed(new ExtendBothElevator(0));
+		leftButton9.whenPressed(new ExtendBothElevator(Constants.wheelElevatorOffSet));
 	}
 
 	// Getting joystick values

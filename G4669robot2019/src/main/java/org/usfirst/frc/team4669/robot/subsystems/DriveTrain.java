@@ -57,8 +57,8 @@ public class DriveTrain extends Subsystem {
   private PIDOutputWrapper visionDistanceOutput;
   private PIDOutputWrapper strafeOutput;
 
-  private Ultrasonic frontUltrasonic;
-  private Ultrasonic rearUltrasonic;
+  public Ultrasonic frontUltrasonic;
+  public Ultrasonic rearUltrasonic;
 
 
   private Gyro gyro;
@@ -76,9 +76,9 @@ public class DriveTrain extends Subsystem {
   public DriveTrain() {
     super();
     gyro = new ADXRS450_Gyro();
-    frontUltrasonic = new Ultrasonic(RobotMap.frontUltrasonicEcho,RobotMap.frontUltrasonicTrigger);
+    frontUltrasonic = new Ultrasonic(RobotMap.frontUltrasonicTrigger,RobotMap.frontUltrasonicEcho);
+    rearUltrasonic = new Ultrasonic(RobotMap.rearUltrasonicTrigger,RobotMap.rearUltrasonicEcho);
     frontUltrasonic.setAutomaticMode(true);
-    rearUltrasonic = new Ultrasonic(RobotMap.rearUltrasonicEcho,RobotMap.rearUltrasonicTrigger);
     rearUltrasonic.setAutomaticMode(true);
     
     strafeWrapper = new PIDSourceWrapper(0);

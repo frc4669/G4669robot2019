@@ -41,7 +41,7 @@ public class Constants {
 	// Position Constants, figure out actual numbers later
 	public static final double elevatorTolerance = 100; // Units in encoder position
 	public static final double level2HeightInches = 6 + 0.5; // Rest of the units are inches
-	public static final double wheelElevatorOffSet = 2;
+	public static final double wheelElevatorOffSet = 2.5;
 	public static final double climbDriveDistance = 3;
 	public static final double climbDriveDistance2 = 15;
 	public static final double climbDriveDistance3 = 5;
@@ -60,10 +60,6 @@ public class Constants {
 
 	public static final double armGrabBallX = 15;
 	public static final double armGrabBallY = 6.5;
-
-	public static final double startingShoulderAngle = 98.18;// Units in degrees, not legitimate numbers
-	public static final double startingElbowAngle = -150.9;
-	public static final double startingWristAngle = 9.67;
 
 	// Constants for Pathfinder
 	public static final double maxVel = 77.4; // units in inches
@@ -120,16 +116,16 @@ public class Constants {
 
 	public static final double armScaleFactor = 1;
 
-	public static final int defaultShoulder = 5229;
-	public static final int defaultElbow = -7710;
-	public static final int defaultWrist = 45;
+	public static final int startShoulder = 5229;
+	public static final int startElbow = -7710;
+	public static final int startWrist = -2116;
 
-	public static final int shoulderVel = (int) (300 * armScaleFactor);
+	public static final int shoulderVel = (int) (200 * armScaleFactor);
 	public static final int shoulderAccel = (int) (375 * armScaleFactor);
-	public static final int elbowVel = (int) (400 * armScaleFactor);
-	public static final int elbowAccel = (int) (600 * armScaleFactor);
-	public static final int wristVel = (int) (500 * armScaleFactor);
-	public static final int wristAccel = (int) (750 * armScaleFactor);
+	public static final int elbowVel = (int) (200 * armScaleFactor);
+	public static final int elbowAccel = (int) (400 * armScaleFactor);
+	public static final int wristVel = (int) (400 * armScaleFactor);
+	public static final int wristAccel = (int) (400 * armScaleFactor);
 
 	public static final int armTolerance = 10; // units of encoder ticks
 

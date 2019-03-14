@@ -18,7 +18,7 @@ public class ExtendBothElevator extends Command {
   public ExtendBothElevator(double positionInches) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    this.position = positionInches * Constants.inchToEncoderElevator;
+    this.position = -positionInches * Constants.inchToEncoderElevator;
     requires(Robot.elevator);
   }
 
@@ -29,8 +29,7 @@ public class ExtendBothElevator extends Command {
     System.out.println(position);
     Robot.elevator.setMagicVelAccel(Robot.elevator.getLeftMotor(), Constants.elevatorVel, Constants.elevatorAccel);
     Robot.elevator.setMagicVelAccel(Robot.elevator.getRightMotor(), Constants.elevatorVel, Constants.elevatorAccel);
-    Robot.elevator.setMotionMagic(Robot.elevator.getLeftMotor(), position);
-    Robot.elevator.setMotionMagic(Robot.elevator.getRightMotor(), position);
+    Robot.elevator.setMotionMagicBoth(position);
   }
 
   // Called repeatedly when this Command is scheduled to run

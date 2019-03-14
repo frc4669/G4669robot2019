@@ -30,9 +30,13 @@ public class ButtonBoard {
 		button12 = new JoystickButton(buttonBoard, 12);
 
 
-		button10.whenPressed(new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, Constants.hatch1Height, 90, false, false));
-		button11.whenPressed(new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, Constants.hatch2Height, 90, false, false));
-		button12.whenPressed(new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, Constants.hatch3Height, 90, false, false));
+		button4.whenPressed(new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, Constants.hatch1Height, 0, false, false));
+		button5.whenPressed(new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, Constants.hatch2Height, 0, false, false));
+		button6.whenPressed(new ArmToPosition(Constants.robotToArmFront, Constants.hatch3Height, 0, false, false));
+
+		button10.whenPressed(new ArmToPosition(-(Constants.robotToArmBack + 30), Constants.hatch1Height, 180, true, false));
+		button11.whenPressed(new ArmToPosition(-(Constants.robotToArmBack + Constants.xDistanceToPlace), Constants.hatch2Height, 180, true, false));
+		button12.whenPressed(new ArmToPosition(-(Constants.robotToArmBack), Constants.hatch3Height, 180, false, false));
 
 
 	}

@@ -25,9 +25,9 @@ public class ArmDefault extends Command {
   @Override
   protected void initialize() {
     Robot.arm.stop();
-    Robot.arm.setMotorPosMagic(Robot.arm.getShoulderMotor(), Constants.defaultShoulder);
-    Robot.arm.setMotorPosMagic(Robot.arm.getElbowMotor(), Constants.defaultElbow);
-    Robot.arm.setMotorPosMagic(Robot.arm.getWristMotor(), Constants.defaultWrist);
+    Robot.arm.setMotorPosMagic(Robot.arm.getShoulderMotor(), Constants.startShoulder);
+    Robot.arm.setMotorPosMagic(Robot.arm.getElbowMotor(), Constants.startElbow);
+    Robot.arm.setMotorPosMagic(Robot.arm.getWristMotor(), Constants.startWrist);
   
   }
 

@@ -45,13 +45,13 @@ public class Arm extends Subsystem {
     wristMotor = new WPI_TalonSRX(RobotMap.wristMotor);
 
     talonConfig(shoulderMotor, false);
-    shoulderMotor.setSelectedSensorPosition(Constants.defaultShoulder);
+    shoulderMotor.setSelectedSensorPosition(Constants.startShoulder);
 
     talonConfig(elbowMotor, false);
-    elbowMotor.setSelectedSensorPosition(Constants.defaultElbow);
+    elbowMotor.setSelectedSensorPosition(Constants.startElbow);
 
     talonConfig(wristMotor, true);
-    wristMotor.setSelectedSensorPosition(Constants.defaultWrist);
+    wristMotor.setSelectedSensorPosition(Constants.startWrist);
 
     setCurrentLimit(elbowMotor);
     setCurrentLimit(wristMotor);
@@ -105,13 +105,14 @@ public class Arm extends Subsystem {
    * Method to get the angle to provide to the arm motors to get to a target (x,y)
    * position
    * 
-   * @param x      Target length away from the base of the arm. Units in inches
-   * @param y      Target height from the ground. Units in inches
+   * @param xGrip      Target length away from the base of the arm. Units in inches
+   * @param yGrip      Target height from the ground. Units in inches
+   * @param targetGrabberAngle Target wrist angle
    * @param flipUp Changes whether to flip up the elbow or not
    * @param ballMode Whether we're trying to grab a cargo or hatch panel
    * @return An array with the shoulder angle and elbow angle, null, or NaN if impossible
    */
-  public double[] calculateAngles(double x, double y, double targetGrabberAngle, boolean flipUp, boolean ballMode) {
+  public double[] calculateAngles(double xGrip, double yGrip, double targetGrabberAngle,boolean flipUp, boolean ballMode) {
     double a3;
     //Changes the mode of the wrist depending on whether we want the hatch or the cargo 
     if(ballMode){
@@ -120,29 +121,25 @@ public class Arm extends Subsystem {
     else  {
       a3 = Constants.handHookLength;
     }
-    if(!ballMode){
-      targetGrabberAngle+=180;
+
+    //Avoids making the target height too low
+    if (yGrip < 6.5){
+      return null;
     }
 
     //Corrects our x and y position based on the length of the hand
-    double x1 = x - a3 * Math.cos(Math.toRadians(targetGrabberAngle));
-    y = y - a3 * Math.sin(Math.toRadians(targetGrabberAngle));
+    double xWrist = xGrip - a3 * Math.cos(Math.toRadians(targetGrabberAngle));
+    double yWrist = yGrip - a3 * Math.sin(Math.toRadians(targetGrabberAngle)) - Constants.shoulderHeight;
 
-    //Wrist correction factor
-    targetGrabberAngle -= 90;
-
-    //Avoids making the target height too low
-    if (y < 6.5){
-      return null;
+    if(ballMode){
+      targetGrabberAngle+=180;
     }
-    //Corrects the height target to now be referenced from the joint base of the arm
-    y -= Constants.shoulderHeight;
 
     //Gets the distance from the base of the arm to the target position
-    double distance = Math.sqrt(Math.pow(x1, 2) + Math.pow(y, 2));
+    double distance = Math.sqrt(Math.pow(xWrist, 2) + Math.pow(yWrist, 2));
 
     //Checks if target position is feasible with the lengths of the arm
-    if (distance > a1 + a2 || distance < Math.abs(a1 - a2) || y < 0){
+    if (distance > a1 + a2 || distance < Math.abs(a1 - a2)){
       return null;
     }
 
@@ -152,17 +149,17 @@ public class Arm extends Subsystem {
       elbowRad = -elbowRad;
     double shoulderRad;
     if (flipUp)
-      shoulderRad = Math.atan2(y, x1)
-          - Math.acos((Math.pow(a2, 2) - Math.pow(a1, 2) - Math.pow(x1, 2) - Math.pow(y, 2)) / (-2 * a1 * distance));
+      shoulderRad = Math.atan2(yWrist, xWrist)
+          - Math.acos((Math.pow(a2, 2) - Math.pow(a1, 2) - Math.pow(xWrist, 2) - Math.pow(yWrist, 2)) / (-2 * a1 * distance));
     else
-      shoulderRad = Math.atan2(y, x1)
-          + Math.acos((Math.pow(a2, 2) - Math.pow(a1, 2) - Math.pow(x1, 2) - Math.pow(y, 2)) / (-2 * a1 * distance));
+      shoulderRad = Math.atan2(yWrist, xWrist)
+          + Math.acos((Math.pow(a2, 2) - Math.pow(a1, 2) - Math.pow(xWrist, 2) - Math.pow(yWrist, 2)) / (-2 * a1 * distance));
     double elbowDeg = Math.toDegrees(elbowRad);
     double shoulderDeg = Math.toDegrees(shoulderRad);
-    double wristDeg = targetGrabberAngle - shoulderDeg;
+    double wristDeg = targetGrabberAngle - (shoulderDeg - 90);
 
     //Checks if our angles are too large, or if angles aren't possible
-    if (shoulderDeg < 0 || shoulderDeg > 180 || Math.abs(elbowDeg) > 150 || shoulderDeg != shoulderDeg || elbowDeg != elbowDeg){
+    if (shoulderDeg < 0 || shoulderDeg > 180 || Math.abs(elbowDeg) > 150 || Double.isNaN(shoulderDeg) || Double.isNaN(shoulderDeg)|| Double.isNaN(wristDeg)){
         return null;
     }
 
@@ -177,7 +174,7 @@ public class Arm extends Subsystem {
    * @param jointTalon Which joint arm motor to use
    * @param degrees    Target angle in degrees
    */
-  public void setToAngle(TalonSRX jointTalon, double degrees, boolean joystickControl) {
+  public void setToAngle(TalonSRX jointTalon, double degrees) {
     double sprocketRatio = 0;
     if (jointTalon == shoulderMotor)
       sprocketRatio = Constants.shoulderGearRatio;
@@ -187,10 +184,7 @@ public class Arm extends Subsystem {
       sprocketRatio = Constants.wristGearRatio;
     if (sprocketRatio != 0) {
       double targetPos = degrees * Constants.encoderTicksPerRotation * sprocketRatio / 360;
-      if (!joystickControl)
-        setMotorPosMagic(jointTalon, targetPos);
-      else
-        setMotorPos(jointTalon, targetPos);
+      setMotorPosMagic(jointTalon, targetPos);
     }
   }
 

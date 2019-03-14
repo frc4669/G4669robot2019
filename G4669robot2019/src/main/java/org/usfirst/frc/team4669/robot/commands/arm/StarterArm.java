@@ -22,9 +22,9 @@ public class StarterArm extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.arm.setMotorPosMagic(Robot.arm.getShoulderMotor(), Constants.defaultShoulder);
-    Robot.arm.setMotorPosMagic(Robot.arm.getElbowMotor(), Constants.defaultElbow);
-    Robot.arm.setMotorPosMagic(Robot.arm.getWristMotor(), Constants.defaultWrist);
+    Robot.arm.setMotorPosMagic(Robot.arm.getShoulderMotor(), Constants.startShoulder);
+    Robot.arm.setMotorPosMagic(Robot.arm.getElbowMotor(), Constants.startElbow);
+    Robot.arm.setMotorPosMagic(Robot.arm.getWristMotor(), Constants.startWrist);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -35,9 +35,9 @@ public class StarterArm extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    double shoulderPos = Constants.defaultShoulder;
-    double elbowPos = Constants.defaultElbow;
-    double wristPos = Constants.defaultWrist;
+    double shoulderPos = Constants.startShoulder;
+    double elbowPos = Constants.startElbow;
+    double wristPos = Constants.startWrist;
 
     double shoulderError = Math.abs(shoulderPos - Robot.arm.getEncoderPosition(Robot.arm.getShoulderMotor()));
     double elbowError = Math.abs(elbowPos - Robot.arm.getEncoderPosition(Robot.arm.getElbowMotor()));

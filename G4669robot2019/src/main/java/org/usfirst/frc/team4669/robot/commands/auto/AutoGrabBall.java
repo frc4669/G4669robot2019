@@ -8,7 +8,7 @@
 package org.usfirst.frc.team4669.robot.commands.auto;
 
 import org.usfirst.frc.team4669.robot.commands.arm.ArmToPosition;
-import org.usfirst.frc.team4669.robot.commands.arm.RetractArm;
+// import org.usfirst.frc.team4669.robot.commands.arm.RetractArm;
 import org.usfirst.frc.team4669.robot.commands.driveTrain.DriveForwardMotionMagic;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 
@@ -41,6 +41,6 @@ public class AutoGrabBall extends CommandGroup {
     addSequential(new ArmToPosition(Constants.armGrabBallX, Constants.armGrabBallY, 0, false, true));
     addSequential(new DriveForwardMotionMagic(2));
     // addSequential(new CloseGrabber());
-    addSequential(new RetractArm());
+    // addSequential(new RetractArm());
   }
 }

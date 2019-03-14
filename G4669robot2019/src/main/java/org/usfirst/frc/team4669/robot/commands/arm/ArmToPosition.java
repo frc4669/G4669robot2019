@@ -11,6 +11,7 @@ import org.usfirst.frc.team4669.robot.Robot;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ArmToPosition extends CommandGroup {
 
@@ -41,6 +42,7 @@ public class ArmToPosition extends CommandGroup {
       wristAngle = armAngles[2];
       if (!(shoulderAngle != shoulderAngle || elbowAngle != elbowAngle))
         addSequential(new ArmAngleSet(shoulderAngle, elbowAngle, wristAngle));
+      SmartDashboard.putNumber("Wrist Angle", wristAngle);
     }
   }
 }

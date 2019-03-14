@@ -54,17 +54,20 @@ public class ElevatorClimber extends Subsystem {
         accel = new BuiltInAccelerometer();
 
         setupMotor(leftMotor, false, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false, true);
-        leftMotor.configForwardSoftLimitEnable(false);
-        // leftMotor.configForwardSoftLimitThreshold(0);
+        leftMotor.configForwardSoftLimitEnable(true);
+        leftMotor.configForwardSoftLimitThreshold(0);
         leftMotor.configReverseSoftLimitEnable(true);
         leftMotor.configReverseSoftLimitThreshold((int) (-Constants.limitMaxHeight * Constants.inchToEncoderElevator));
+        leftMotor.configSetParameter(ParamEnum.eClearPositionOnLimitF, 1, 0, 0, 10);
 
         setupMotor(rightMotor, false, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false,
                 true);
-        rightMotor.configForwardSoftLimitEnable(false);
-        // rightMotor.configForwardSoftLimitThreshold(0);
+        rightMotor.configForwardSoftLimitEnable(true);
+        rightMotor.configForwardSoftLimitThreshold(0);
         rightMotor.configReverseSoftLimitEnable(true);
         rightMotor.configReverseSoftLimitThreshold((int) (-Constants.limitMaxHeight * Constants.inchToEncoderElevator));
+        rightMotor.configSetParameter(ParamEnum.eClearPositionOnLimitF, 1, 0, 0, 10);
+        
         setupMotor(wheelMotor, true, Constants.elevatorWheelPID, Constants.elevatorWheelVel,
                 Constants.elevatorWheelAccel, true, false);
     }
@@ -145,7 +148,12 @@ public class ElevatorClimber extends Subsystem {
     }
 
     public void setMotionMagic(TalonSRX talon, double position) {
-        talon.set(ControlMode.MotionMagic, -position);
+        talon.set(ControlMode.MotionMagic, position);
+    }
+
+    public void setMotionMagicBoth(double position) {
+        leftMotor.set(ControlMode.MotionMagic, position);
+        rightMotor.set(ControlMode.MotionMagic, position);
     }
 
     public int getEncoderPos(TalonSRX talon) {

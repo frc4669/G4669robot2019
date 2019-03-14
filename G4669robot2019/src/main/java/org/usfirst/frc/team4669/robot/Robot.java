@@ -80,7 +80,6 @@ public class Robot extends TimedRobot {
 		driveTrain = new DriveTrain();
 		arm = new Arm();
 		grabber = new Grabber();
-		// ultrasonic = new AnalogUltrasonic(0);
 		oi = new OI();
 		f310 = new F310();
 		buttonBoard = new ButtonBoard();
@@ -100,19 +99,19 @@ public class Robot extends TimedRobot {
 		chooser.addDefault("Do Nothing", "DoNothing");
 		chooser.addObject("Pathfinder", "Pathfinder");
 
-		competitionDashboardInit();
-
+		ShuffleboardCompetition.createAuto(chooser);
+		ShuffleboardCompetition.initialize();
 		// SmartDashboard.putData("Auto mode", chooser);
-		// testSmartDashboardInit();
+		testSmartDashboardInit();
 
 	}
 
 	public void robotPeriodic(){
 		updateSmartDashboard();
-
+		ShuffleboardCompetition.update();
 		//Calibrate Elbow encoder position upon reaching reverse limit switch
 		if(arm.getElbowMotor().getSensorCollection().isRevLimitSwitchClosed())
-			arm.getElbowMotor().setSelectedSensorPosition(Constants.defaultElbow,RobotMap.pidIdx, Constants.timeout);
+			arm.getElbowMotor().setSelectedSensorPosition(Constants.startElbow,RobotMap.pidIdx, Constants.timeout);
 	}
 
 	/**
@@ -226,8 +225,6 @@ public class Robot extends TimedRobot {
 	}
 
 	public void updateSmartDashboard() {
-		SmartDashboard.putData((Sendable) driveTrain.getGyro());
-		// SmartDashboard.putData(driveTrain.getGyroController());
 		testSmartDashboard();
 	}
 
@@ -259,26 +256,8 @@ public class Robot extends TimedRobot {
 
 	}
 
-	public void competitionDashboardInit(){
-		ShuffleboardTab compTab = Shuffleboard.getTab("Competition");
-		compTab.add("Auto Mode", chooser).withSize(3, 1).withPosition(5, 5);
-	}
-
-	public void competitionDashboardPeriodic(){
-		ShuffleboardTab compTab = Shuffleboard.getTab("Competition");
-		compTab.add("Gyro",driveTrain.getAngle()).withWidget(BuiltInWidgets.kGyro);
-		ShuffleboardLayout compressor = compTab.getLayout("Compressor", BuiltInLayouts.kList).withSize(2, 2);
-		compressor.add("Compressor Enabled", grabber.isCompressorRunning());
-		compressor.add("Pressure Low", grabber.isPressureLow());
-		ShuffleboardLayout distanceSensors = compTab.getLayout("Distance", BuiltInLayouts.kList).withSize(1, 2);
-		distanceSensors.add("Front Dist", driveTrain.getFrontDistance());
-		distanceSensors.add("Rear Dist", driveTrain.getRearDistance());
-
-		
-	}
-
 	public void testSmartDashboard() {
-		SmartDashboard.putNumber("Gyro Angle", driveTrain.getAngle());
+		// SmartDashboard.putNumber("Gyro Angle", driveTrain.getAngle());
 		// SmartDashboard.putNumber("Vision Turn Error",
 		// driveTrain.getPIDError(driveTrain.getVisionTurnController()));
 		// SmartDashboard.putNumber("Vision Distance Error",
