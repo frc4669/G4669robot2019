@@ -14,6 +14,12 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ArmToPosition extends CommandGroup {
+  public static double currentXPos = 0;
+  public static double currentYPos = 0;
+  public static boolean currentBallMode = false;
+  public static boolean currentElbowMode = false;
+  public static double currentGrabberAngle = 0;
+
 
   public ArmToPosition(double x, double y, double targetGrabberAngle, boolean flipUp, boolean ballMode) {
     // Add Commands here:
@@ -36,6 +42,11 @@ public class ArmToPosition extends CommandGroup {
     // shoulderAngle = Robot.arm.targetToAngleShoulder(x, y);
     // elbowAngle = Robot.arm.targetToAngleElbow(x, y);
     if (Robot.arm.calculateAngles(x, y, targetGrabberAngle, flipUp, ballMode) != null) {
+      currentXPos = x;
+      currentYPos = y;
+      currentElbowMode = flipUp;
+      currentBallMode = ballMode;
+      currentGrabberAngle = targetGrabberAngle;
       double[] armAngles = Robot.arm.calculateAngles(x, y, targetGrabberAngle, flipUp, ballMode);
       shoulderAngle = armAngles[0];
       elbowAngle = armAngles[1];
@@ -43,6 +54,10 @@ public class ArmToPosition extends CommandGroup {
       if (!(shoulderAngle != shoulderAngle || elbowAngle != elbowAngle))
         addSequential(new ArmAngleSet(shoulderAngle, elbowAngle, wristAngle));
       SmartDashboard.putNumber("Wrist Angle", wristAngle);
+    }
+    else{
+      currentXPos = 0;
+      currentYPos = 0;
     }
   }
 }

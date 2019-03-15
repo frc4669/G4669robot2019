@@ -8,15 +8,16 @@
 package org.usfirst.frc.team4669.robot.commands.auto;
 
 import org.usfirst.frc.team4669.robot.misc.Constants;
+import org.usfirst.frc.team4669.robot.Robot;
 import org.usfirst.frc.team4669.robot.commands.elevator.*;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class AutoClimbLevel2 extends CommandGroup {
+public class IncrementalClimb extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public AutoClimbLevel2() {
+  public IncrementalClimb() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -34,13 +35,18 @@ public class AutoClimbLevel2 extends CommandGroup {
     // a CommandGroup containing them would require both the chassis and the
     // arm.
 
-    // Add if statement to not run if not facing right direction and if distance
-    // isn't correct
-    addSequential(new ExtendBothElevator(Constants.level2HeightInches + Constants.wheelElevatorOffSet));
-    addSequential(new DriveElevatorMotionMagic(Constants.climbDriveDistance));
-    addSequential(new ExtendRightElevator(Constants.wheelElevatorOffSet));
-    addSequential(new DriveElevatorMotionMagic(Constants.climbDriveDistance2));
-    addSequential(new ExtendLeftElevator(Constants.wheelElevatorOffSet));
-
+    // establish an if command for conditions of : [1] not being correct distance
+    // from climbing [2] facing wrong direction
+    int avgPos = (Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor())+Robot.elevator.getEncoderPos(Robot.elevator.getRightMotor()))/2;
+    double currentIn = avgPos * Constants.encoderToInchElevator;
+    if(currentIn < Constants.incrementalHeightInches){
+      addSequential(new ExtendBothElevator(Constants.wheelElevatorOffSet));
+      avgPos = (Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor())+Robot.elevator.getEncoderPos(Robot.elevator.getRightMotor()))/2;
+      currentIn = avgPos * Constants.encoderToInchElevator;
+    }
+    if(currentIn < Constants.limitMaxHeight){
+      addSequential(new ExtendBothElevator(currentIn + Constants.incrementalHeightInches));
+    }
+   
   }
 }

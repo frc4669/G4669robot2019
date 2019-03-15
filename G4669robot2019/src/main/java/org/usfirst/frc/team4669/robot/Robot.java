@@ -104,17 +104,19 @@ public class Robot extends TimedRobot {
 		ShuffleboardCompetition.createAuto(chooser);
 		ShuffleboardCompetition.initialize();
 		// SmartDashboard.putData("Auto mode", chooser);
-		testSmartDashboardInit();
+		// testSmartDashboardInit();
 
 	}
 
 	public void robotPeriodic(){
-		updateSmartDashboard();
+		// updateSmartDashboard();
 		ShuffleboardCompetition.update();
 		//Calibrate Elbow encoder position upon reaching reverse limit switch
 		if(arm.getElbowMotor().getSensorCollection().isRevLimitSwitchClosed())
 			arm.getElbowMotor().setSelectedSensorPosition(Constants.startElbow,RobotMap.pidIdx, Constants.timeout);
-		if(buttonBoard.getButton(1)){
+		if(arm.getShoulderMotor().getSensorCollection().isFwdLimitSwitchClosed())
+			arm.getShoulderMotor().setSelectedSensorPosition(Constants.calibrateShoulder,RobotMap.pidIdx, Constants.timeout);
+		if(buttonBoard.getButtonPressed(1)){
 			toggleBallMode =!toggleBallMode;
 		}
 	}
@@ -208,6 +210,9 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 		if (f310.getDPadPOV() != -1) {
 			Command turn = new TurnTo(f310.getDPadPOV());
+			turn.start();
+		} else if(buttonBoard.getAngle()!=-1){
+			Command turn = new TurnTo(buttonBoard.getAngle());
 			turn.start();
 		}
 		if(Timer.getMatchTime()<=30&&!endgameStarted){

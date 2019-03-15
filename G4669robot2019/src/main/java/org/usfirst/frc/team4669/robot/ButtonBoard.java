@@ -3,6 +3,7 @@ package org.usfirst.frc.team4669.robot;
 
 import org.usfirst.frc.team4669.robot.RobotMap;
 import org.usfirst.frc.team4669.robot.commands.arm.ArmToPosition;
+import org.usfirst.frc.team4669.robot.commands.grabber.ToggleCompressor;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -34,7 +35,7 @@ public class ButtonBoard {
 			button5.whenPressed(new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, Constants.hatch2Height, 0, false, true));
 			button6.whenPressed(new ArmToPosition(Constants.robotToArmFront, Constants.hatch3Height, 0, false, true));
 
-			button10.whenPressed(new ArmToPosition(-(Constants.robotToArmBack + 30), Constants.hatch1Height, 180, true, true));
+			button10.whenPressed(new ArmToPosition(-(Constants.robotToArmBack + Constants.xDistanceToPlace), Constants.hatch1Height, 180, true, true));
 			button11.whenPressed(new ArmToPosition(-(Constants.robotToArmBack + Constants.xDistanceToPlace), Constants.hatch2Height, 180, true, true));
 			button12.whenPressed(new ArmToPosition(-(Constants.robotToArmBack), Constants.hatch3Height, 180, false, true));
 			
@@ -43,16 +44,37 @@ public class ButtonBoard {
 			button5.whenPressed(new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, Constants.hatch2Height, 0, false, false));
 			button6.whenPressed(new ArmToPosition(Constants.robotToArmFront, Constants.hatch3Height, 0, false, false));
 
-			button10.whenPressed(new ArmToPosition(-(Constants.robotToArmBack + 30), Constants.hatch1Height, 180, true, false));
+			button10.whenPressed(new ArmToPosition(-(Constants.robotToArmBack + Constants.xDistanceToPlace), Constants.hatch1Height, 180, true, false));
 			button11.whenPressed(new ArmToPosition(-(Constants.robotToArmBack + Constants.xDistanceToPlace), Constants.hatch2Height, 180, true, false));
 			button12.whenPressed(new ArmToPosition(-(Constants.robotToArmBack), Constants.hatch3Height, 180, false, false));
+		}
+		button2.whenPressed(new ToggleCompressor());
+		if(ArmToPosition.currentXPos!=0&&ArmToPosition.currentYPos!=0){
+			if(ArmToPosition.currentXPos>0){
+				button7.whenPressed(new ArmToPosition(Constants.nudgeForwardDist + ArmToPosition.currentXPos, ArmToPosition.currentYPos,ArmToPosition.
+					currentGrabberAngle,ArmToPosition.currentElbowMode,ArmToPosition.currentBallMode));
+				button9.whenPressed(new ArmToPosition(ArmToPosition.currentXPos - Constants.nudgeForwardDist, ArmToPosition.currentYPos,ArmToPosition.
+					currentGrabberAngle,ArmToPosition.currentElbowMode,ArmToPosition.currentBallMode));
+			} else{
+				button7.whenPressed(new ArmToPosition(ArmToPosition.currentXPos-Constants.nudgeForwardDist, ArmToPosition.currentYPos,ArmToPosition.
+					currentGrabberAngle,ArmToPosition.currentElbowMode,ArmToPosition.currentBallMode));
+				button9.whenPressed(new ArmToPosition(ArmToPosition.currentXPos + Constants.nudgeForwardDist, ArmToPosition.currentYPos,ArmToPosition.
+					currentGrabberAngle,ArmToPosition.currentElbowMode,ArmToPosition.currentBallMode));
+			}
 			
 		}
-
 	}
 
 	public boolean getButton(int buttonPort) {
 		return buttonBoard.getRawButton(buttonPort);
+	}
+
+	public boolean getButtonReleased(int buttonPort) {
+		return buttonBoard.getRawButtonReleased(buttonPort);
+	}
+
+	public boolean getButtonPressed(int buttonPort) {
+		return buttonBoard.getRawButtonPressed(buttonPort);
 	}
 
 	public double getX() {
@@ -78,30 +100,30 @@ public class ButtonBoard {
 		return (getY() == -1);
 	}
 	
-	public int getAngle() {
+	public double getAngle() {
 		if (isRight()) {
 			return 0;
 		}
 		else if (isRight() && isUp()) {
-			return 45;
+			return 180-28.75;
 		}
 		else if (isUp()) {
 			return 90;
 		}
 		else if (isLeft() && isUp()) {
-			return 135;
+			return 180+28.75;
 		}
 		else if (isLeft()) {
 			return 180;
 		}
 		else if (isLeft() && isDown()) {
-			return 225;
+			return 360-28.75;
 		}
 		else if (isDown()) {
 			return 270;
 		}
 		else if (isRight() && isDown()) {
-			return 315;
+			return 28.75;
 		}
 		else {
 			return -1;

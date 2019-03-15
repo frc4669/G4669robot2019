@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class ArmDefault extends Command {
   boolean holdShoulder = false, holdElbow = false, holdWrist = false;
   double shoulderPos = 0, elbowPos = 0, wristPos = 0;
+  double wristPower = 0, elbowPower = 0, shoulderPower = 0;
   public ArmDefault() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -34,10 +35,16 @@ public class ArmDefault extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    // Keeps the arm joints at 0 velocity so it doesn't move
-    double wristPower = Robot.oi.extremeZ();
-    double elbowPower = Robot.oi.extremeX();
-    double shoulderPower = Robot.oi.extremeY();
+
+    if(Robot.oi.getExtremeRawButton(1)){
+      wristPower = Robot.oi.extremeZ();
+      elbowPower = Robot.oi.extremeX();
+      shoulderPower = Robot.oi.extremeY();
+    } else{
+      wristPower = 0;
+      elbowPower = 0;
+      shoulderPower = 0;
+    }
 
     if (Math.abs(wristPower) > Math.abs(elbowPower) && Math.abs(wristPower) > Math.abs(shoulderPower)) {
       elbowPower = 0;

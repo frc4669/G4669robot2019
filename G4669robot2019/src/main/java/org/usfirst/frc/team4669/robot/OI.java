@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team4669.robot;
 
+import org.usfirst.frc.team4669.robot.commands.auto.IncrementalClimb;
 import org.usfirst.frc.team4669.robot.commands.elevator.ExtendBothElevator;
 import org.usfirst.frc.team4669.robot.commands.elevator.ExtendLeftElevator;
 import org.usfirst.frc.team4669.robot.commands.elevator.ExtendRightElevator;
@@ -68,12 +69,21 @@ public class OI {
 			rightButton9 = new JoystickButton(rightStick, 9), rightButton10 = new JoystickButton(rightStick, 10),
 			rightButton11 = new JoystickButton(rightStick, 11);
 
+	private Button extremeButton1 = new JoystickButton(extremeStick, 1), extremeButton2 = new JoystickButton(extremeStick, 2),
+			extremeButton3 = new JoystickButton(extremeStick, 3), extremeButton4 = new JoystickButton(extremeStick, 4),
+			extremeButton5 = new JoystickButton(extremeStick, 5), extremeButton6 = new JoystickButton(extremeStick, 6),
+			extremeButton7 = new JoystickButton(extremeStick, 7), extremeButton8 = new JoystickButton(extremeStick, 8),
+			extremeButton9 = new JoystickButton(extremeStick, 9), extremeButton10 = new JoystickButton(extremeStick, 10),
+			extremeButton11 = new JoystickButton(extremeStick, 11);
+
 	public OI() {
-		// Creates button objects for every button on logitech joystick
-		leftButton2.whenPressed(new ExtendBothElevator(Constants.level2HeightInches + Constants.wheelElevatorOffSet));
-		leftButton3.whenPressed(new ExtendBothElevator(Constants.level3HeightInches + Constants.wheelElevatorOffSet));
-		leftButton8.whenPressed(new ExtendBothElevator(0));
-		leftButton9.whenPressed(new ExtendBothElevator(Constants.wheelElevatorOffSet));
+		if(Robot.endgameStarted){
+			extremeButton8.whenPressed(new IncrementalClimb());
+			extremeButton7.whenPressed(new ExtendBothElevator(0));
+			extremeButton9.whenPressed(new ExtendLeftElevator(Constants.wheelElevatorOffSet));
+			extremeButton10.whenPressed(new ExtendRightElevator(Constants.wheelElevatorOffSet));
+			
+		}
 	}
 
 	// Getting joystick values

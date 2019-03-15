@@ -22,6 +22,7 @@ public class StarterArm extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    ArmToPosition.currentYPos = ArmToPosition.currentXPos = 0;
     Robot.arm.setMotorPosMagic(Robot.arm.getShoulderMotor(), Constants.startShoulder);
     Robot.arm.setMotorPosMagic(Robot.arm.getElbowMotor(), Constants.startElbow);
     Robot.arm.setMotorPosMagic(Robot.arm.getWristMotor(), Constants.startWrist);

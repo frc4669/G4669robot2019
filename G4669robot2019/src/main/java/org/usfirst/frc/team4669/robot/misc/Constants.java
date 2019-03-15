@@ -39,13 +39,14 @@ public class Constants {
 	public static final int ballDiameter = 13;
 
 	// Position Constants, figure out actual numbers later
-	public static final double elevatorTolerance = 100; // Units in encoder position
-	public static final double level2HeightInches = 6 + 0.5; // Rest of the units are inches
+	public static final double elevatorTolerance = 200; // Units in encoder position
+	public static final double level2HeightInches = 6.5; // Rest of the units are inches
 	public static final double wheelElevatorOffSet = 2.5;
 	public static final double climbDriveDistance = 3;
 	public static final double climbDriveDistance2 = 15;
 	public static final double climbDriveDistance3 = 5;
-	public static final double level3HeightInches = 19 + 0.5;
+	public static final double level3HeightInches = 19.5;
+	public static final double incrementalHeightInches = 6.5;
 	public static final double limitMaxHeight = 22;
 
 	public static final double xDistanceToPlace = 18;
@@ -116,9 +117,15 @@ public class Constants {
 
 	public static final double armScaleFactor = 1;
 
+	public static final int defaultShoulderAngle = 110;
+	public static final int defaultElbowAngle = -100;
+	public static final int defaultWristAngle = -30;
+
 	public static final int startShoulder = 5229;
 	public static final int startElbow = -7710;
 	public static final int startWrist = -2116;
+
+	public static final int calibrateShoulder = 8378;
 
 	public static final int shoulderVel = (int) (200 * armScaleFactor);
 	public static final int shoulderAccel = (int) (375 * armScaleFactor);
@@ -163,4 +170,6 @@ public class Constants {
 	public static final double infraredScale = 1 / 0.165 / 2.54; // Divide by this to get voltage scaling factor to inches
 	
 	public static final int arduinoBaudRate = 9600;
+
+	public static final double nudgeForwardDist = 6;
 }

@@ -25,6 +25,9 @@ public class Arm extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
+  public static double xPos;
+  public static double yPos;
+
   double a1 = Constants.upperArmLength;
   double a2 = Constants.forearmLength;
 

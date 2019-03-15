@@ -12,13 +12,13 @@ import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class DriveElevatorMotionMagic extends Command {
+public class ExtendBothAccelerometer extends Command {
   double position;
 
-  public DriveElevatorMotionMagic(double positionInches) {
+  public ExtendBothAccelerometer(double positionInches) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    this.position = positionInches * Constants.inchToEncoderDrive;
+    this.position = -positionInches * Constants.inchToEncoderElevator;
     requires(Robot.elevator);
   }
 
@@ -26,20 +26,31 @@ public class DriveElevatorMotionMagic extends Command {
   @Override
   protected void initialize() {
     Robot.elevator.stop();
-    Robot.elevator.zeroWheelEncoder();
-    Robot.elevator.setMotionMagic(Robot.elevator.getWheelMotor(), position);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    if (Robot.elevator.getAccelY() < -0.1) {
+        Robot.elevator.setVelocity(Robot.elevator.getLeftMotor(),-Robot.elevatorVel);
+        Robot.elevator.zeroVelocity(Robot.elevator.getRightMotor());
+    } else if (Robot.elevator.getAccelY() > 0.1) {
+      Robot.elevator.setVelocity(Robot.elevator.getRightMotor(),-Robot.elevatorVel);
+      Robot.elevator.zeroVelocity(Robot.elevator.getLeftMotor());
+    } else {
+      Robot.elevator.setVelocity(Robot.elevator.getLeftMotor(),-Robot.elevatorVel);
+      Robot.elevator.setVelocity(Robot.elevator.getRightMotor(),-Robot.elevatorVel);
+      
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (Math
-        .abs(position - Robot.elevator.getEncoderPos(Robot.elevator.getWheelMotor())) < Constants.driveTolerance);
+    double leftPos =  Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor());
+    double rightPos = Robot.elevator.getEncoderPos(Robot.elevator.getRightMotor());
+    double avgPos = (leftPos + rightPos)/2; 
+    return Math.abs(avgPos) < Constants.elevatorTolerance;
   }
 
   // Called once after isFinished returns true

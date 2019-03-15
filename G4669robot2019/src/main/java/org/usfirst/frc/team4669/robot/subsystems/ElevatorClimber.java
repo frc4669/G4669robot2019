@@ -189,11 +189,11 @@ public class ElevatorClimber extends Subsystem {
         talon.set(ControlMode.Velocity, 0);
     }
 
-    public double getLeftHeight(){
+    public double getLeftSensor(){
         return leftSensor.getDistance();
     }
 
-    public double getRightHeight(){
+    public double getRightSensor(){
         return leftSensor.getDistance();
     }
 
