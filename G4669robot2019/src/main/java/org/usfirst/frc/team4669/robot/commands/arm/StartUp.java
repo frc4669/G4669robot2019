@@ -7,15 +7,18 @@
 
 package org.usfirst.frc.team4669.robot.commands.arm;
 
-import org.usfirst.frc.team4669.robot.misc.Constants;
+import org.usfirst.frc.team4669.robot.commands.grabber.CloseGrabber;
+import org.usfirst.frc.team4669.robot.commands.grabber.OpenGrabber;
+import org.usfirst.frc.team4669.robot.commands.grabber.ToggleCompressor;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class RetractArm extends CommandGroup {
+public class StartUp extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public RetractArm() {
+  public StartUp() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -32,7 +35,9 @@ public class RetractArm extends CommandGroup {
     // e.g. if Command1 requires chassis, and Command2 requires arm,
     // a CommandGroup containing them would require both the chassis and the
     // arm.
-    addSequential(new PositionCommand(ArmData.ballStart,ArmData.hookStart));
-
-    }
+    // addSequential(new ToggleCompressor());
+    addSequential(new PositionCommand(ArmData.hookStart, ArmData.hookStart,0.4));
+    Timer.delay(0.1);
+    addSequential(new OpenGrabber());
+  }
 }

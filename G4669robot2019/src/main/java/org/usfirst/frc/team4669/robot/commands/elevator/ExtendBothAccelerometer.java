@@ -50,7 +50,7 @@ public class ExtendBothAccelerometer extends Command {
     double leftPos =  Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor());
     double rightPos = Robot.elevator.getEncoderPos(Robot.elevator.getRightMotor());
     double avgPos = (leftPos + rightPos)/2; 
-    return Math.abs(avgPos) < Constants.elevatorTolerance;
+    return Math.abs(avgPos) < Constants.elevatorTolerance||!Robot.endgameStarted;
   }
 
   // Called once after isFinished returns true

@@ -21,7 +21,7 @@ public class ArmToPosition extends CommandGroup {
   public static double currentGrabberAngle = 0;
 
 
-  public ArmToPosition(double x, double y, double targetGrabberAngle, boolean flipUp, boolean ballMode) {
+  public ArmToPosition(double x, double xCorrect, double y, double yCorrect, double targetGrabberAngle, double angleCorrect, boolean flipUp, boolean ballMode) {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -41,13 +41,13 @@ public class ArmToPosition extends CommandGroup {
     double shoulderAngle, elbowAngle, wristAngle;
     // shoulderAngle = Robot.arm.targetToAngleShoulder(x, y);
     // elbowAngle = Robot.arm.targetToAngleElbow(x, y);
-    if (Robot.arm.calculateAngles(x, y, targetGrabberAngle, flipUp, ballMode) != null) {
+    if (Robot.arm.calculateAngles(x, xCorrect, y, yCorrect, targetGrabberAngle, angleCorrect,flipUp, ballMode) != null) {
       currentXPos = x;
       currentYPos = y;
       currentElbowMode = flipUp;
       currentBallMode = ballMode;
       currentGrabberAngle = targetGrabberAngle;
-      double[] armAngles = Robot.arm.calculateAngles(x, y, targetGrabberAngle, flipUp, ballMode);
+      double[] armAngles = Robot.arm.calculateAngles(x, xCorrect, y, yCorrect, targetGrabberAngle, angleCorrect,flipUp, ballMode);
       shoulderAngle = armAngles[0];
       elbowAngle = armAngles[1];
       wristAngle = armAngles[2];

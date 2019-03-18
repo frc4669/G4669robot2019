@@ -9,6 +9,9 @@ package org.usfirst.frc.team4669.robot;
 
 import java.util.Map;
 
+import org.usfirst.frc.team4669.robot.commands.arm.StartElbow;
+import org.usfirst.frc.team4669.robot.commands.arm.StartShoulder;
+import org.usfirst.frc.team4669.robot.commands.arm.StartWrist;
 import org.usfirst.frc.team4669.robot.commands.arm.StarterArm;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -21,7 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class ShuffleboardCompetition {
     static ShuffleboardTab compTab = Shuffleboard.getTab("Competition");
-    private static NetworkTableEntry frontDist,rearDist, compStatus, pressureStatus,leftClimbSensor,rightClimbSensor, ballModeToggle, hatchModeToggle;
+    private static NetworkTableEntry frontDist,rearDist, compStatus, pressureStatus,leftClimbSensor,rightClimbSensor, ballModeToggle, hatchModeToggle,calibrateMode;
     public static void initialize(){
 		compTab.add("Gyro",(Sendable) Robot.driveTrain.getGyro()).withProperties(Map.of("Label position", "HIDDEN"));
 		ShuffleboardLayout compressor = compTab.getLayout("Compressor", BuiltInLayouts.kList).withSize(2, 4);
@@ -36,7 +39,11 @@ public class ShuffleboardCompetition {
     rightClimbSensor = distanceSensors.add("Right Climb on Plat", Robot.elevator.getRightSensor()>1.8).getEntry();
     ballModeToggle = compTab.add("Ball Mode", Robot.toggleBallMode).getEntry();
     hatchModeToggle = compTab.add("Hatch Mode", !Robot.toggleBallMode).getEntry();
+    calibrateMode = compTab.add("Calibrate Mode", false).getEntry();
     compTab.add("Start Arm Pos", new StarterArm());
+    compTab.add("Start Shoulder", new StartShoulder());
+    compTab.add("Start Elbow", new StartElbow());
+    compTab.add("Start Wrist", new StartWrist());
 
 
     }
@@ -53,6 +60,8 @@ public class ShuffleboardCompetition {
       leftClimbSensor.setBoolean(Robot.elevator.getLeftSensor()>1.8);
       rightClimbSensor.setBoolean(Robot.elevator.getRightSensor()>1.8);
       ballModeToggle.setBoolean(Robot.toggleBallMode);
-      hatchModeToggle.setBoolean(Robot.toggleBallMode);
+      hatchModeToggle.setBoolean(!Robot.toggleBallMode);
+      Robot.toggleCalibrate = calibrateMode.getBoolean(false);
+
     }
 }

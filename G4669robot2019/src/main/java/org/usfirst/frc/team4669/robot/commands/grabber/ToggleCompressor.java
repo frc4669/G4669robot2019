@@ -28,7 +28,7 @@ public class ToggleCompressor extends InstantCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
-    if(Robot.grabber.isCompressorRunning())
+    if(Robot.grabber.isCompressorClosedLoopOn())
       Robot.grabber.stopCompressor();
     else
       Robot.grabber.startCompressor();

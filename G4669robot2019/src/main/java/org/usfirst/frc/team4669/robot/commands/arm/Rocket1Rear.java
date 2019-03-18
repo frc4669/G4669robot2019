@@ -7,15 +7,19 @@
 
 package org.usfirst.frc.team4669.robot.commands.arm;
 
+import org.usfirst.frc.team4669.robot.Robot;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class RetractArm extends CommandGroup {
+public class Rocket1Rear extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public RetractArm() {
+
+  private ArmToPosition hatch1R = new ArmToPosition(-(Constants.robotToArmBack + Constants.xDistanceToPlace), 0, Constants.hatch1Height, 0, 180, 0, true, false),
+  ball1R = new ArmToPosition(-(Constants.robotToArmBack + Constants.xDistanceToPlace), 0, Constants.ball1Height, 0, 180, 0, true, true);
+  public Rocket1Rear() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -32,7 +36,11 @@ public class RetractArm extends CommandGroup {
     // e.g. if Command1 requires chassis, and Command2 requires arm,
     // a CommandGroup containing them would require both the chassis and the
     // arm.
-    addSequential(new PositionCommand(ArmData.ballStart,ArmData.hookStart));
-
+    
+    if(Robot.toggleBallMode){
+      addSequential(ball1R);
+    } else{
+      addSequential(hatch1R);
     }
+  }
 }

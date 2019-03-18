@@ -15,13 +15,13 @@ import org.usfirst.frc.team4669.robot.Robot;
 public class Constants {
 	// Robot Constants
 	public static final double wheelDiameter = 4; // in inches
-	public static final double elevatorSprocketDiameter = 1.775; // in inches
+	public static final double elevatorSprocketDiameter = 1.25; // in inches
 	public static final double wheelBase = 22.25; // figure out real distance later
 	public static final int encoderTicksPerRotation = 4096;
-	public static final double upperArmLength = 17.5;
-	public static final double shoulderHeight = 26;
+	public static final double upperArmLength = 17.25;
+	public static final double shoulderHeight = 26.25;
 	public static final double armHeightOffset = 2;
-	public static final double forearmLength = 35.375;
+	public static final double forearmLength = 35;
 	public static final double handHookLength = 8.5;
 	public static final double handHoopLength = 13;
 	public static final double shoulderGearRatio = 4.5;
@@ -56,6 +56,7 @@ public class Constants {
 	public static final double ball1Height = 26.8;
 	public static final double ball2Height = 54.8;
 	public static final double ball3Height = 82.8;
+	public static final double ballShipHeight = 42;
 	public static final double robotToArmFront = 20.9;
 	public static final double robotToArmBack = 8.5;
 
@@ -117,16 +118,18 @@ public class Constants {
 
 	public static final double armScaleFactor = 1;
 
-	public static final int defaultShoulderAngle = 110;
-	public static final int defaultElbowAngle = -100;
-	public static final int defaultWristAngle = -30;
+	public static final int defaultElbowPos = -6089;
 
-	public static final int startShoulder = 5229;
-	public static final int startElbow = -7710;
-	public static final int startWrist = -2116;
+	public static final int startShoulder = 5279;
+	public static final int startElbow = -7920+615/2;
+	public static final int startWrist = -2116+(int)(4*wristGearRatio*encoderTicksPerRotation/360);
 
-	public static final int calibrateShoulder = 8378;
+	public static final int calibrateShoulder = 7869-(int)(1*shoulderGearRatio*encoderTicksPerRotation/360);
+	public static final int calibrateElbow = -7860+615/2;
+	public static final int calibrateWrist = -5286+(int)(4*wristGearRatio*encoderTicksPerRotation/360);
 
+
+	
 	public static final int shoulderVel = (int) (200 * armScaleFactor);
 	public static final int shoulderAccel = (int) (375 * armScaleFactor);
 	public static final int elbowVel = (int) (200 * armScaleFactor);

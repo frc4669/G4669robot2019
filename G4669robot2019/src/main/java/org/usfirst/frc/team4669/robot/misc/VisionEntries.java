@@ -4,12 +4,14 @@ import org.usfirst.frc.team4669.robot.Robot;
 
 public class VisionEntries {
     private int x = 0, y = 0, width = 0, height = 0, horizontalAngle = 0, distance = 0;
+    private boolean isBallDetected = false;
 
     public VisionEntries() {
         updateEntries();
     }
 
     public void updateEntries() {
+        isBallDetected = Robot.visionTable.getEntry("isBallDetected").getBoolean(false);
         if (Robot.visionTable.containsKey("orangeX"))
             x = Robot.visionTable.getEntry("orangeX").getNumber(0).intValue();
         else
@@ -67,6 +69,7 @@ public class VisionEntries {
     }
 
     public boolean isObjectDetected() {
-        return !(width == 0 || height == 0);
+        updateEntries();
+        return isBallDetected;
     }
 }

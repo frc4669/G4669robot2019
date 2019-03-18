@@ -37,16 +37,15 @@ public class IncrementalClimb extends CommandGroup {
 
     // establish an if command for conditions of : [1] not being correct distance
     // from climbing [2] facing wrong direction
-    int avgPos = (Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor())+Robot.elevator.getEncoderPos(Robot.elevator.getRightMotor()))/2;
-    double currentIn = avgPos * Constants.encoderToInchElevator;
-    if(currentIn < Constants.incrementalHeightInches){
-      addSequential(new ExtendBothElevator(Constants.wheelElevatorOffSet));
-      avgPos = (Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor())+Robot.elevator.getEncoderPos(Robot.elevator.getRightMotor()))/2;
-      currentIn = avgPos * Constants.encoderToInchElevator;
+      int avgPos = (Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor())+Robot.elevator.getEncoderPos(Robot.elevator.getRightMotor()))/2;
+      double currentIn = Math.abs(avgPos * Constants.encoderToInchElevator);
+      if(currentIn < Constants.incrementalHeightInches){
+        addSequential(new ExtendBothElevator(Constants.wheelElevatorOffSet));
+        avgPos = (Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor())+Robot.elevator.getEncoderPos(Robot.elevator.getRightMotor()))/2;
+        currentIn = Math.abs(avgPos * Constants.encoderToInchElevator);
+      }
+      if(currentIn < Constants.limitMaxHeight){
+        addSequential(new ExtendBothElevator(currentIn + Constants.incrementalHeightInches));
     }
-    if(currentIn < Constants.limitMaxHeight){
-      addSequential(new ExtendBothElevator(currentIn + Constants.incrementalHeightInches));
-    }
-   
   }
 }

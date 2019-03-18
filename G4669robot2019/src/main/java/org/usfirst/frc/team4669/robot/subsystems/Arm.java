@@ -115,7 +115,8 @@ public class Arm extends Subsystem {
    * @param ballMode Whether we're trying to grab a cargo or hatch panel
    * @return An array with the shoulder angle and elbow angle, null, or NaN if impossible
    */
-  public double[] calculateAngles(double xGrip, double yGrip, double targetGrabberAngle,boolean flipUp, boolean ballMode) {
+  public double[] calculateAngles(double xGrip, double xCorrect, double yGrip, double yCorrect,
+                                  double targetGrabberAngle, double angleCorrect,boolean flipUp, boolean ballMode) {
     double a3;
     //Changes the mode of the wrist depending on whether we want the hatch or the cargo 
     if(ballMode){
@@ -127,6 +128,7 @@ public class Arm extends Subsystem {
 
     //Avoids making the target height too low
     if (yGrip < 6.5){
+      System.out.println("Target y too low");
       return null;
     }
 
@@ -143,8 +145,12 @@ public class Arm extends Subsystem {
 
     //Checks if target position is feasible with the lengths of the arm
     if (distance > a1 + a2 || distance < Math.abs(a1 - a2)){
+      System.out.println("Distance out of range, " + distance);
       return null;
     }
+    yWrist += yCorrect;
+    xWrist += xCorrect;
+    distance = Math.sqrt(Math.pow(xWrist, 2) + Math.pow(yWrist, 2));
 
     //Now calculate the angles for each motor
     double elbowRad = Math.acos((Math.pow(distance, 2) - Math.pow(a1, 2) - Math.pow(a2, 2)) / (-2 * a1 * a2)) - Math.PI;
@@ -157,12 +163,20 @@ public class Arm extends Subsystem {
     else
       shoulderRad = Math.atan2(yWrist, xWrist)
           + Math.acos((Math.pow(a2, 2) - Math.pow(a1, 2) - Math.pow(xWrist, 2) - Math.pow(yWrist, 2)) / (-2 * a1 * distance));
+    if(shoulderRad<-Math.PI){
+      shoulderRad+=Math.PI*2;
+    }
+    if(shoulderRad>Math.PI){
+      shoulderRad-=Math.PI*2;
+    }
     double elbowDeg = Math.toDegrees(elbowRad);
     double shoulderDeg = Math.toDegrees(shoulderRad);
-    double wristDeg = targetGrabberAngle - (shoulderDeg - 90);
+    double wristDeg = targetGrabberAngle + angleCorrect - (shoulderDeg - 90);
 
     //Checks if our angles are too large, or if angles aren't possible
-    if (shoulderDeg < 0 || shoulderDeg > 180 || Math.abs(elbowDeg) > 150 || Double.isNaN(shoulderDeg) || Double.isNaN(shoulderDeg)|| Double.isNaN(wristDeg)){
+    if (shoulderDeg < 0 || shoulderDeg > 180 || Math.abs(elbowDeg) > 160 || Double.isNaN(shoulderDeg) || Double.isNaN(shoulderDeg)|| Double.isNaN(wristDeg)){
+        System.out.println("Angles are too large or impossible."+ " Shoulder: " + shoulderDeg+ " Elbow: "+ elbowDeg);
+
         return null;
     }
 

@@ -37,9 +37,9 @@ public class ArmDefault extends Command {
   protected void execute() {
 
     if(Robot.oi.getExtremeRawButton(1)){
-      wristPower = Robot.oi.extremeZ();
-      elbowPower = Robot.oi.extremeX();
-      shoulderPower = Robot.oi.extremeY();
+      wristPower = 0.3*Robot.oi.extremeZ();
+      elbowPower = 0.5*Robot.oi.extremeX();
+      shoulderPower = 0.4*Robot.oi.extremeY();
     } else{
       wristPower = 0;
       elbowPower = 0;

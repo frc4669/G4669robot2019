@@ -7,10 +7,13 @@
 
 package org.usfirst.frc.team4669.robot;
 
+import org.usfirst.frc.team4669.robot.commands.arm.StarterArm;
 import org.usfirst.frc.team4669.robot.commands.auto.IncrementalClimb;
+import org.usfirst.frc.team4669.robot.commands.driveTrain.TurnTo;
 import org.usfirst.frc.team4669.robot.commands.elevator.ExtendBothElevator;
 import org.usfirst.frc.team4669.robot.commands.elevator.ExtendLeftElevator;
 import org.usfirst.frc.team4669.robot.commands.elevator.ExtendRightElevator;
+import org.usfirst.frc.team4669.robot.commands.grabber.ToggleCompressor;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -51,61 +54,64 @@ public class OI {
 	// button.whenReleased(new ExampleCommand());
 
 	// Joystick variables
-	private Joystick leftStick = new Joystick(RobotMap.leftJoystick);
-	private Joystick rightStick = new Joystick(RobotMap.rightJoystick);
+	// private Joystick leftStick = new Joystick(RobotMap.leftJoystick);
+	// private Joystick rightStick = new Joystick(RobotMap.rightJoystick);
 	private Joystick extremeStick = new Joystick(RobotMap.extremeJoystick);
 
-	private Button leftButton1 = new JoystickButton(leftStick, 1), leftButton2 = new JoystickButton(leftStick, 2),
-			leftButton3 = new JoystickButton(leftStick, 3), leftButton4 = new JoystickButton(leftStick, 4),
-			leftButton5 = new JoystickButton(leftStick, 5), leftButton6 = new JoystickButton(leftStick, 6),
-			leftButton7 = new JoystickButton(leftStick, 7), leftButton8 = new JoystickButton(leftStick, 8),
-			leftButton9 = new JoystickButton(leftStick, 9), leftButton10 = new JoystickButton(leftStick, 10),
-			leftButton11 = new JoystickButton(leftStick, 11);
+	// private Button leftButton1 = new JoystickButton(leftStick, 1), leftButton2 = new JoystickButton(leftStick, 2),
+	// 		leftButton3 = new JoystickButton(leftStick, 3), leftButton4 = new JoystickButton(leftStick, 4),
+	// 		leftButton5 = new JoystickButton(leftStick, 5), leftButton6 = new JoystickButton(leftStick, 6),
+	// 		leftButton7 = new JoystickButton(leftStick, 7), leftButton8 = new JoystickButton(leftStick, 8),
+	// 		leftButton9 = new JoystickButton(leftStick, 9), leftButton10 = new JoystickButton(leftStick, 10),
+	// 		leftButton11 = new JoystickButton(leftStick, 11);
 
-	private Button rightButton1 = new JoystickButton(rightStick, 1), rightButton2 = new JoystickButton(rightStick, 2),
-			rightButton3 = new JoystickButton(rightStick, 3), rightButton4 = new JoystickButton(rightStick, 4),
-			rightButton5 = new JoystickButton(rightStick, 5), rightButton6 = new JoystickButton(rightStick, 6),
-			rightButton7 = new JoystickButton(rightStick, 7), rightButton8 = new JoystickButton(rightStick, 8),
-			rightButton9 = new JoystickButton(rightStick, 9), rightButton10 = new JoystickButton(rightStick, 10),
-			rightButton11 = new JoystickButton(rightStick, 11);
+	// private Button rightButton1 = new JoystickButton(rightStick, 1), rightButton2 = new JoystickButton(rightStick, 2),
+	// 		rightButton3 = new JoystickButton(rightStick, 3), rightButton4 = new JoystickButton(rightStick, 4),
+	// 		rightButton5 = new JoystickButton(rightStick, 5), rightButton6 = new JoystickButton(rightStick, 6),
+	// 		rightButton7 = new JoystickButton(rightStick, 7), rightButton8 = new JoystickButton(rightStick, 8),
+	// 		rightButton9 = new JoystickButton(rightStick, 9), rightButton10 = new JoystickButton(rightStick, 10),
+	// 		rightButton11 = new JoystickButton(rightStick, 11);
 
 	private Button extremeButton1 = new JoystickButton(extremeStick, 1), extremeButton2 = new JoystickButton(extremeStick, 2),
 			extremeButton3 = new JoystickButton(extremeStick, 3), extremeButton4 = new JoystickButton(extremeStick, 4),
 			extremeButton5 = new JoystickButton(extremeStick, 5), extremeButton6 = new JoystickButton(extremeStick, 6),
 			extremeButton7 = new JoystickButton(extremeStick, 7), extremeButton8 = new JoystickButton(extremeStick, 8),
 			extremeButton9 = new JoystickButton(extremeStick, 9), extremeButton10 = new JoystickButton(extremeStick, 10),
-			extremeButton11 = new JoystickButton(extremeStick, 11);
+			extremeButton11 = new JoystickButton(extremeStick, 11), extremeButton12 = new JoystickButton(extremeStick, 12);
 
 	public OI() {
-		if(Robot.endgameStarted){
-			extremeButton8.whenPressed(new IncrementalClimb());
-			extremeButton7.whenPressed(new ExtendBothElevator(0));
-			extremeButton9.whenPressed(new ExtendLeftElevator(Constants.wheelElevatorOffSet));
-			extremeButton10.whenPressed(new ExtendRightElevator(Constants.wheelElevatorOffSet));
-			
-		}
+		
+		// extremeButton8.whenPressed(new IncrementalClimb());
+		extremeButton7.whenPressed(new ExtendBothElevator(0));
+		extremeButton9.whenPressed(new ExtendLeftElevator(0));
+		extremeButton10.whenPressed(new ExtendRightElevator(0));
+		
+		extremeButton5.whenPressed(new TurnTo(180+28.75));
+		extremeButton6.whenPressed(new TurnTo(180-28.75));
+		extremeButton3.whenPressed(new TurnTo(360-28.75));
+		extremeButton4.whenPressed(new TurnTo(28.75));
 	}
 
 	// Getting joystick values
-	public double leftY() {
-		double joystickValue = leftStick.getY();
-		return deadzone(joystickValue, 0.09);
-	}
+	// public double leftY() {
+	// 	double joystickValue = leftStick.getY();
+	// 	return deadzone(joystickValue, 0.09);
+	// }
 
-	public double leftX() {
-		double joystickValue = leftStick.getX();
-		return deadzone(joystickValue, 0.09);
-	}
+	// public double leftX() {
+	// 	double joystickValue = leftStick.getX();
+	// 	return deadzone(joystickValue, 0.09);
+	// }
 
-	public double rightY() {
-		double joystickValue = rightStick.getY();
-		return deadzone(joystickValue, 0.09);
-	}
+	// public double rightY() {
+	// 	double joystickValue = rightStick.getY();
+	// 	return deadzone(joystickValue, 0.09);
+	// }
 
-	public double rightX() {
-		double joystickValue = rightStick.getX();
-		return deadzone(joystickValue, 0.09);
-	}
+	// public double rightX() {
+	// 	double joystickValue = rightStick.getX();
+	// 	return deadzone(joystickValue, 0.09);
+	// }
 
 	public double extremeX() {
 		double joystickValue = extremeStick.getX();
@@ -123,24 +129,34 @@ public class OI {
 	}
 
 	public boolean getLeftRawButton(int button) {
-		return leftStick.getRawButton(button);
+		// return leftStick.getRawButton(button);
+		return false;
 	}
 
 	public boolean getRightRawButton(int button) {
-		return rightStick.getRawButton(button);
+		// return rightStick.getRawButton(button);
+		return false;
 	}
 
 	public boolean getExtremeRawButton(int button) {
 		return extremeStick.getRawButton(button);
 	}
 
-	public Joystick getLeftStick() {
-		return leftStick;
+	public boolean getExtremeRawButtonPressed(int button) {
+		return extremeStick.getRawButtonPressed(button);
 	}
 
-	public Joystick getRightStick() {
-		return rightStick;
+	public int getExtremePOV() {
+		return extremeStick.getPOV();
 	}
+
+	// public Joystick getLeftStick() {
+	// 	return leftStick;
+	// }
+
+	// public Joystick getRightStick() {
+	// 	return rightStick;
+	// }
 
 	public Joystick getExtremeStick() {
 		return extremeStick;

@@ -50,6 +50,10 @@ public class Grabber extends Subsystem {
     return compressor.enabled();
   }
 
+  public boolean isCompressorClosedLoopOn(){
+    return compressor.getClosedLoopControl();
+  }
+
   public boolean isPressureLow(){
     return compressor.getPressureSwitchValue();
   }

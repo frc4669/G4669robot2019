@@ -47,7 +47,7 @@ public class AlignToBall extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (!Robot.visionEntries.isObjectDetected()
+    return (!Robot.visionEntries.isObjectDetected()||Robot.f310.getButton(F310.orangeButton)
         || Robot.driveTrain.getPIDDone(Robot.driveTrain.getVisionTurnController())
             && Robot.driveTrain.getPIDDone(Robot.driveTrain.getVisionDistanceController()));
   }

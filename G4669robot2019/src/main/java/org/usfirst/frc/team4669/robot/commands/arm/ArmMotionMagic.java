@@ -12,16 +12,16 @@ import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ArmAngleSet extends Command {
-  double shoulderAngle, elbowAngle, wristAngle;
+public class ArmMotionMagic extends Command {
+  double shoulderPos, elbowPos, wristPos;
 
-  public ArmAngleSet(double shoulderAngle, double elbowAngle, double wristAngle) {
+  public ArmMotionMagic(double shoulderPos, double elbowPos, double wristPos) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     requires(Robot.arm);
-    this.shoulderAngle = shoulderAngle;
-    this.elbowAngle = elbowAngle;
-    this.wristAngle = wristAngle;
+    this.shoulderPos = shoulderPos;
+    this.elbowPos = elbowPos;
+    this.wristPos = wristPos;
   }
 
   // Called just before this Command runs the first time
@@ -31,11 +31,11 @@ public class ArmAngleSet extends Command {
     Robot.arm.stop();
     
     System.out.println("Setting Elbow Target");
-    Robot.arm.setToAngle(Robot.arm.getElbowMotor(), elbowAngle);
+    Robot.arm.setMotorPosMagic(Robot.arm.getElbowMotor(), elbowPos);
     System.out.println("Setting Shoulder Target");
-    Robot.arm.setToAngle(Robot.arm.getShoulderMotor(), shoulderAngle);
+    Robot.arm.setMotorPosMagic(Robot.arm.getShoulderMotor(), shoulderPos);
     System.out.println("Setting Wrist Target");
-    Robot.arm.setToAngle(Robot.arm.getWristMotor(), wristAngle);
+    Robot.arm.setMotorPosMagic(Robot.arm.getWristMotor(), wristPos);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -46,9 +46,6 @@ public class ArmAngleSet extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    double shoulderPos = shoulderAngle * Constants.encoderTicksPerRotation * Constants.shoulderGearRatio / 360;
-    double elbowPos = elbowAngle * Constants.encoderTicksPerRotation * Constants.elbowGearRatio / 360;
-    double wristPos = wristAngle * Constants.encoderTicksPerRotation * Constants.wristGearRatio / 360;
 
     double shoulderError = Math.abs(shoulderPos - Robot.arm.getEncoderPosition(Robot.arm.getShoulderMotor()));
     double elbowError = Math.abs(elbowPos - Robot.arm.getEncoderPosition(Robot.arm.getElbowMotor()));
