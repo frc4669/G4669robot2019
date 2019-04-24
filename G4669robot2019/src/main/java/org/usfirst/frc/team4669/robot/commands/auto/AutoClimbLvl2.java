@@ -5,21 +5,24 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.usfirst.frc.team4669.robot.commands.arm;
+package org.usfirst.frc.team4669.robot.commands.auto;
 
-import org.usfirst.frc.team4669.robot.Robot;
+import org.usfirst.frc.team4669.robot.commands.driveTrain.StrafeStraight;
+import org.usfirst.frc.team4669.robot.commands.elevator.DriveElevatorMotionMagic;
+import org.usfirst.frc.team4669.robot.commands.elevator.ExtendBothElevator;
+import org.usfirst.frc.team4669.robot.commands.elevator.ExtendLeftElevator;
+import org.usfirst.frc.team4669.robot.commands.elevator.ExtendRightElevator;
+import org.usfirst.frc.team4669.robot.commands.elevator.IncrementClimb;
+import org.usfirst.frc.team4669.robot.commands.elevator.DriveElevatorMotionMagic.Sensor;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class Rocket2Rear extends CommandGroup {
+public class AutoClimbLvl2 extends CommandGroup {
   /**
    * Add your docs here.
    */
-
-  private ArmToPosition hatch2R = new ArmToPosition(-(Constants.robotToArmBack + Constants.xDistanceToPlace), 0, Constants.hatch2Height, 0, 180, 0, true, false),
-  ball2R = new ArmToPosition(-(Constants.robotToArmBack + Constants.xDistanceToPlace), 0, Constants.ball2Height, 0, 180, 0, true, true);
-  public Rocket2Rear() {
+  public AutoClimbLvl2() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -36,11 +39,14 @@ public class Rocket2Rear extends CommandGroup {
     // e.g. if Command1 requires chassis, and Command2 requires arm,
     // a CommandGroup containing them would require both the chassis and the
     // arm.
-    
-    if(Robot.toggleBallMode){
-      addSequential(ball2R);
-    } else{
-      addSequential(hatch2R);
-    }
+    addSequential(new IncrementClimb());
+    addSequential(new DriveElevatorMotionMagic(2, Sensor.RIGHT));
+    addSequential(new ExtendRightElevator(0));
+    addSequential(new StrafeStraight(1.5,true));
+    addSequential(new ExtendRightElevator(Constants.wheelElevatorOffSet));
+    addSequential(new DriveElevatorMotionMagic(5, Sensor.LEFT));
+    addSequential(new ExtendBothElevator(0));
+
+
   }
 }

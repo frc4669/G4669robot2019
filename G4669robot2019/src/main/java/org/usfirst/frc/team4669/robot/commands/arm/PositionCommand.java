@@ -50,7 +50,6 @@ public class PositionCommand extends Command {
     System.out.println("Starting Arm Motion Magic");
     Robot.arm.stop();
     ArmData curData = null;
-    double shoulderAngle, elbowAngle, wristAngle;
     boolean ballMode = false;
     if(Robot.toggleBallMode){
       curData = ball;
@@ -100,7 +99,7 @@ public class PositionCommand extends Command {
     double wristError = Math.abs(wristPos - Robot.arm.getEncoderPosition(Robot.arm.getWristMotor()));
 
     System.out.println("Shoulder error: " + shoulderError +  " Elbow error: " + elbowError + "Wrist error: " + wristError);
-    return (isTimedOut()||Robot.oi.getExtremeRawButton(1) || (shoulderError < 300 && elbowError < 300 && wristError < 300));
+    return (isTimedOut()||Robot.oi.getExtremeRawButton(1) || (shoulderError < 100 && elbowError < 100 && wristError < 50));
 
   }
 

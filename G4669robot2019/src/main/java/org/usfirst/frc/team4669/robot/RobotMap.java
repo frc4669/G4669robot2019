@@ -26,7 +26,7 @@ public class RobotMap {
 
 	/** CAN IDs for motor controllers */
 	public static final int driveFrontLeft = 5;
-	public static final int driveRearLeft = 2;
+	public static final int driveRearLeft = 12;
 	public static final int driveFrontRight = 11;
 	public static final int driveRearRight = 9;
 
@@ -35,7 +35,7 @@ public class RobotMap {
 	public static final int wheelMotorElevator = 3;
 
 	public static final int shoulderMotor = 13;
-	public static final int wristMotor = 12;
+	public static final int wristMotor = 2;
 	public static final int elbowMotor = 6; // 2
 
 	/** USB IDs for gamepad and joysticks */
@@ -44,6 +44,8 @@ public class RobotMap {
 	public static final int f310 = 2;
 	public static final int extremeJoystick = 3;
 	public static final int buttonBoard = 4;
+	public static final int testButonBoard = 5;
+
 
 	/** Talon SRX Encoder Slot and PID Slot */
 	public static final int slotIdx = 0;
@@ -55,7 +57,8 @@ public class RobotMap {
 	public static final int rearUltrasonicEcho = 2;
 	public static final int rearUltrasonicTrigger = 3;
 	public static final int rightInfrared = 0; // Infrared sensors use analog channels;
-	public static final int leftInfrared = 1;
+	public static final int midInfrared = 1;
+	public static final int leftInfrared = 2;
 
 	/** Pneumatic Channels */
 	public static final int solenoidForward = 0;

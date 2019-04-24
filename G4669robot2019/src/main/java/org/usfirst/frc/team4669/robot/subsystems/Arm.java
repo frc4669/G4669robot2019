@@ -131,6 +131,10 @@ public class Arm extends Subsystem {
       System.out.println("Target y too low");
       return null;
     }
+    if (xGrip > Constants.robotToArmFront + 28||xGrip < -(Constants.robotToArmBack + 28)){
+      System.out.println("Target x too far");
+      return null;
+    }
 
     //Corrects our x and y position based on the length of the hand
     double xWrist = xGrip - a3 * Math.cos(Math.toRadians(targetGrabberAngle));

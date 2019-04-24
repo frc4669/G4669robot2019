@@ -8,18 +8,16 @@
 package org.usfirst.frc.team4669.robot.commands.arm;
 
 import org.usfirst.frc.team4669.robot.Robot;
-import org.usfirst.frc.team4669.robot.misc.Constants;
+import org.usfirst.frc.team4669.robot.commands.grabber.CloseGrabber;
+import org.usfirst.frc.team4669.robot.commands.grabber.OpenGrabber;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class Rocket3Rear extends CommandGroup {
+public class ToggleBallHatch extends CommandGroup {
   /**
    * Add your docs here.
    */
-
-  private ArmToPosition hatch3R = new ArmToPosition(-(Constants.robotToArmBack + 7), 0, Constants.hatch3Height, 0, 180, 0, true, false),
-  ball3R = new ArmToPosition(-(Constants.robotToArmBack + 10), 0, Constants.ball3Height, 0, 180, 0, true, true);
-  public Rocket3Rear() {
+  public ToggleBallHatch() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -36,11 +34,19 @@ public class Rocket3Rear extends CommandGroup {
     // e.g. if Command1 requires chassis, and Command2 requires arm,
     // a CommandGroup containing them would require both the chassis and the
     // arm.
-    
-    if(Robot.toggleBallMode){
-      addSequential(ball3R);
-    } else{
-      addSequential(hatch3R);
+    if(PositionCommand.lastCommand==ArmData.hookStart&&!Robot.toggleBallMode){
+      addSequential(new OpenGrabber());
+      addSequential(new PositionCommand(ArmData.hookToBall));
+      Robot.toggleBallMode = true;
+      addSequential(new PathCommand(0));
+      addSequential(new CloseGrabber());
+    } else if(PositionCommand.lastCommand==ArmData.ballPickup&&Robot.toggleBallMode){
+      addSequential(new OpenGrabber());
+      Robot.toggleBallMode = false;
+      addSequential(new PositionCommand(ArmData.ballToHatch));
+      addSequential(new PathCommand(0));
+
     }
+
   }
 }

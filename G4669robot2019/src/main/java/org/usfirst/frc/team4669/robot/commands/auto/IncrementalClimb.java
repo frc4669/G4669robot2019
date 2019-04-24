@@ -17,7 +17,8 @@ public class IncrementalClimb extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public IncrementalClimb() {
+  public 
+  IncrementalClimb() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -39,13 +40,10 @@ public class IncrementalClimb extends CommandGroup {
     // from climbing [2] facing wrong direction
       int avgPos = (Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor())+Robot.elevator.getEncoderPos(Robot.elevator.getRightMotor()))/2;
       double currentIn = Math.abs(avgPos * Constants.encoderToInchElevator);
-      if(currentIn < Constants.incrementalHeightInches){
-        addSequential(new ExtendBothElevator(Constants.wheelElevatorOffSet));
-        avgPos = (Robot.elevator.getEncoderPos(Robot.elevator.getLeftMotor())+Robot.elevator.getEncoderPos(Robot.elevator.getRightMotor()))/2;
-        currentIn = Math.abs(avgPos * Constants.encoderToInchElevator);
+      if(currentIn < Constants.wheelElevatorOffSet + Constants.level2HeightInches - 1){
+        addSequential(new ExtendBothElevator(Constants.wheelElevatorOffSet + Constants.level2HeightInches));
+      } else{
+        addSequential(new ExtendBothElevator(currentIn + Constants.level2HeightInches));
       }
-      if(currentIn < Constants.limitMaxHeight){
-        addSequential(new ExtendBothElevator(currentIn + Constants.incrementalHeightInches));
-    }
   }
 }

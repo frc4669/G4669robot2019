@@ -32,7 +32,7 @@ public class RetractArm extends CommandGroup {
     // e.g. if Command1 requires chassis, and Command2 requires arm,
     // a CommandGroup containing them would require both the chassis and the
     // arm.
-    addSequential(new PositionCommand(ArmData.ballStart,ArmData.hookStart));
+    addSequential(new PositionCommand(ArmData.ballPickup,ArmData.hookStart));
 
     }
 }

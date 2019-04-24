@@ -8,6 +8,7 @@
 package org.usfirst.frc.team4669.robot;
 
 import java.awt.Color;
+import java.util.Arrays;
 
 import org.usfirst.frc.team4669.robot.commands.*;
 import org.usfirst.frc.team4669.robot.commands.arm.*;
@@ -52,6 +53,7 @@ public class Robot extends TimedRobot {
 	public static OI oi;
 	public static F310 f310;
 	public static ButtonBoard buttonBoard;
+	// public static ButtonBoard testButtonBoard;
 	public static DriveTrain driveTrain;
 	public static LineAlignEntries frontLineEntries;
 	public static LineAlignEntries backLineEntries;
@@ -62,8 +64,9 @@ public class Robot extends TimedRobot {
 	public static AnalogDistanceSensor ultrasonic;
 	public static int elevatorVel = 300;
 	public static int elevatorAccel = 600;
-	public static ArduinoCommunicator arduinoCommunicator;
-	public static boolean endgameStarted = false;
+	// public static ArduinoCommunicator arduinoCommunicator;
+
+	// public static boolean endgameStarted = false;
 
 	public static boolean toggleBallMode = false;
 	public static boolean toggleCalibrate = false;
@@ -86,18 +89,27 @@ public class Robot extends TimedRobot {
 		grabber = new Grabber();
 		oi = new OI();
 		f310 = new F310();
-		buttonBoard = new ButtonBoard();
+		buttonBoard = new ButtonBoard(RobotMap.buttonBoard);
+		// testButtonBoard = new ButtonBoard(RobotMap.testButonBoard);
+
+		// testButtonBoard.button1.whenPressed(new AutoClimbLvl2());
+		// testButtonBoard.button2.whenPressed(new PositionCommand(ArmData.hookToBall));
+		// testButtonBoard.button4.whenPressed(new StrafeStraight(0.3,true));
 		
-		arduinoCommunicator = new ArduinoCommunicator();
+		// arduinoCommunicator = new ArduinoCommunicator(Constants.arduinoBaudRate);
+
+		buttonBoard.button12.whenPressed(new ExtendBothElevator(0));
 
 		visionEntries = new VisionEntries();
 		frontLineEntries = new LineAlignEntries(true);
 		backLineEntries = new LineAlignEntries(false);
 
+
 		ArmData.initData();
 
 		driveTrain.zeroEncoders();
 		driveTrain.resetGyro();
+
 		driveTrain.calibrateGyro();
 
 		// Sends Strings to chooser and not commands in the case of the command
@@ -113,7 +125,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public void robotPeriodic(){
-		updateSmartDashboard();
+		// updateSmartDashboard();
 		ShuffleboardCompetition.update();
 		//Calibrate Elbow encoder position upon reaching reverse limit switch
 		if(toggleCalibrate){
@@ -124,10 +136,9 @@ public class Robot extends TimedRobot {
 			if(arm.getWristMotor().getSensorCollection().isRevLimitSwitchClosed())
 				arm.getWristMotor().setSelectedSensorPosition(Constants.calibrateWrist,RobotMap.pidIdx, Constants.timeout);
 		}
-		if(buttonBoard.getButtonPressed(1)){
-			toggleBallMode = !toggleBallMode;
-		}
-		// buttonBoard.updateArmNudge();
+		// if(buttonBoard.getButtonPressed(1)){
+			// toggleBallMode = !toggleBallMode;
+		// }
 	}
 
 	/**
@@ -174,7 +185,7 @@ public class Robot extends TimedRobot {
 		// 	autonomousCommand = new PathfinderTest();
 		if(chooser.getSelected().equals("HookGrab"))
 			autonomousCommand = new StartUp();
-		arduinoCommunicator.sendRGB(255,128,0);
+		// arduinoCommunicator.sendRGB(255,128,0);
 		driveTrain.zeroEncoders();
 		driveTrain.resetGyro();
 		// driveTrain.calibrateGyro();
@@ -199,6 +210,13 @@ public class Robot extends TimedRobot {
 			Command turn = new TurnTo(buttonBoard.getAngle());
 			turn.start();
 		}
+		if (f310.getButtonPressed(F310.orangeButton)){
+			Command ballAlign = new AlignToBall();
+			ballAlign.start();
+		}
+		if(buttonBoard.getButtonPressed(1)){
+			new ToggleBallHatch().start();;
+		}
 		if(buttonBoard.getButtonPressed(2)){
 			new PathCommand(0).start();
 		}
@@ -206,88 +224,95 @@ public class Robot extends TimedRobot {
 			if(!toggleBallMode)
 				new PathCommand(1).start();
 			else
-				new PathCommand(2).start();
+				new PathCommand(1).start();
 		}
 		if(buttonBoard.getButtonPressed(5)){
 			if(!toggleBallMode)
 				new PathCommand(2).start();
 			else
-				new PathCommand(4).start();
+				new PathCommand(3).start();
 		}
 		if(buttonBoard.getButtonPressed(6)){
 			if(!toggleBallMode)
-				new PathCommand(0).start();
-			else
-				new PathCommand(1).start();
-		}
-		if(buttonBoard.getButtonPressed(7)&&toggleBallMode){
-			new PathCommand(3).start();
-		}
-		if(buttonBoard.getButtonPressed(10)){
-			if(!toggleBallMode)
-				new PathCommand(5).start();
-			else
-				new PathCommand(7).start();
-		}
-		if(buttonBoard.getButtonPressed(11)){
-			if(!toggleBallMode)
-				new PathCommand(4).start();
-			else
-				new PathCommand(6).start();
-		}
-		if(buttonBoard.getButtonPressed(12)){
-			if(!toggleBallMode)
 				new PathCommand(3).start();
 			else
-				new PathCommand(5).start();
+				new PathCommand(4).start();
 		}
-		else if(oi.getExtremePOV()==0){
+		if(buttonBoard.getButtonPressed(7)&&toggleBallMode){
+			new PathCommand(2).start();
+		}
+		if(buttonBoard.getButtonPressed(9)&&toggleBallMode){
+			new FlickWrist().start();
+		}
+		// if(buttonBoard.getButtonPressed(10)){
+		// 	if(!toggleBallMode)
+		// 		new PathCommand(5).start();
+		// 	else
+		// 		new PathCommand(6).start();
+		// }
+		// if(buttonBoard.getButtonPressed(11)){
+		// 	if(!toggleBallMode)
+		// 		new PathCommand(4).start();
+		// 	else
+		// 		new PathCommand(5).start();
+		// }
+		// if(buttonBoard.getButtonPressed(12)){
+		// 	if(!toggleBallMode)
+		// 		new PathCommand(3).start();
+		// 	else
+		// 		new PathCommand(4).start();
+		// }
+		if(oi.getExtremePOV()==0){
 			ArmData lastPosition = PositionCommand.lastPosition;
-			ArmData upData = new ArmData(lastPosition.getX(), 0, lastPosition.getY()+3, 0, lastPosition.getGrabberAngle(), 0, lastPosition.getFlip());
-			new PositionCommand(upData, upData).start();
+			if(lastPosition != null){
+				ArmData upData = new ArmData(lastPosition.getX(), lastPosition.getXCorrection(), lastPosition.getY()+1, lastPosition.getYCorrection(), lastPosition.getGrabberAngle(), lastPosition.getAngleCorrection(), lastPosition.getFlip());
+				new PositionCommand(upData, upData).start();
+			}
 		}
 		else if(oi.getExtremePOV()==90){
 			ArmData lastPosition = PositionCommand.lastPosition;
-			ArmData fwdData = new ArmData(lastPosition.getX()+3, 0, lastPosition.getY(), 0, lastPosition.getGrabberAngle(), 0, lastPosition.getFlip());
-			new PositionCommand(fwdData, fwdData).start();
+			if(lastPosition != null){
+				ArmData fwdData = new ArmData(lastPosition.getX()+1, lastPosition.getXCorrection(), lastPosition.getY(), lastPosition.getYCorrection(), lastPosition.getGrabberAngle(), lastPosition.getAngleCorrection(), lastPosition.getFlip());
+				new PositionCommand(fwdData, fwdData).start();
+			}
 		}
 		else if(oi.getExtremePOV()==180){
 			ArmData lastPosition = PositionCommand.lastPosition;
-			ArmData downData = new ArmData(lastPosition.getX(), 0, lastPosition.getY()-3, 0, lastPosition.getGrabberAngle(), 0, lastPosition.getFlip());
-			new PositionCommand(downData, downData).start();
+			if(lastPosition != null){
+				ArmData downData = new ArmData(lastPosition.getX(), lastPosition.getXCorrection(), lastPosition.getY()-1, lastPosition.getYCorrection(), lastPosition.getGrabberAngle(), lastPosition.getAngleCorrection(), lastPosition.getFlip());
+				new PositionCommand(downData, downData).start();
+			}
 		}
 		else if(oi.getExtremePOV()==270){
 			ArmData lastPosition = PositionCommand.lastPosition;
-			ArmData fwdData = new ArmData(lastPosition.getX()-3, 0, lastPosition.getY(), 0, lastPosition.getGrabberAngle(), 0, lastPosition.getFlip());
-			new PositionCommand(fwdData, fwdData).start();
-		}
-		else if(oi.getExtremeRawButtonPressed(11)){
-			ArmData lastPosition = PositionCommand.lastPosition;
-			double angleTilt = 3;
-			if(lastPosition.getX()<0){
-				angleTilt = -angleTilt;
+			if(lastPosition != null){
+				ArmData fwdData = new ArmData(lastPosition.getX()-1, lastPosition.getXCorrection(), lastPosition.getY(), lastPosition.getYCorrection(), lastPosition.getGrabberAngle(), lastPosition.getAngleCorrection(), lastPosition.getFlip());
+				new PositionCommand(fwdData, fwdData).start();
 			}
-			ArmData tiltData = new ArmData(lastPosition.getX(), 0, lastPosition.getY(), 0, lastPosition.getGrabberAngle()-angleTilt, 0, lastPosition.getFlip());
-			new PositionCommand(tiltData, tiltData).start();
 		}
-		else if(oi.getExtremeRawButtonPressed(12)){
-			ArmData lastPosition = PositionCommand.lastPosition;
-			double angleTilt = 3;
-			if(lastPosition.getX()<0){
-				angleTilt = -angleTilt;
+		else if(buttonBoard.getButtonPressed(10)){
+			ArmData lastPosition = PositionCommand.lastPosition;	
+			if(lastPosition != null){
+				double angleTilt = 3;
+				if(lastPosition.getX()<0){
+					angleTilt = -angleTilt;
+				}
+				ArmData tiltData = new ArmData(lastPosition.getX(), lastPosition.getXCorrection(), lastPosition.getY(), lastPosition.getYCorrection(), lastPosition.getGrabberAngle()-angleTilt, lastPosition.getAngleCorrection(), lastPosition.getFlip());
+				new PositionCommand(tiltData, tiltData).start();
 			}
-			ArmData tiltData = new ArmData(lastPosition.getX(), 0, lastPosition.getY(), 0, lastPosition.getGrabberAngle()+angleTilt, 0, lastPosition.getFlip());
-			new PositionCommand(tiltData, tiltData).start();
 		}
-		// else if(oi.getExtremeRawButtonPressed(7)){
-		// 	ArmData lastCommand = PositionCommand.lastCommand;
-		// 	if(lastCommand==ArmData.ball3R){
-		// 		double angleTilt = 160;
-		// 		ArmData tiltData = new ArmData(lastCommand.getX(), 0, lastCommand.getY(), 0, lastCommand.getGrabberAngle()+angleTilt, 0, lastCommand.getFlip());
-		// 		new PositionCommand(tiltData, tiltData).start();
-		// 	}	
-		// }
-		// updateSmartDashboard();
+		else if(buttonBoard.getButtonPressed(11)){
+			ArmData lastPosition = PositionCommand.lastPosition;
+			if(lastPosition != null){
+				double angleTilt = 3;
+				if(lastPosition.getX()<0){
+					angleTilt = -angleTilt;
+				}
+				ArmData tiltData = new ArmData(lastPosition.getX(), lastPosition.getXCorrection(), lastPosition.getY(), lastPosition.getYCorrection(), lastPosition.getGrabberAngle()+angleTilt, 
+						lastPosition.getAngleCorrection(), lastPosition.getFlip());
+				new PositionCommand(tiltData, tiltData).start();
+			}
+		}
 	}
 
 	@Override
@@ -300,10 +325,10 @@ public class Robot extends TimedRobot {
 			autonomousCommand.cancel();
 		}
 		//Sends alliance color to Arduino for RGB lighting
-		if(DriverStation.getInstance().getAlliance()==DriverStation.Alliance.Red)
-			arduinoCommunicator.sendRGB(Color.red.getRed(),Color.red.getGreen(),Color.red.getBlue());
-		else if(DriverStation.getInstance().getAlliance()==DriverStation.Alliance.Blue)
-			arduinoCommunicator.sendRGB(Color.blue.getRed(),Color.blue.getGreen(),Color.blue.getBlue());
+		// if(DriverStation.getInstance().getAlliance()==DriverStation.Alliance.Red)
+		// 	arduinoCommunicator.sendRGB(Color.red.getRed(),Color.red.getGreen(),Color.red.getBlue());
+		// else if(DriverStation.getInstance().getAlliance()==DriverStation.Alliance.Blue)
+		// 	arduinoCommunicator.sendRGB(Color.blue.getRed(),Color.blue.getGreen(),Color.blue.getBlue());
 
 	}
 
@@ -319,106 +344,105 @@ public class Robot extends TimedRobot {
 			Command turn = new TurnTo(buttonBoard.getAngle());
 			turn.start();
 		}
+		if (f310.getButtonPressed(F310.orangeButton)){
+			Command ballAlign = new AlignToBall();
+			ballAlign.start();
+		}
+		if(buttonBoard.getButtonPressed(1)){
+			new ToggleBallHatch().start();;
+		}
 		if(buttonBoard.getButtonPressed(2)){
-			if(!toggleBallMode)
-				new PathCommand(0).start();
-			else
-				new PathCommand(1).start();
+			new PathCommand(0).start();
 		}
 		if(buttonBoard.getButtonPressed(4)){
 			if(!toggleBallMode)
 				new PathCommand(1).start();
 			else
-				new PathCommand(2).start();
+				new PathCommand(1).start();
 		}
 		if(buttonBoard.getButtonPressed(5)){
 			if(!toggleBallMode)
 				new PathCommand(2).start();
 			else
-				new PathCommand(4).start();
+				new PathCommand(3).start();
 		}
 		if(buttonBoard.getButtonPressed(6)){
 			if(!toggleBallMode)
-				new PathCommand(0).start();
-			else
-				new PathCommand(0).start();
-		}
-
-		if(buttonBoard.getButtonPressed(7)&&toggleBallMode){
-			new PathCommand(3).start();
-		}
-		if(buttonBoard.getButtonPressed(10)){
-			if(!toggleBallMode)
-				new PathCommand(5).start();
-			else
-				new PathCommand(7).start();
-		}
-		if(buttonBoard.getButtonPressed(11)){
-			if(!toggleBallMode)
-				new PathCommand(4).start();
-			else
-				new PathCommand(6).start();
-		}
-		if(buttonBoard.getButtonPressed(12)){
-			if(!toggleBallMode)
 				new PathCommand(3).start();
 			else
-				new PathCommand(5).start();
+				new PathCommand(4).start();
 		}
-
+		if(buttonBoard.getButtonPressed(7)&&toggleBallMode){
+			new PathCommand(2).start();
+		}
+		else if(buttonBoard.getButtonPressed(9)&&toggleBallMode){
+			new FlickWrist().start();
+		}
+	
 		if(oi.getExtremePOV()==0){
 			ArmData lastPosition = PositionCommand.lastPosition;
-			ArmData upData = new ArmData(lastPosition.getX(), 0, lastPosition.getY()+1, 0, lastPosition.getGrabberAngle(), 0, lastPosition.getFlip());
-			new PositionCommand(upData, upData).start();
+			if(lastPosition != null){
+				ArmData upData = new ArmData(lastPosition.getX(), lastPosition.getXCorrection(), lastPosition.getY()+1, lastPosition.getYCorrection(), lastPosition.getGrabberAngle(), lastPosition.getAngleCorrection(), lastPosition.getFlip());
+				new PositionCommand(upData, upData).start();
+			}
 		}
 		else if(oi.getExtremePOV()==90){
 			ArmData lastPosition = PositionCommand.lastPosition;
-			ArmData fwdData = new ArmData(lastPosition.getX()+1, 0, lastPosition.getY(), 0, lastPosition.getGrabberAngle(), 0, lastPosition.getFlip());
-			new PositionCommand(fwdData, fwdData).start();
+			if(lastPosition != null){
+				ArmData fwdData = new ArmData(lastPosition.getX()+1, lastPosition.getXCorrection(), lastPosition.getY(), lastPosition.getYCorrection(), lastPosition.getGrabberAngle(), lastPosition.getAngleCorrection(), lastPosition.getFlip());
+				new PositionCommand(fwdData, fwdData).start();
+			}
 		}
 		else if(oi.getExtremePOV()==180){
 			ArmData lastPosition = PositionCommand.lastPosition;
-			ArmData downData = new ArmData(lastPosition.getX(), 0, lastPosition.getY()-1, 0, lastPosition.getGrabberAngle(), 0, lastPosition.getFlip());
-			new PositionCommand(downData, downData).start();
+			if(lastPosition != null){
+				ArmData downData = new ArmData(lastPosition.getX(), lastPosition.getXCorrection(), lastPosition.getY()-1, lastPosition.getYCorrection(), lastPosition.getGrabberAngle(), lastPosition.getAngleCorrection(), lastPosition.getFlip());
+				new PositionCommand(downData, downData).start();
+			}
 		}
 		else if(oi.getExtremePOV()==270){
 			ArmData lastPosition = PositionCommand.lastPosition;
-			ArmData fwdData = new ArmData(lastPosition.getX()-1, 0, lastPosition.getY(), 0, lastPosition.getGrabberAngle(), 0, lastPosition.getFlip());
-			new PositionCommand(fwdData, fwdData).start();
-		}
-		else if(oi.getExtremeRawButtonPressed(11)){
-			ArmData lastPosition = PositionCommand.lastPosition;
-			double angleTilt = 3;
-			if(lastPosition.getX()<0){
-				angleTilt = -angleTilt;
+			if(lastPosition != null){
+				ArmData fwdData = new ArmData(lastPosition.getX()-1, lastPosition.getXCorrection(), lastPosition.getY(), lastPosition.getYCorrection(), lastPosition.getGrabberAngle(), lastPosition.getAngleCorrection(), lastPosition.getFlip());
+				new PositionCommand(fwdData, fwdData).start();
 			}
-			ArmData tiltData = new ArmData(lastPosition.getX(), 0, lastPosition.getY(), 0, lastPosition.getGrabberAngle()-angleTilt, 0, lastPosition.getFlip());
-			new PositionCommand(tiltData, tiltData).start();
 		}
-		else if(oi.getExtremeRawButtonPressed(12)){
-			ArmData lastPosition = PositionCommand.lastPosition;
-			double angleTilt = 3;
-			if(lastPosition.getX()<0){
-				angleTilt = -angleTilt;
+		else if(buttonBoard.getButtonPressed(10)){
+			ArmData lastPosition = PositionCommand.lastPosition;	
+			if(lastPosition != null){
+				double angleTilt = 3;
+				if(lastPosition.getX()<0){
+					angleTilt = -angleTilt;
+				}
+				ArmData tiltData = new ArmData(lastPosition.getX(), lastPosition.getXCorrection(), lastPosition.getY(), lastPosition.getYCorrection(), lastPosition.getGrabberAngle()-angleTilt, lastPosition.getAngleCorrection(), lastPosition.getFlip());
+				new PositionCommand(tiltData, tiltData).start();
 			}
-			ArmData tiltData = new ArmData(lastPosition.getX(), 0, lastPosition.getY(), 0, lastPosition.getGrabberAngle()+angleTilt, 0, lastPosition.getFlip());
-			new PositionCommand(tiltData, tiltData).start();
 		}
-		if(oi.getExtremeRawButtonPressed(8)){
-			new IncrementalClimb().start();
+		else if(buttonBoard.getButtonPressed(11)){
+			ArmData lastPosition = PositionCommand.lastPosition;
+			if(lastPosition != null){
+				double angleTilt = 3;
+				if(lastPosition.getX()<0){
+					angleTilt = -angleTilt;
+				}
+				ArmData tiltData = new ArmData(lastPosition.getX(), lastPosition.getXCorrection(), lastPosition.getY(), lastPosition.getYCorrection(), lastPosition.getGrabberAngle()+angleTilt, 
+						lastPosition.getAngleCorrection(), lastPosition.getFlip());
+				new PositionCommand(tiltData, tiltData).start();
+			}
 		}
-		// else if(oi.getExtremeRawButtonPressed(7)){
-		// 	ArmData lastCommand = PositionCommand.lastCommand;
-		// 	if(lastCommand==ArmData.ball3R){
-		// 		double angleTilt = 160;
-		// 		ArmData tiltData = new ArmData(lastCommand.getX(), 0, lastCommand.getY(), 0, lastCommand.getGrabberAngle()+angleTilt, 0, lastCommand.getFlip());
-		// 		new PositionCommand(tiltData, tiltData).start();
-		// 	}	
+
+		if (oi.getExtremeRawButtonPressed(8)){
+			new AutoClimbLvl3().start();
+		}
+
+		if (oi.getExtremeRawButtonPressed(7)){
+			new AutoClimbLvl2().start();
+		}
+
+		// if(Timer.getMatchTime()<=30&&!endgameStarted){
+		// 	// arduinoCommunicator.sendString("endgame");
+		// 	endgameStarted = true;
 		// }
-		if(Timer.getMatchTime()<=30&&!endgameStarted){
-			arduinoCommunicator.sendString("endgame");
-			endgameStarted = true;
-		}
 		Scheduler.getInstance().run();
 		// updateSmartDashboard();
 		// testSmartDashboard();

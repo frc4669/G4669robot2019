@@ -9,6 +9,7 @@ package org.usfirst.frc.team4669.robot.commands.driveTrain;
 
 import org.usfirst.frc.team4669.robot.F310;
 import org.usfirst.frc.team4669.robot.Robot;
+import org.usfirst.frc.team4669.robot.ShuffleboardCompetition;
 import org.usfirst.frc.team4669.robot.subsystems.DriveTrain;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class JoystickDrive extends Command {
 
   boolean turnRunning = false;
+  boolean strafeStraight = false;
 
   public JoystickDrive() {
     // Use requires() here to declare subsystem dependencies
@@ -26,6 +28,8 @@ public class JoystickDrive extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    strafeStraight = false;
+    Robot.driveTrain.disablePIDController(Robot.driveTrain.getGyroController());
     Robot.driveTrain.stop();
   }
 
@@ -36,14 +40,25 @@ public class JoystickDrive extends Command {
     double forward = 0.8 * Robot.f310.getLeftY();
     double rotation = 0.8 * Robot.f310.getRightX();
     if (Robot.f310.getButton(F310.rightShoulderButton)) {
-      strafe = 0.5 * Robot.f310.getLeftX();
+      strafe = 0.65 * Robot.f310.getLeftX();
       forward = 0.3 * Robot.f310.getLeftY();
       rotation = 0.3 * Robot.f310.getRightX();
     }
+    
     if (Robot.f310.getButton(F310.leftShoulderButton)) {
-      if(Robot.driveTrain.getFrontDistance()<14){
-        forward = 0;
+      if(!strafeStraight){
+        double angleHold = Robot.driveTrain.getAngleNormalized();
+        Robot.driveTrain.configPIDController(Robot.driveTrain.getGyroController(), 0, 360, true, 0.3, 1);
+        Robot.driveTrain.enablePIDController(Robot.driveTrain.getGyroController());
+        Robot.driveTrain.setTarget(Robot.driveTrain.getGyroController(), angleHold);
+        strafeStraight = true;
       }
+      else{
+        rotation = Robot.driveTrain.getTurnOutput();
+      }
+    } else{
+      strafeStraight = false;
+      Robot.driveTrain.disablePIDController(Robot.driveTrain.getGyroController());
     }
 
     Robot.driveTrain.robotOrientedDrive(strafe, forward, rotation);

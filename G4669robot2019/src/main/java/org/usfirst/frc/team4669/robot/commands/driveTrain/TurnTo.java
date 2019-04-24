@@ -23,19 +23,20 @@ public class TurnTo extends Command {
         setTimeout(4);
         System.out.println("Turn Angle: " + degree);
         Robot.driveTrain.stop();
+        Robot.driveTrain.configPIDController(Robot.driveTrain.getGyroController(), 0, 360, true, 0.5, 3);
         Robot.driveTrain.enablePIDController(Robot.driveTrain.getGyroController());
         Robot.driveTrain.setTarget(Robot.driveTrain.getGyroController(), degree);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        Robot.driveTrain.robotOrientedDrive(0, 0, Robot.driveTrain.getTurnOutput());
+        Robot.driveTrain.robotOrientedDrive(0.3, 0, Robot.driveTrain.getTurnOutput());
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
         // Stop turning once robot turns past specified angle
-        return Robot.driveTrain.getPIDDone(Robot.driveTrain.getGyroController()) || isTimedOut() || degree == -1;
+        return isTimedOut()||Robot.driveTrain.getPIDDone(Robot.driveTrain.getGyroController());
     }
 
     // Called once after isFinished returns true

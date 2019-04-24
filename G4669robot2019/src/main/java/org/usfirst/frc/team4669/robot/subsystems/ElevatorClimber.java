@@ -3,11 +3,14 @@ package org.usfirst.frc.team4669.robot.subsystems;
 import org.usfirst.frc.team4669.robot.AnalogDistanceSensor;
 import org.usfirst.frc.team4669.robot.RobotMap;
 import org.usfirst.frc.team4669.robot.commands.elevator.TeleopClimber;
+import org.usfirst.frc.team4669.robot.misc.ArduinoCommunicator;
 import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -29,12 +32,17 @@ public class ElevatorClimber extends Subsystem {
     private Accelerometer accel;
 
     private AnalogDistanceSensor leftSensor;
+    private AnalogDistanceSensor midSensor;
     private AnalogDistanceSensor rightSensor;
 
 
     private int timeout = Constants.timeout;
     private int slotIdx = RobotMap.slotIdx;
     private int pidIdx = RobotMap.pidIdx;
+
+    public ArduinoCommunicator sensorsArduino;
+    protected int[] distances = null;
+
 
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
@@ -44,13 +52,12 @@ public class ElevatorClimber extends Subsystem {
         leftMotor = new WPI_TalonSRX(RobotMap.leftMotorElevator);
         rightMotor = new WPI_TalonSRX(RobotMap.rightMotorElevator);
         wheelMotor = new WPI_TalonSRX(RobotMap.wheelMotorElevator);
-
-        leftSensor = new AnalogDistanceSensor(RobotMap.leftInfrared);
-        rightSensor = new AnalogDistanceSensor(RobotMap.rightInfrared);
-
-        leftSensor.setScaleFactor(Constants.infraredScale);
-        rightSensor.setScaleFactor(Constants.infraredScale);
-
+        
+        sensorsArduino = new ArduinoCommunicator(Constants.baudRateSensors);
+        // leftSensor = new AnalogDistanceSensor(RobotMap.leftInfrared);
+        // midSensor = new AnalogDistanceSensor(RobotMap.midInfrared);
+        // rightSensor = new AnalogDistanceSensor(RobotMap.rightInfrared);
+        
         accel = new BuiltInAccelerometer();
 
         setupMotor(leftMotor, false, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false, true);
@@ -60,7 +67,7 @@ public class ElevatorClimber extends Subsystem {
         leftMotor.configReverseSoftLimitThreshold((int) (-Constants.limitMaxHeight * Constants.inchToEncoderElevator));
         leftMotor.configSetParameter(ParamEnum.eClearPositionOnLimitF, 1, 0, 0, 10);
 
-        setupMotor(rightMotor, false, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false,
+        setupMotor(rightMotor, true, Constants.elevatorPID, Constants.elevatorVel, Constants.elevatorAccel, false,
                 true);
         rightMotor.configForwardSoftLimitEnable(true);
         rightMotor.configForwardSoftLimitThreshold(0);
@@ -70,6 +77,10 @@ public class ElevatorClimber extends Subsystem {
         
         setupMotor(wheelMotor, true, Constants.elevatorWheelPID, Constants.elevatorWheelVel,
                 Constants.elevatorWheelAccel, true, false);
+
+        wheelMotor.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated,LimitSwitchNormal.Disabled);
+        wheelMotor.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated,LimitSwitchNormal.Disabled);
+
     }
 
     public void initDefaultCommand() {
@@ -189,12 +200,58 @@ public class ElevatorClimber extends Subsystem {
         talon.set(ControlMode.Velocity, 0);
     }
 
+    public void getDistances(){
+        int[] intArr = sensorsArduino.receiveDistance();
+        if(intArr!=null){
+            if(intArr[0]==-1||intArr[1]==-1||intArr[2]==-1){
+                int[] nullArr = {256,256,256};
+                distances = nullArr;
+            } else{
+                distances = intArr;
+            }
+        } else{
+            int[] nullArr = {256,256,256};
+            distances = nullArr;
+        }
+    }
+
     public double getLeftSensor(){
-        return leftSensor.getDistance();
+        if(distances !=null)
+            return distances[2];
+        return 256;
+    }
+
+    public double getMidSensor(){
+        if(distances !=null)
+            return distances[1];
+        return 256;
     }
 
     public double getRightSensor(){
-        return leftSensor.getDistance();
+        if(distances !=null)
+            return distances[0];
+        return 256;
+    }
+
+    public double getLeftSensorUpdate(){
+        getDistances();
+        if(distances !=null)
+            return distances[2];
+        return 256;
+    }
+
+    public double getMidSensorUpdate(){
+        getDistances();
+        if(distances !=null)
+            return distances[1];
+        return 256;
+    }
+
+    public double getRightSensorUpdate(){
+        getDistances();
+        if(distances !=null)
+            return distances[0];
+        return 256;
     }
 
     public double getAccelX() {

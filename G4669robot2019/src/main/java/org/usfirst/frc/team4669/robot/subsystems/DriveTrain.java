@@ -77,9 +77,9 @@ public class DriveTrain extends Subsystem {
     super();
     gyro = new ADXRS450_Gyro();
     frontUltrasonic = new Ultrasonic(RobotMap.frontUltrasonicTrigger,RobotMap.frontUltrasonicEcho);
-    rearUltrasonic = new Ultrasonic(RobotMap.rearUltrasonicTrigger,RobotMap.rearUltrasonicEcho);
+    // rearUltrasonic = new Ultrasonic(RobotMap.rearUltrasonicTrigger,RobotMap.rearUltrasonicEcho);
     frontUltrasonic.setAutomaticMode(true);
-    rearUltrasonic.setAutomaticMode(true);
+    // rearUltrasonic.setAutomaticMode(true);
     
     strafeWrapper = new PIDSourceWrapper(0);
     visionDistance = new PIDSourceWrapper(0);
@@ -206,15 +206,15 @@ public class DriveTrain extends Subsystem {
    * joystick is pushed forwards, and towards the drivers when it is pulled
    * towards them - regardless of what direction the robot is facing.
    * 
-   * @param ySpeed       The speed that the robot should drive left and right.
+   * @param strafeSpeed       The speed that the robot should drive left and right.
    *                     [-1.0..1.0]
-   * @param xSpeed       The speed that the robot should drive fowards and
+   * @param forwardSpeed       The speed that the robot should drive fowards and
    *                     backwards. [-1.0..1.0]
    * @param rotationRate The rate of rotation for the robot that is completely
    *                     independent of the translation. [-1.0..1.0]
    */
-  public void robotOrientedDrive(double ySpeed, double xSpeed, double rotation) {
-    drive.driveCartesian(ySpeed, xSpeed, rotation);
+  public void robotOrientedDrive(double strafeSpeed, double forwardSpeed, double rotation) {
+    drive.driveCartesian(strafeSpeed, forwardSpeed, rotation);
   }
 
   /**
@@ -353,6 +353,20 @@ public class DriveTrain extends Subsystem {
 
   public double getAngle() {
     return gyro.getAngle();
+  }
+
+  public double getAngleNormalized() {
+    double angle = gyro.getAngle();
+    if(angle<0){
+      while(angle<0){
+        angle+=360;
+      }
+    } else if(angle>=360){
+      while(angle>=360){
+        angle-=360;
+      }
+    }
+    return angle;
   }
 
   public void setMotionVelAccel(int velocity, int accel) {

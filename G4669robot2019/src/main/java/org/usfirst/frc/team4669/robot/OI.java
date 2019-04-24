@@ -8,6 +8,8 @@
 package org.usfirst.frc.team4669.robot;
 
 import org.usfirst.frc.team4669.robot.commands.arm.StarterArm;
+import org.usfirst.frc.team4669.robot.commands.auto.AutoClimbLvl2;
+import org.usfirst.frc.team4669.robot.commands.auto.AutoClimbLvl3;
 import org.usfirst.frc.team4669.robot.commands.auto.IncrementalClimb;
 import org.usfirst.frc.team4669.robot.commands.driveTrain.TurnTo;
 import org.usfirst.frc.team4669.robot.commands.elevator.ExtendBothElevator;
@@ -80,16 +82,13 @@ public class OI {
 			extremeButton11 = new JoystickButton(extremeStick, 11), extremeButton12 = new JoystickButton(extremeStick, 12);
 
 	public OI() {
-		
-		// extremeButton8.whenPressed(new IncrementalClimb());
-		extremeButton7.whenPressed(new ExtendBothElevator(0));
-		extremeButton9.whenPressed(new ExtendLeftElevator(0));
-		extremeButton10.whenPressed(new ExtendRightElevator(0));
-		
 		extremeButton5.whenPressed(new TurnTo(180+28.75));
 		extremeButton6.whenPressed(new TurnTo(180-28.75));
 		extremeButton3.whenPressed(new TurnTo(360-28.75));
 		extremeButton4.whenPressed(new TurnTo(28.75));
+
+		extremeButton9.whenPressed(new ExtendLeftElevator(0));
+		extremeButton10.whenPressed(new ExtendRightElevator(0));
 	}
 
 	// Getting joystick values

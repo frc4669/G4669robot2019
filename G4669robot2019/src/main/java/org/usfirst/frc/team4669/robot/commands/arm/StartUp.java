@@ -36,8 +36,7 @@ public class StartUp extends CommandGroup {
     // a CommandGroup containing them would require both the chassis and the
     // arm.
     // addSequential(new ToggleCompressor());
-    addSequential(new PositionCommand(ArmData.hookStart, ArmData.hookStart,0.4));
-    Timer.delay(0.1);
     addSequential(new OpenGrabber());
+    addSequential(new PositionCommand(ArmData.hookStart));
   }
 }

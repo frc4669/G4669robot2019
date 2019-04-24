@@ -7,71 +7,53 @@
 
 package org.usfirst.frc.team4669.robot.commands.elevator;
 
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+
 import org.usfirst.frc.team4669.robot.Robot;
-import org.usfirst.frc.team4669.robot.misc.Constants;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class DriveElevatorMotionMagic extends Command {
-  public enum Sensor {
-    RIGHT, LEFT, DISABLED;
-  }
-
-  Sensor sensorStatus;
-
-  
-  public DriveElevatorMotionMagic(double timeout, Sensor sensorStatus){
-      // Use requires() here to declare subsystem dependencies
+public class HomeElevators extends Command {
+  public HomeElevators() {
+    // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    setTimeout(timeout);
-    this.sensorStatus = sensorStatus;
     requires(Robot.elevator);
   }
-
-  public DriveElevatorMotionMagic(double timeout) {
-    this(timeout, Sensor.DISABLED);
-  }
-
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    Robot.elevator.getLeftMotor().configForwardSoftLimitEnable(false);
+    Robot.elevator.getRightMotor().configForwardSoftLimitEnable(false);
+
     Robot.elevator.stop();
-    // Robot.elevator.zeroWheelEncoder();
-    // Robot.elevator.setMotionMagic(Robot.elevator.getWheelMotor(), position);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.elevator.percentOutputWheel(0.35);
+    if(!Robot.elevator.getForwardLimit(Robot.elevator.getLeftMotor())){
+      Robot.elevator.percentOutputLeft(0.15);
+    } else{
+      Robot.elevator.percentOutputLeft(0);
+    }
+    if(!Robot.elevator.getForwardLimit(Robot.elevator.getRightMotor())){
+      Robot.elevator.percentOutputRight(0.15);
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    switch(sensorStatus){
-      case RIGHT:
-        if(Robot.elevator.getRightSensorUpdate()<Constants.climberRightSensorTol){
-          return true;
-        }
-        break;
-      case LEFT:
-        if(Robot.elevator.getLeftSensorUpdate()<Constants.climberLeftSensorTol){
-          return true;
-        }
-          break;
-      case DISABLED:
-        break;
-    }
-    return isTimedOut();
-    // return (Math
-    //     .abs(position - Robot.elevator.getEncoderPos(Robot.elevator.getWheelMotor())) < Constants.driveTolerance);
+    return Robot.elevator.getForwardLimit(Robot.elevator.getLeftMotor())&&Robot.elevator.getForwardLimit(Robot.elevator.getRightMotor());
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    Robot.elevator.getLeftMotor().configForwardSoftLimitEnable(true);
+    Robot.elevator.getRightMotor().configForwardSoftLimitEnable(true);
     Robot.elevator.stop();
   }
 
@@ -79,6 +61,5 @@ public class DriveElevatorMotionMagic extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    end();
   }
 }

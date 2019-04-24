@@ -7,19 +7,13 @@
 
 package org.usfirst.frc.team4669.robot.commands.arm;
 
-import org.usfirst.frc.team4669.robot.Robot;
-import org.usfirst.frc.team4669.robot.misc.Constants;
-
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class Rocket2Front extends CommandGroup {
+public class FlickWrist extends CommandGroup {
   /**
    * Add your docs here.
    */
-
-  private ArmToPosition hatch2F = new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, 0, Constants.hatch2Height, 5, 0, 0, false, false),
-                        ball2F = new ArmToPosition(Constants.robotToArmFront + Constants.xDistanceToPlace, 0, Constants.ball2Height, 0, 0, 0, false, true);
-  public Rocket2Front() {
+  public FlickWrist() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -36,11 +30,14 @@ public class Rocket2Front extends CommandGroup {
     // e.g. if Command1 requires chassis, and Command2 requires arm,
     // a CommandGroup containing them would require both the chassis and the
     // arm.
-    
-    if(Robot.toggleBallMode){
-      addSequential(ball2F);
-    } else{
-      addSequential(hatch2F);
+    ArmData lastCommand = PositionCommand.lastCommand;
+    if(lastCommand == ArmData.ball1F||lastCommand == ArmData.ball2F){
+      ArmData rotateWristData = new ArmData(lastCommand.getX(),lastCommand.getXCorrection(),lastCommand.getY(),lastCommand.getYCorrection(),lastCommand.getGrabberAngle(),lastCommand.getAngleCorrection()+120,lastCommand.getFlip());
+      addSequential(new PositionCommand(rotateWristData));
+    }
+    else if(lastCommand == ArmData.ball3R){
+      ArmData rotateWristData = new ArmData(lastCommand.getX(),lastCommand.getXCorrection(),lastCommand.getY(),lastCommand.getYCorrection(),lastCommand.getGrabberAngle(),lastCommand.getAngleCorrection()-110,lastCommand.getFlip());
+      addSequential(new PositionCommand(rotateWristData));
     }
   }
 }

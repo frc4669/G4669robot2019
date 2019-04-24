@@ -8,6 +8,7 @@
 package org.usfirst.frc.team4669.robot.commands.arm;
 
 import org.usfirst.frc.team4669.robot.Robot;
+import org.usfirst.frc.team4669.robot.commands.grabber.OpenGrabber;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -47,7 +48,14 @@ public class PathCommand extends CommandGroup {
           index = ArmData.hatchList.indexOf(PositionCommand.lastCommand);
         }
     }
-    System.out.println("Start: " + index + "End: " + end);
+    System.out.println("Start: " + index + " End: " + end);
+      if(index == 0 && index == end){
+        addSequential(new OpenGrabber());
+        addSequential(new PositionCommand(ArmData.ballPickup,ArmData.hookStart));
+      }
+      if(index==end){
+        addSequential(new PositionCommand(ArmData.ballList.get(index),ArmData.hatchList.get(index)));
+      }
       if(index < end){
         for(int x = index+1; x<=end; x++){
           ArmData data;
@@ -56,6 +64,7 @@ public class PathCommand extends CommandGroup {
           } else{
             data = ArmData.ballList.get(x);
           }
+          addSequential(new OpenGrabber());
           addSequential(new PositionCommand(data));
         }
       }
@@ -67,6 +76,7 @@ public class PathCommand extends CommandGroup {
           } else{
             data = ArmData.ballList.get(x);
           }
+          addSequential(new OpenGrabber());
           addSequential(new PositionCommand(data));
         }
       }

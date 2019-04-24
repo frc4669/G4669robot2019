@@ -41,13 +41,12 @@ public class Constants {
 	// Position Constants, figure out actual numbers later
 	public static final double elevatorTolerance = 200; // Units in encoder position
 	public static final double level2HeightInches = 6.5; // Rest of the units are inches
-	public static final double wheelElevatorOffSet = 2.5;
+	public static final double wheelElevatorOffSet = 3.5;
 	public static final double climbDriveDistance = 3;
 	public static final double climbDriveDistance2 = 15;
 	public static final double climbDriveDistance3 = 5;
 	public static final double level3HeightInches = 19.5;
-	public static final double incrementalHeightInches = 6.5;
-	public static final double limitMaxHeight = 22;
+	public static final double limitMaxHeight = 25;
 
 	public static final double xDistanceToPlace = 18;
 	public static final double hatch1Height = 18.3;
@@ -57,8 +56,8 @@ public class Constants {
 	public static final double ball2Height = 54.8;
 	public static final double ball3Height = 82.8;
 	public static final double ballShipHeight = 42;
-	public static final double robotToArmFront = 20.9;
-	public static final double robotToArmBack = 8.5;
+	public static final double robotToArmFront = 20.9+0.25;
+	public static final double robotToArmBack = 8.5-0.25;
 
 	public static final double armGrabBallX = 15;
 	public static final double armGrabBallY = 6.5;
@@ -70,13 +69,13 @@ public class Constants {
 	public static final double strafekD = 5;
 
 	/**
-	 * Array for accessing PID constants for turning drive train
+	 * Array for accessing PID constants for driving drive train
 	 * {kF,kP,kI,kD,Integral Zone}
 	 */
 	public static final double[] driveTrainPID = { 0.4049, 8, 0.96, 160, 50 };
 
 	/** Array for accessing PID constants for the gyro turning {kP,kI,kD} */
-	public static final double[] gyroPID = { 0.25, 0, 0.045 };
+	public static final double[] gyroPID = { 0.05, 0, 0 };
 
 	/** Array for accessing PID constants for vision {kP,kI,kD} */
 	public static final double[] cameraPID = { 0.8, 0, 0 };
@@ -120,9 +119,9 @@ public class Constants {
 
 	public static final int defaultElbowPos = -6089;
 
-	public static final int startShoulder = 5279;
-	public static final int startElbow = -7920+615/2;
-	public static final int startWrist = -2116+(int)(4*wristGearRatio*encoderTicksPerRotation/360);
+	public static final int startShoulder = 4798;
+	public static final int startElbow = -7553;
+	public static final int startWrist = -1875;
 
 	public static final int calibrateShoulder = 7869-(int)(1*shoulderGearRatio*encoderTicksPerRotation/360);
 	public static final int calibrateElbow = -7860+615/2;
@@ -132,7 +131,7 @@ public class Constants {
 	
 	public static final int shoulderVel = (int) (200 * armScaleFactor);
 	public static final int shoulderAccel = (int) (375 * armScaleFactor);
-	public static final int elbowVel = (int) (200 * armScaleFactor);
+	public static final int elbowVel = (int) (400 * armScaleFactor);
 	public static final int elbowAccel = (int) (400 * armScaleFactor);
 	public static final int wristVel = (int) (400 * armScaleFactor);
 	public static final int wristAccel = (int) (400 * armScaleFactor);
@@ -159,8 +158,8 @@ public class Constants {
 	public static final int strafeTolerance = 400;
 
 	// Drive Train current limits
-	public static final int continuousCurrentLimit = 20;
-	public static final int peakCurrentLimit = 22;
+	public static final int continuousCurrentLimit = 25;
+	public static final int peakCurrentLimit = 28;
 	public static final int currentDuration = 50;
 
 	// Arm current limits
@@ -172,7 +171,11 @@ public class Constants {
 																		// inches
 	public static final double infraredScale = 1 / 0.165 / 2.54; // Divide by this to get voltage scaling factor to inches
 	
-	public static final int arduinoBaudRate = 9600;
+	// public static final int arduinoBaudRate = 9600;
+	public static final int baudRateSensors = 115200;
 
 	public static final double nudgeForwardDist = 6;
+	public static final double climberLeftSensorTol = 200;
+	public static final double climberMidSensorTol = 200;
+	public static final double climberRightSensorTol = 200;
 }

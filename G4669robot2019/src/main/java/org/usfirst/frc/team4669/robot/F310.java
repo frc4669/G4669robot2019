@@ -5,6 +5,7 @@ import org.usfirst.frc.team4669.robot.commands.auto.AlignToLine;
 import org.usfirst.frc.team4669.robot.commands.auto.BallAlignment;
 import org.usfirst.frc.team4669.robot.commands.auto.AlignToLine.Direction;
 import org.usfirst.frc.team4669.robot.commands.StopAll;
+import org.usfirst.frc.team4669.robot.commands.driveTrain.StrafeStraight;
 import org.usfirst.frc.team4669.robot.commands.driveTrain.TurnTo;
 import org.usfirst.frc.team4669.robot.commands.grabber.CloseGrabber;
 import org.usfirst.frc.team4669.robot.commands.grabber.OpenGrabber;
@@ -49,7 +50,7 @@ public class F310 {
 		rightJoyButtonObject = new JoystickButton(f310, F310.rightJoyButton);
 		startButtonObject.whenPressed(new StopAll());
 		blueButtonObject.whenPressed(new ToggleCompressor());
-		orangeButtonObject.whenPressed(new AlignToBall());
+		// orangeButtonObject.whenPressed(new StrafeStraight(3));
 		greenButtonObject.whenPressed(new OpenGrabber());
 		redButtonObject.whenPressed(new CloseGrabber());
 
@@ -96,6 +97,10 @@ public class F310 {
 
 	public boolean getButton(int buttonPort) {
 		return f310.getRawButton(buttonPort);
+	}
+
+	public boolean getButtonPressed(int buttonPort) {
+		return f310.getRawButtonPressed(buttonPort);
 	}
 
 	public boolean getButtonReleased(int buttonPort) {
